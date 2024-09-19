@@ -12,7 +12,7 @@ library(tidyverse)
 library(sdmTMB)
 library(ggplot2)
 
-plotdir <- paste0(here::here(), "/SMBKC/smbkc_24f/plots")
+plotdir <- paste0(here::here(), "/SMBKC/plots")
 
 # read in data
 #SMBKC <- read.csv("adfg_smbkc_survey_cpuenum_VAST.csv")

@@ -12,12 +12,14 @@ library(tidyverse)
 library(sdmTMB)
 library(ggplot2)
 
+cur_yr <- 2024
+
 plotdir <- paste0(here::here(), "/SMBKC/plots")
 
 # read in data
-#SMBKC <- read.csv("adfg_smbkc_survey_cpuenum_VAST.csv")
 haul_bkc <- read.csv(paste0(here::here(), '/SMBKC/data/trawl_survey/EBSCrab_Haul_', cur_yr, '.csv'), skip = 5)
 
+# error check
 haul_bkc %>% filter(SAMPLING_FACTOR >= 1 & is.na(LENGTH) == TRUE)
 
 # prepare data
@@ -42,18 +44,32 @@ bkc_kgkm <- haul_bkc %>% filter(MID_LATITUDE > 58.5) %>%
 
 # make SPDE mesh
 #BK_spde <- make_mesh(bkc_kgkm, c("LONGITUDE","LATITUDE"), cutoff="10") 
-BK_spde <- make_mesh(bkc_kgkm, c("LONGITUDE","LATITUDE"), n_knots = 100) 
+#BK_spde <- make_mesh(bkc_kgkm, c("LONGITUDE","LATITUDE"), n_knots = 100)
+BK_spde <- make_mesh(bkc_kgkm, c("LONGITUDE","LATITUDE"), n_knots = 50)
 plot(BK_spde)
 BK_spde$mesh$n
 
 # fit a GLMM
-m <- sdmTMB(
+m.smbkc <- sdmTMB(
   data = bkc_kgkm, 
   formula = kg.km ~ 0 + as.factor(SURVEY_YEAR), #the 0 is there so there is a factor predictor for each time slice
   time = "SURVEY_YEAR", mesh = BK_spde, family = tweedie(link = "log"))
+# Warning messages:
+#1: In sqrt(diag(cov)) : NaNs produced
+#2: The model may not have converged: non-positive-definite Hessian matrix. 
+
+# print the model fit
+m.smbkc
+
+# view parameters
+tidy.smbkc <- tidy(m.smbkc, conf.int = TRUE)
+tidy.smbkc.ran <- tidy(m.smbkc, effects = "ran_pars", conf.int = TRUE)
+
+# run sanity checks
+sanity(m.smbkc)
 
 # inspect randomized quantile residuals
-bkc_kgkm$resids <- residuals(m) # randomized quantile residuals
+bkc_kgkm$resids <- residuals(m.smbkc) # randomized quantile residuals
 
 #> Note what used to be the default sdmTMB residuals (before version 0.4.3.9005)
 #> are now `type = 'mle-eb'`. We recommend using the current default `'mle-mvn'`,
@@ -83,7 +99,7 @@ grid_yrs <- replicate_df(grid_new, "SURVEY_YEAR", unique(bkc_kgkm$SURVEY_YEAR))
 dplyr::glimpse(grid_yrs)
 
 # predictions on new data
-predictions <- predict(m, newdata = grid_yrs, return_tmb_object = T)
+predictions <- predict(m.smbkc, newdata = grid_yrs, return_tmb_object = T)
 
 # make a map function
 plot_map <- function(dat, column) {

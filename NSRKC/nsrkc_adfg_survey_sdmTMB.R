@@ -1,5 +1,5 @@
 # ************************************************************************************************************
-# Generating a spatiotemporal model-based index for St Matthew Island blue king crab in the NMFS trawl survey
+# Generating a spatiotemporal model-based index for Norton Sound red king crab in the NBS trawl survey
 # September 2024
 # Caitlin Stern
 # ************************************************************************************************************
@@ -43,13 +43,25 @@ plot(RK_spde)
 RK_spde$mesh$n
 
 # fit a GLMM
-m <- sdmTMB(
+m.nsrkc <- sdmTMB(
   data = rkc_kgkm, 
   formula = kg.km ~ 0 + as.factor(SURVEY_YEAR), #the 0 is there so there is a factor predictor for each time slice
   time = "SURVEY_YEAR", mesh = RK_spde, family = tweedie(link = "log"))
+#Warning message:
+#The model may not have converged. Maximum final gradient: 0.0363312230861308. 
+
+# print the model fit
+m.nsrkc
+
+# view parameters
+tidynsrkc <- tidy(m.nsrkc, conf.int = TRUE)
+tidy.nsrkc.ran <- tidy(m.nsrkc, effects = "ran_pars", conf.int = TRUE)
+
+# run sanity checks
+sanity(m.nsrkc)
 
 # inspect randomized quantile residuals
-rkc_kgkm$resids <- residuals(m) # randomized quantile residuals
+rkc_kgkm$resids <- residuals(m.nsrkc) # randomized quantile residuals
 
 #> Note what used to be the default sdmTMB residuals (before version 0.4.3.9005)
 #> are now `type = 'mle-eb'`. We recommend using the current default `'mle-mvn'`,
@@ -79,7 +91,7 @@ grid_yrs <- replicate_df(grid_new, "SURVEY_YEAR", unique(rkc_kgkm$SURVEY_YEAR))
 dplyr::glimpse(grid_yrs)
 
 # predictions on new data
-predictions <- predict(m, newdata = grid_yrs, return_tmb_object = T)
+predictions <- predict(m.nsrkc, newdata = grid_yrs, return_tmb_object = T)
 
 # make a map function
 plot_map <- function(dat, column) {

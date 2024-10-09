@@ -23,16 +23,24 @@ haul_bkc <- read.csv(paste0(here::here(), '/SMBKC/data/trawl_survey/EBSCrab_Haul
 haul_bkc %>% filter(SAMPLING_FACTOR >= 1 & is.na(LENGTH) == TRUE)
 
 # prepare data
-bkc_kgkm <- haul_bkc %>% filter(MID_LATITUDE > 58.5) %>% 
+bkc_kgkm <- haul_bkc %>% 
+  filter(AKFIN_SURVEY_YEAR >= 1978, MID_LATITUDE > 58.5) %>% 
   dplyr::select(AKFIN_SURVEY_YEAR, GIS_STATION, MID_LATITUDE, MID_LONGITUDE, AREA_SWEPT, SPECIES_NAME, SEX, LENGTH, SAMPLING_FACTOR) %>% 
-  filter(SEX == 1 & LENGTH >= 90) %>% 
-  # calculate weight in kg. Mean weight by stage: 0.7 kg for Stage-1, 1.2 kg for Stage-2, and 1.9 kg for Stage-3
+  # calculate weight in kg for males >= 90mm. Mean weight by stage: 0.7 kg for Stage-1, 1.2 kg for Stage-2, and 1.9 kg for Stage-3
   mutate(wt.kg1 = case_when(
-    LENGTH >= 90 & LENGTH < 104 ~ 0.7,
-    LENGTH >= 104 & LENGTH < 120 ~ 1.2,
-    LENGTH >= 120 ~ 1.9
+    SEX == 1 & LENGTH >= 90 & LENGTH < 104 ~ 0.7,
+    SEX == 1 & LENGTH >= 104 & LENGTH < 120 ~ 1.2,
+    SEX == 1 & LENGTH >= 120 ~ 1.9,
+    TRUE ~ 0
   )) %>%
-  mutate(wt.kg = wt.kg1 * SAMPLING_FACTOR) %>%
+  # make sampling factor column for males >= 90mm only; for all others sampling factor = 0
+  mutate(sampling.factor = case_when(
+    SEX == 1 & LENGTH >= 90 & LENGTH < 104 ~ SAMPLING_FACTOR,
+    SEX == 1 & LENGTH >= 104 & LENGTH < 120 ~ SAMPLING_FACTOR,
+    SEX == 1 & LENGTH >= 120 ~ SAMPLING_FACTOR,
+    TRUE ~ 0
+  )) %>%
+  mutate(wt.kg = wt.kg1 * sampling.factor) %>%
   group_by(AKFIN_SURVEY_YEAR, GIS_STATION) %>% 
   mutate(total.wt.kg = sum(wt.kg)) %>% 
   mutate(AREA_SWEPT_km2 = AREA_SWEPT/0.29155335) %>% # convert from square nautical miles to square km
@@ -49,17 +57,17 @@ BK_spde <- make_mesh(bkc_kgkm, c("LONGITUDE","LATITUDE"), n_knots = 50)
 plot(BK_spde)
 BK_spde$mesh$n
 
+BK_spde.2 <- make_mesh(bkc_kgkm, c("LONGITUDE","LATITUDE"), n_knots = 10)
+
 # fit a GLMM
 m.smbkc <- sdmTMB(
   data = bkc_kgkm, 
   formula = kg.km ~ 0 + as.factor(SURVEY_YEAR), #the 0 is there so there is a factor predictor for each time slice
   time = "SURVEY_YEAR", mesh = BK_spde, family = tweedie(link = "log"))
-# Warning messages:
-#1: In sqrt(diag(cov)) : NaNs produced
-#2: The model may not have converged: non-positive-definite Hessian matrix. 
 
 # print the model fit
 m.smbkc
+m.smbkc$sd_report
 
 # view parameters
 tidy.smbkc <- tidy(m.smbkc, conf.int = TRUE)
@@ -145,7 +153,9 @@ View(predictions)
 index <- get_index(predictions, area = 1, bias_correct = TRUE)
 
 # index values in metric tons rather than kg
-index.t <- index %>% mutate(est.t = est / 1000, lwr.t = lwr/1000, upr.t = upr/1000)
+index.t <- index %>% 
+  mutate(est.t = est / 1000, lwr.t = lwr/1000, upr.t = upr/1000) %>%
+  mutate(est.t2 = est / 100, lwr.t2 = lwr/100, upr.t2 = upr/100)
 
 # plot index
 ggplot(index.t, aes(SURVEY_YEAR, est.t)) + geom_line() +
@@ -157,5 +167,30 @@ ggplot(index.t, aes(SURVEY_YEAR, est.t)) + geom_line() +
 mutate(index, cv = sqrt(exp(se^2) - 1)) %>% 
   select(-log_est, -se) %>%
   knitr::kable(format = "pandoc", digits = c(0, 0, 0, 0, 2))
+
+# plot predicted vs. observed index
+
+obs.biom <- read.csv(paste0(here::here(), '/SMBKC/data/trawl_survey/survey_biomass_mt2.csv'))
+
+obs.pred <- left_join(index.t, obs.biom, by = "SURVEY_YEAR") %>% filter(SURVEY_YEAR >= 1978) %>%
+  mutate(obs_l95 = BIOMASS_MT * exp(-1.96 * sqrt(log(1 + BIOMASS_MT_CV^2))),
+       obs_u95 = BIOMASS_MT * exp(1.96 * sqrt(log(1 + BIOMASS_MT_CV^2))))
+
+ggplot(obs.pred)+
+  geom_line(aes(x = SURVEY_YEAR, y = est.t2))+
+  geom_ribbon(aes(x = SURVEY_YEAR, y = est.t2, ymin = lwr.t2, ymax = upr.t2), alpha = 0.4) +
+  geom_point(aes(x = SURVEY_YEAR, y = BIOMASS_MT), color = "grey20")+
+  geom_errorbar(aes(x = SURVEY_YEAR, ymin = obs_l95, ymax = obs_u95), width = 0, color = "grey20")+
+  xlab('Year') + 
+  ylab('Biomass estimate (t)') +
+  scale_y_continuous(labels = scales::comma)
+  #scale_color_manual(values = cbpalette)+
+  #coord_cartesian(ylim = c(0, NA)) + 
+  #scale_x_discrete(labels = yraxis$labels, breaks = yraxis$breaks)
+
+ggplot(index.t, aes(SURVEY_YEAR, est.t)) + geom_line() +
+  geom_ribbon(aes(ymin = lwr.t, ymax = upr.t), alpha = 0.4) +
+  xlab('Year') + ylab('Biomass estimate (t)') +
+  scale_y_continuous(label=scales::comma)
 
 ########################################################

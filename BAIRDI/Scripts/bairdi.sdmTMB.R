@@ -206,4 +206,4 @@ saveRDS(pred.male.bio, "./BAIRDI/Output/predicted_male_biomass(spatial).rda")
 
 # Extract the total abundance/biomass calculations and standard errors
 get_index(pred.male.abund) -> male.abund.ind
-get_indesx(pred.male.bio) -> male.bio.ind
+get_index(pred.male.bio) -> male.bio.ind

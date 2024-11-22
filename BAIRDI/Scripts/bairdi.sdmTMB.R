@@ -32,6 +32,56 @@ ncrs <- "+proj=aea +lat_0=50 +lon_0=-154 +lat_1=55 +lat_2=65 +x_0=0 +y_0=0 +datu
 ebs <- st_read(here::here("BAIRDI/data/ebs_friendly.kml")) %>% 
   st_transform(., crs = ncrs)
 
+### LOAD FUNCTIONS -------------------------------------------------------------
+eval_resid <- function(data, model, type, matsex){
+  data$s_glmm_resids <- residuals(model, type = "mle-mvn")
+  
+  # visualize residuals across the EBS
+  ggplot(data) + 
+    geom_sf(data = shoreline) +
+    geom_point(aes(y = lat, x = lon, color = s_glmm_resids), size = 1) +
+    scale_color_gradient2(midpoint = 0) + 
+    labs(y = "Latitude",
+         x = "Longitude") +
+    theme_gray() + 
+    ggtitle(paste("Bairdi", matsex, type, "residuals"))+
+    facet_wrap(~year)+
+    theme(axis.title = element_text(size = 10),
+          legend.position = "bottom") -> res_plot
+  
+  ggsave(plot = res_plot, paste0("./BAIRDI/Figures/bairdi_", matsex, "_", type, "_resid.png"), height = 9, width = 8.5, units = "in")
+  
+  return(res_plot)
+}
+
+predict_model <- function(newdat, model, type, matsex, years){
+  newdat %>%
+    filter(year %in% years) -> newdat2
+ 
+  out <- predict(model, newdata= newdat2, return_tmb_object = T)
+    
+  lab <- ifelse(type == "abundance", "Log bairdi per sq.km", "Log bairdi biomass (kg) per sq.skm")
+  
+  # model predictions (global interept + spatial random field)
+  ggplot(out$data) +
+    geom_raster(aes(y = lat, x = lon, fill = est)) + 
+    geom_sf(data = shoreline) +
+    scale_fill_gradient2() + 
+    labs(y = "Latitude",
+         x = "Longitude",
+         fill = lab) +
+    theme_gray() + 
+    facet_wrap(~year)+
+    ggtitle(paste("Bairdi", matsex, "predicted", type))+
+    theme(axis.title = element_text(size = 10),
+          legend.position = "bottom") -> pred_plot
+  
+  ggsave(plot = pred_plot, paste0("./BAIRDI/Figures/bairdi_", matsex, "_", type, "_predicted.png"), height = 9, width = 8.5, units = "in")
+  
+  
+  return(list(pred = out, pred_plot = pred_plot))
+}
+
 ### PROCESS DATA -----------------------------------------------------------------
 # shoreline
 shoreline <- 
@@ -56,7 +106,7 @@ sample <- read_csv(file = here::here("BAIRDI/data/bairdi_cpue.csv")) %>%
 
 males <- sample %>%
           filter(MAT_SEX %in% c("Immature Male", "Mature Male")) %>%
-          group_by(GIS_STATION, REGION, AREA_SWEPT, HAUL_TYPE, lon, lat, geometry, lon_group) %>%
+          group_by(year, GIS_STATION, REGION, AREA_SWEPT, HAUL_TYPE, lon, lat, geometry, lon_group) %>%
           reframe(cpue = sum(cpue),
                   cpue_kg = sum(cpue_kg)) %>%
           mutate(MAT_SEX = "All males")
@@ -95,89 +145,65 @@ matfem <- sample %>%
     dplyr::select(lon = x, 
                   lat = y)
   
-  ## INLA mesh----
+  ## INLA mesh
   mesh2 <- INLA::inla.mesh.2d(boundary = survey_buffed,
                              max.edge = c(20, 50), # max allowed triangle edge length inside and outside boundary
                              offset = c(10, 40), # extension of inner and outer boundary
                              cutoff = 25) #minimum distance between points (was 20)
   plot(mesh2)
   
-  ## convert for sdmTMB----
-  ebs_spde <- sdmTMB::make_mesh(data = sample,
+  ## convert for sdmTMB
+  male.mesh <- sdmTMB::make_mesh(data = males,
                                 xy_cols = c("lon", "lat"),
                                 mesh = mesh2)
-  plot(ebs_spde)
-
+ 
+  imfem.mesh <- sdmTMB::make_mesh(data = imfem,
+                                 xy_cols = c("lon", "lat"),
+                                 mesh = mesh2)
+  
+  matfem.mesh <- sdmTMB::make_mesh(data = matfem,
+                                 xy_cols = c("lon", "lat"),
+                                 mesh = mesh2)
+  
 ### FIT MODELS -------------------------------------------------------------------
-# 1) All Males
 
-# Tweedie GLMM w/ spatial RE-----
+# 1) All Males ----
 
+# Fit Tweedie GLMM w/ spatial RE
+male.abund <- sdmTMB(cpue ~ 0 + as.factor(year), #the 0 is there so there is a factor predictor for each time slice
+                     spatial = "on",
+                     mesh = male.mesh,
+                     family = tweedie(),
+                     time = "year",
+                     anisotropy = TRUE,
+                     data = males)
+  
+saveRDS(male.abund, "./BAIRDI/bairdi_male_abundTMB.rda")
 
-# fit a spatial GLMM
-m3 <- sdmTMB(cpue_kg ~ 1, #the 0 is there so there is a factor predictor for each time slice
+male.bio <- sdmTMB(cpue_kg ~ 0 + as.factor(year), #the 0 is there so there is a factor predictor for each time slice
              spatial = "on",
-             mesh = ebs_spde,
+             mesh = male.mesh,
              family = tweedie(),
-             data = sample)
+             time = "year",
+             anisotropy = TRUE,
+             data = males)
 
-# m3 <- sdmTMB(cpue_kg ~ 0 + as.factor(year), #the 0 is there so there is a factor predictor for each time slice
-#              spatial = "on",
-#              mesh = ebs_spde,
-#              family = tweedie(),
-#              time = "year",
-#              data = sample)
-
-# evaluate residuals
-# Look at residual patterning
-sample$s_glmm_resids <- residuals(m3, type = "mle-mvn")
-
-# visualize residuals across the EBS
-ggplot(sample) + 
-  geom_sf(data = shoreline) +
-  geom_point(aes(y = lat, x = lon, color = s_glmm_resids), size = 5) +
-  scale_color_gradient2(midpoint = 0) + 
-  labs(y = "Latitude",
-       x = "Longitude") +
-  theme_gray() + 
-  theme(axis.title = element_text(size = 16)) 
+saveRDS(male.abund, "./BAIRDI/bairdi_male_bioTMB.rda")
 
 
-# visualize using a variogram
-v3_out <- tibble()
-for (i in 1:500){
-  sample$s_glmm_resids <- residuals(m3, type = "mle-mvn")
-  ex3_sp <- sample
-  coordinates(ex3_sp) <- c("lon", "lat")
 
-  v3 <- variogram(object = s_glmm_resids ~ 1,
-                  data = ex3_sp,
-                  cressie = T,
-                  cutoff = 500) %>%
-    mutate(draw = i)
-  assign("v3_out", rbind(v3, v3_out))
-}
+# Look at residuals
+eval_resid(males, male.abund, "abundance", "male")
+eval_resid(males, male.bio, "biomass", "male")
 
-ggplot(v3_out) +
-  geom_boxplot(aes(y = gamma,
-                   x = dist,
-                   group = dist)) +
-  labs(y = "Sample Variogram",
-       x = "Distance (km)") +
-  theme_gray() +
-  theme(axis.title = element_text(size = 15))
 
-# predict from the model to extract spatial random field (LOG SCALE)
-pred_df <- predict(m3, newdata = pred_grid)
+# Predict from model
+predict_model(pred_grid, male.abund, "abundance", "male", c(1988:2019, 2021:2024)) -> pred.male.abund
+predict_model(pred_grid, male.bio, "biomass", "male", c(1988:2019, 2021:2024)) -> pred.male.bio
 
-# model predictions (global intercept + spatial random field)
-ggplot(pred_df) +
-  geom_raster(aes(y = lat, x = lon, fill = est)) + 
-  geom_sf(data = shoreline) +
-  scale_fill_gradient2() + 
-  labs(y = "Latitude",
-       x = "Longitude",
-       fill = "Log bairdi per sq. km") +
-  theme_gray() + 
-  theme(axis.title = element_text(size = 16),
-        legend.position = "bottom")
+saveRDS(pred.male.abund, "./BAIRDI/Output/predicted_male_abundance(spatial).rda")
+saveRDS(pred.male.bio, "./BAIRDI/Output/predicted_male_biomass(spatial).rda")
+
+# Extract the total abundance/biomass calculations and standard errors
+get_index(pred.male.abund) -> male.abund.ind
+get_indesx(pred.male.bio) -> male.bio.ind

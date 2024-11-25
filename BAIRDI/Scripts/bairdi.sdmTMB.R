@@ -83,6 +83,13 @@ predict_model <- function(newdat, model, type, matsex, years){
 }
 
 ### PROCESS DATA -----------------------------------------------------------------
+# load observed total abundance/biomass
+tanEbio<- read.csv("Y:/KOD_Survey/EBS Shelf/2024/Tech Memo/Outputs/bio_EBS_TannerE.csv")
+tanWbio <- read.csv("Y:/KOD_Survey/EBS Shelf/2024/Tech Memo/Outputs/bio_EBS_TannerW.csv")
+
+tanEabund<- read.csv("Y:/KOD_Survey/EBS Shelf/2024/Tech Memo/Outputs/abund_EBS_TannerE.csv")
+tanWabund <- read.csv("Y:/KOD_Survey/EBS Shelf/2024/Tech Memo/Outputs/abund_EBS_TannerW.csv")
+
 # shoreline
 shoreline <- 
   ne_states(country = "United States of America") %>% 
@@ -196,14 +203,66 @@ saveRDS(male.abund, "./BAIRDI/bairdi_male_bioTMB.rda")
 eval_resid(males, male.abund, "abundance", "male")
 eval_resid(males, male.bio, "biomass", "male")
 
+# set plotting years
+years <- c(1988:2019, 2021:2024)
+
+# Replicate pred_grid (newdata) by years
+pred_grid2 <- replicate_df(pred_grid, "year", years)
 
 # Predict from model
-predict_model(pred_grid, male.abund, "abundance", "male", c(1988:2019, 2021:2024)) -> pred.male.abund
-predict_model(pred_grid, male.bio, "biomass", "male", c(1988:2019, 2021:2024)) -> pred.male.bio
+predict_model(pred_grid2, male.abund, "abundance", "male", years) -> pred.male.abund
+predict_model(pred_grid2, male.bio, "biomass", "male", years) -> pred.male.bio
 
 saveRDS(pred.male.abund, "./BAIRDI/Output/predicted_male_abundance(spatial).rda")
 saveRDS(pred.male.bio, "./BAIRDI/Output/predicted_male_biomass(spatial).rda")
 
 # Extract the total abundance/biomass calculations and standard errors
-get_index(pred.male.abund) -> male.abund.ind
-get_index(pred.male.bio) -> male.bio.ind
+get_index(pred.male.abund$pred, area = 1, bias_correct = TRUE) -> male.abund.ind
+get_index(pred.male.bio$pred, area = 1, bias_correct = TRUE) -> male.bio.ind
+
+# Process observed abundance/biomass
+rbind(tanEbio %>%
+      dplyr::select(Year, Small.male...113.mm., Large.male...113.mm.) %>%
+      rename(smmale = Small.male...113.mm., lgmale = Large.male...113.mm.) %>%
+      pivot_longer(., cols = c(2:3), names_to = "matsex", values_to = "biomass") %>%
+      mutate(CI = as.numeric(gsub(",", "", sapply(str_extract_all(biomass, "(?<=\\()[^)(]+(?=\\))"), paste0, collapse =","))),
+             biomass = as.numeric(gsub(",", "", gsub("\\([^()]*\\)", "", biomass)))),
+      tanWbio %>%
+        dplyr::select(Year, Small.male...103.mm., Large.male...103.mm.) %>%
+        rename(smmale = Small.male...103.mm., lgmale = Large.male...103.mm.) %>%
+        pivot_longer(., cols = c(2:3), names_to = "matsex", values_to = "biomass") %>%
+        mutate(CI = as.numeric(gsub(",", "", sapply(str_extract_all(biomass, "(?<=\\()[^)(]+(?=\\))"), paste0, collapse =","))),
+               biomass = as.numeric(gsub(",", "", gsub("\\([^()]*\\)", "", biomass))))) %>%
+  group_by(Year) %>%
+  reframe(biomass = sum(biomass),
+          CI = sum(CI)) -> male.bio.obs
+
+rbind(tanEabund %>%
+        dplyr::select(Year, Small.male...113.mm., Large.male...113.mm.) %>%
+        rename(smmale = Small.male...113.mm., lgmale = Large.male...113.mm.) %>%
+        pivot_longer(., cols = c(2:3), names_to = "matsex", values_to = "abundance") %>%
+        mutate(CI = as.numeric(gsub(",", "", sapply(str_extract_all(abundance, "(?<=\\()[^)(]+(?=\\))"), paste0, collapse =","))),
+               abundance = as.numeric(gsub(",", "", gsub("\\([^()]*\\)", "", abundance)))),
+      tanWabund %>%
+        dplyr::select(Year, Small.male...103.mm., Large.male...103.mm.) %>%
+        rename(smmale = Small.male...103.mm., lgmale = Large.male...103.mm.) %>%
+        pivot_longer(., cols = c(2:3), names_to = "matsex", values_to = "abundance") %>%
+        mutate(CI = as.numeric(gsub(",", "", sapply(str_extract_all(abundance, "(?<=\\()[^)(]+(?=\\))"), paste0, collapse =","))),
+               abundance = as.numeric(gsub(",", "", gsub("\\([^()]*\\)", "", abundance))))) %>%
+  group_by(Year) %>%
+  reframe(abundance = sum(abundance),
+          CI = sum(CI)) -> male.abund.obs
+
+
+
+# Plot predicted vs. observed
+male.abund.ind %>% 
+  mutate(est = est/1e6, lwr = lwr/1e6, upr = upr/1e6) %>% 
+  rename(Year = year, abundance = est) -> male.abund.ind
+  
+ggplot()+
+  geom_line(male.abund.ind, mapping = aes(Year, abundance))+
+  #geom_errorbar(abund, mapping = aes(x = Year, ymin = abundance-lwr, ymax = abundance+upr))+
+  geom_line(male.abund.obs, mapping = aes(Year))
+                                                                                                            
+

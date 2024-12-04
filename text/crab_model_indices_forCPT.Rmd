@@ -1,0 +1,129 @@
+---
+title: "Spatiotemporal model-based index development for Bering Sea and Aleutian Islands crab stocks"
+subtitle: "Update for Crab Plan Team modeling workshop"
+authors: |
+  | Emily Ryznar$^{1,2}$, Caitlin Stern$^{3,4}$, and Jon Richar$^{1,5}$
+  | $^1$NOAA Fisheries 
+  | $^2$emily.ryznar@noaa.gov 
+  | $^3$Alaska Department of Fish and Game 
+  | $^4$caitlin.stern@alaska.gov 
+  | $^5$jon.richar@noaa.gov 
+date: "`r format(Sys.time(), '%B %Y')`"
+output:
+  bookdown::pdf_document2:
+    fig_caption: true
+    includes: null
+    toc: no
+header-includes:
+   - \usepackage{caption}
+
+---
+
+\pagenumbering{arabic}
+
+```{r global_options, include=FALSE, echo = FALSE, message = FALSE, warning=FALSE}
+library(knitr)
+opts_chunk$set(fig.width = 12, fig.height = 7, fig.align = "left", echo = FALSE, warning = FALSE, message = FALSE,  dpi=300)
+
+```
+
+```{r, load_packages, echo = FALSE, include = FALSE}
+
+library(xtable)
+library(tidyverse)
+
+options(xtable.comment = FALSE)
+
+```
+
+# Introduction
+
+The goal of this investigation was to develop spatiotemporal model-based indices of abundance for three Bering Sea and Aleutian Islands (BSAI) crab stocks: Tanner crab (*Chionoecetes bairdi*), Norton Sound red king crab (*Paralithodes camtschaticus*), and St. Matthew Island blue king crab (*Paralithodes platypus*). Research suggests that spatiotemporal model-based indices can be more robust to survey changes than are design-based indices, though the models must be well-specified (Yalcin et al. 2023). Spatiotemporal model-based indices are used in North Pacific Fishery Management Council (NPFMC) groundfish stock assessments for species including Eastern Bering Sea (EBS) walleye pollock (*Gadus chalcogrammus*) and EBS Pacific cod (*Gadus macrocephalus*), both of which use the vector-autoregressive spatial temporal (VAST) approach (Thorson 2019) to produce indices used in the assessments (Ianelli et al. 2024; Barbeaux et al. 2024). Previous BSAI crab stock assessments have presented models using spatiotemporal model-based indices (), although these models were not accepted for harvest specifications (). 
+
+We generated biomass and abundance estimates using the R packages *sdmTMB* (Anderson et al. 2022), which uses geostatistical time series data to estimate spatial and spatiotemporal generalized linear mixed effects models. This approach allows for index standardization when the set of stations surveyed is not consistent across years: one can generate a spatial grid that covers the area of interest, predict from the model onto that grid, and sum the predicted biomass to obtain an area-weighted biomass index that is independent of sampling locations (Anderson et al. 2022).
+
+All three stock assessments for the crab stocks presented here use data from the National Marine Fisheries Service (NMFS) EBS bottom trawl survey (Stockhausen 2024; Hamazaki 2024; Stern and Palof 2024). The St. Matthew Island blue king crab stock assessment also uses data from the Alaska Department of Fish and Game (ADF&G) St. Matthew Island blue king crab pot survey, while the Norton Sound red king crab stock assessment uses data from the NMFS Northern Bering Sea bottom trawl survey and the ADF&G Norton Sound red king crab trawl survey. 
+
+Spatiotemporal model-based index development is expected to confer distinct advantages for each of the three stocks. For the St. Matthew Island blue king crab stock, standardizing the survey indices will allow the assessment to use more of the existing survey data more rigorously. In the past, the assessment has used only data from 96 core stations in the ADF&G pot survey, because not all survey stations were surveyed in all years; index standardization will allow the assessment to use data from all stations surveyed by taking into account differences in the spatial distribution of sampling among years. The NMFS trawl survey is undergoing changes including dropping the high sampling density "corner stations" near St. Matthew Island from 2024 onward (DePhilippo et al. 2023; Stern & Palof 2024); index standardization will allow the assessment to continue using the full time series of data despite changes in the spatial footprint of the survey.
+
+
+
+# Methods
+
+Summary of methods in common among the stocks.
+
+## Tanner crab
+
+
+## Norton Sound red king crab
+
+### EBS NMFS trawl survey
+
+Note: combine EBS and NBS surveys into one index? This seems to be what EBS Pcod does.
+
+### NBS NMFS trawl survey
+
+### ADF&G trawl survey
+
+
+## St. Matthew Island blue king crab
+
+### EBS NMFS trawl survey
+
+
+### ADF&G pot survey
+
+
+# Results
+
+
+## Tanner crab
+
+
+## Norton Sound red king crab
+
+### EBS NMFS trawl survey
+
+### NBS NMFS trawl survey
+
+### ADF&G trawl survey
+
+
+## St. Matthew Island blue king crab
+
+### EBS NMFS trawl survey
+
+
+### ADF&G pot survey
+
+
+# Conclusions
+
+
+# Acknowledgements
+
+
+# References
+
+Anderson, S.C.; Ward, E.J.; English, P.A.; Barnett, L.A.K. 2022. sdmTMB: An R package for fast, flexible, and user-friendly generalized linear mixed effects models with spatial and spatiotemporal random fields. bioRxiv.
+
+Barbeaux, S.J., L. Barnett, P. Hulson, J. Nielsen, S.K. Shotwell, E. Siddon, I. Spies. 2024. Assessment of the Pacific cod stock in the Eastern Bering Sea. In: Stock Assessment and Fishery Evaluation report for the Groundfish Resources of the Bering Sea/Aleutian Islands regions. North Pacific Fishery Management Council, Anchorage, AK.
+
+DeFilippo, L., S. Kotwicki, L. Barnett, J. Richar, M.A. Litzow, W.T. Stockhausen, K. Palof. 2023. Evaluating the impacts of reduced sampling density in a systematic fisheries-independent survey design. Frontiers in Marine Science 10:1219283. 
+
+Hamazaki, T. 2024. Norton Sound red king crab stock assessment for the fishing year 2024. In: Stock Assessment and Fishery Evaluation Report for the King and Tanner Crab Fisheries of the Bering Sea and Aleutian Islands: 2024 Final Crab SAFE. North Pacific Fishery Management Council, Anchorage AK.
+
+Ianelli, J., T. Honkalehto, S. Wassermann, A. McCarthy, S. Steinessen, C. McGilliard, E. Siddon. 2024. Assessment of walleye pollock in the eastern Bering Sea. In: Stock Assessment and Fishery Evaluation report for the Groundfish Resources of the Bering Sea/Aleutian Islands regions. North Pacific Fishery Management Council, Anchorage, AK.
+
+Stern, C., K. Palof. 2024. Saint Matthew Island blue king crab stock assessment 2024. In: Stock Assessment and Fishery Evaluation Report for the King and Tanner Crab Fisheries of the Bering Sea and Aleutian Islands: 2024 Final Crab SAFE. North Pacific Fishery Management Council, Anchorage AK.
+
+Stockhausen, W.T. 2024. 2024 stock assessment and fishery evaluation report for the Tanner crab fisheries of the Bering Sea and Aleutians Islands regions. In: Stock Assessment and Fishery Evaluation Report for the King and Tanner Crab Fisheries of the Bering Sea and Aleutian Islands: 2024 Final Crab SAFE. North Pacific Fishery Management Council, Anchorage AK.
+
+Thorson, J.T. 2019. Guidance for decisions using the vector autoregressive spatio-temporal (VAST) package in stock, ecosystem, habitat, and climate assessments. Fisheries Research 210:143-161. https://doi.org/10.1016/j.fishres.2018.10.013
+
+Yalcin, S., S.C. Anderson, P.M. Regular, P.A. English. 2023. Exploring the limits of spatiotemporal and design-based index standardization under reduced survey coverage. ICES Journal of Marine Sciences 80:2368-2379. https://doi.org/10.1093/icesjms/fsad155
+
+# Tables
+
+
+# Figures

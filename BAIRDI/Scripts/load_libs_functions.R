@@ -7,8 +7,7 @@
 
 # TO DOs:
 # 1) Look at residuals
-# 2) Troubleshoot immature female abundance
-# 3) Get abund/bio obs back to 1975
+# 2) Add in scripts to load new survey data (CPUE, BIO/ABUND) and process each year (CPUE script is in TECHMEMONEW)
 
 ### LOAD LIBRARIES/PARAMS --------------------------------------------------------
 
@@ -22,6 +21,7 @@ library(gstat)
 library(rnaturalearth)
 library(raster)
 library(concaveman)
+library(png)
 
 # Read in spatial layers
 source("Y:/KOD_Survey/EBS Shelf/Spatial crab/load.spatialdata.R")
@@ -189,3 +189,27 @@ tanW.obs %>%
 
 tan.obs <- rbind(tanE.obs2, tanW.obs2)
 
+# LOAD
+tan.obs <- right_join(rbind(read.csv("./BAIRDI/Data/E166_CB_OBSERVEDabundbio.csv"),
+                            read.csv("./BAIRDI/Data/W166_CB_OBSERVEDabundbio.csv")) %>%
+                        rename(Year = AKFIN_SURVEY_YEAR, matsex = MAT_SEX, stock = STOCK, abundance= ABUNDANCE, biomass = BIOMASS) %>%
+                        dplyr::select(Year, matsex, abundance, biomass, stock) %>%
+                        mutate(abundance = abundance/1e6, biomass = biomass/1000) %>%
+                        pivot_longer(., c("abundance", "biomass"), names_to = "type", values_to = "value"),
+                      rbind(read.csv("./BAIRDI/Data/E166_CB_OBSERVEDabundbio.csv"),
+                            read.csv("./BAIRDI/Data/W166_CB_OBSERVEDabundbio.csv")) %>%
+                        dplyr::select(AKFIN_SURVEY_YEAR,MAT_SEX, ABUNDANCE_CI, BIOMASS_CI, STOCK) %>%
+                        rename(Year = AKFIN_SURVEY_YEAR, matsex = MAT_SEX, stock = STOCK, abundance = ABUNDANCE_CI, biomass = BIOMASS_CI) %>%
+                        mutate(abundance = abundance/1e6, biomass = biomass/1000) %>%
+                        pivot_longer(., c("abundance", "biomass"), names_to = "type", values_to = "CI")) %>%
+  filter(matsex %in% c("Immature Female", "Mature Female", "Immature Male", "Mature Male")) %>%
+  mutate(matsex = case_when(matsex %in% c("Immature Male", "Mature Male") ~ "Male",
+                            TRUE ~ matsex)) %>%
+  group_by(Year, type, matsex, stock) %>%
+  reframe(value = sum(value),
+          CI = sum(CI))
+
+
+# ggplot(tan.obs %>% filter(stock == "TannerW", type == "abundance"), aes(Year, value))+
+#   geom_line()+
+#   facet_wrap(~matsex, scales = "free_y")

@@ -78,7 +78,14 @@ Note: combine EBS and NBS surveys into one index? This seems to be what EBS Pcod
 
 
 ## Tanner crab
+```{r, fig.align = "center", fig.cap = "Estimated abundance (millions) for Eastern Bering Sea Tanner crab (Chionoecetes bairdi). Colored lines represent abundance (±95% CI) estimated by sdmTMB, with pink and blue denoting models fit with a 50- and 120-knot mesh, respectively. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey."}
 
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.abundance.index.png"))
+```
+```{r, fig.align = "center", fig.cap = "Estimated biomass (tons) for Eastern Bering Sea Tanner crab (Chionoecetes bairdi). Colored lines represent abundance (±95% CI) estimated by sdmTMB, with pink and blue denoting models fit with a 50- and 120-knot mesh, respectively. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey."}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.biomass.index.png"))
+```
 
 ## Norton Sound red king crab
 

@@ -40,9 +40,13 @@ W.grid2 <- W.grid %>%
   newdat <- W.grid2 %>% filter(year %in% years)
   
     # Fit models
+    fit_models(data, matsex, stock, years, period, knots = 50) -> out.Wmale2
     fit_models(data, matsex, stock, years, period, knots = 120) -> out.Wmale1
     
     # Predict and get index
+    abund.mod <- readRDS("./BAIRDI/Models/bairdi_Male_TannerW_pre-1988_50_abundTMB.rda")
+    bio.mod <- readRDS("./BAIRDI/Models/bairdi_Male_TannerW_pre-1988_50_bioTMB.rda")
+    
     abund.mod <- readRDS("./BAIRDI/Models/bairdi_Male_TannerW_pre-1988_120_abundTMB.rda")
     bio.mod <- readRDS("./BAIRDI/Models/bairdi_Male_TannerW_pre-1988_120_bioTMB.rda")
     
@@ -54,11 +58,15 @@ W.grid2 <- W.grid %>%
   newdat <- W.grid2 %>% filter(year %in% years)
   
     # Fit models
+    fit_models(data, matsex, stock, years, period, knots = 50) -> out.Wmale2
     fit_models(data, matsex, stock, years, period, knots = 120) -> out.Wmale2
     
     # Predict models
-    abund.mod <- readRDS("./BAIRDI/Models/bairdi_Male_TannerW_post-1988_abundTMB.rda")
-    bio.mod <- readRDS("./BAIRDI/Models/bairdi_Male_TannerW_post-1988_bioTMB.rda")
+    abund.mod <- readRDS("./BAIRDI/Models/bairdi_Male_TannerW_post-1988_50_abundTMB.rda")
+    bio.mod <- readRDS("./BAIRDI/Models/bairdi_Male_TannerW_post-1988_50_bioTMB.rda")
+    
+    abund.mod <- readRDS("./BAIRDI/Models/bairdi_Male_TannerW_post-1988_120_abundTMB.rda")
+    bio.mod <- readRDS("./BAIRDI/Models/bairdi_Male_TannerW_post-1988_120_bioTMB.rda")
     
     predict_and_getindex(newdat, abund.mod, bio.mod, matsex, stock, years, period, knots = 120) -> ind.Wmale2
 

@@ -5,6 +5,9 @@
 
 # Author: Emily Ryznar
 
+#PLOTS: 1) model 100 between knots 2) QQ plots and spatial residuals 3) index
+# other different distribution, ar1 vs. iid, joining timeseries together, depth
+
 # TO DOs:
 # 1) Look at residuals
 # 2) Add in scripts to load new survey data (CPUE, BIO/ABUND) and process each year (CPUE script is in TECHMEMONEW)
@@ -54,6 +57,7 @@ fit_models <- function(data, matsex, stock, years, period, knots){
                   spatiotemporal = "iid",
                   mesh = mesh2,
                   family = tweedie(link = "log"),
+                  #family = delta_lognormal(),
                   time = "year",
                   anisotropy = TRUE,
                   data = data2)
@@ -66,6 +70,7 @@ fit_models <- function(data, matsex, stock, years, period, knots){
                 spatiotemporal = "iid",
                 mesh = mesh2,
                 family = tweedie(link = "log"),
+                #family = delta_lognormal(),
                 time = "year",
                 anisotropy = TRUE,
                 data = data2)
@@ -75,25 +80,98 @@ fit_models <- function(data, matsex, stock, years, period, knots){
   return(list(abundTMB = abund, bioTMB = bio, mesh = mesh2))
 }
 
-eval_resid <- function(data, model, type, matsex){
-  data$s_glmm_resids <- residuals(model, type = "mle-mvn")
+evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knots, matsex2){
+  
+  # Run sanity check
+  print("Pre-1988 model")
+  sanity_check_pre <- sanity(pre.model) 
+  print("Post-1988 model")
+  sanity_check_post <- sanity(post.model) 
+  
+  # Calculate Dharma residuals
+  # resid1 <- simulate(pre.model, nsim = 300, type= "mle-mvn")|>
+  #               dharma_residuals(pre.model, return_DHARMa = TRUE)
+  
+  resid1 <- simulate(pre.model, nsim = 300, type= "mle-mvn")|>
+                dharma_residuals(pre.model, plot = FALSE)
+  
+  ggplot()+
+    theme_bw()+
+    geom_abline(slope = 1, intercept = 0, color = "red", linewidth = 1)+
+    geom_point(resid1, mapping = aes(expected, observed), size = 2, fill = "black")+
+    ylab("Expected")+
+    xlab("Observed")+
+    ggtitle("<1988")+
+    theme(axis.text = element_text(size = 12),
+          axis.title = element_text(size = 12)) -> r1.plot
+  
+  #ggsave(filename = paste0("./BAIRDI/Figures/DHARMa_pre1988_", type, "_", stock2, "_", matsex2, "_", knots, ".png"), width=7, height=5, units="in")
+
+
+  # 
+  # png(filename = paste0("./BAIRDI/Figures/DHARMa_pre1988_", type, "_", stock2, "_", matsex2, "_", knots, ".png"), width=7, height=5, units="in", res=600)
+  # 
+  # plot(resid1, title= paste0("DHARMa residuals (Pre-1988, ", type, ",", stock2, " ", matsex2, ", knots=", knots, ")"))
+  # 
+  # dev.off()
+  
+  resid2 <- simulate(post.model, nsim = 300, type= "mle-mvn")|>
+    dharma_residuals(post.model, plot= FALSE)
+  
+  ggplot()+
+    theme_bw()+
+    geom_abline(slope = 1, intercept = 0, color = "red", linewidth = 1)+
+    geom_point(resid2, mapping = aes(expected, observed), size = 2, fill = "black")+
+    ylab("Expected")+
+    xlab("Observed")+
+    ggtitle("≥1988")+
+    theme(axis.text = element_text(size = 12),
+          axis.title = element_text(size = 12)) -> r2.plot
+  
+  cowplot::plot_grid(r1.plot, r2.plot) -> qqplot
+  
+  ggsave(qqplot, filename = paste0("./BAIRDI/Figures/DHARMa_", type, "_", stock2, "_", matsex2, "_", knots, ".png"), width=7, height=5, units="in")
+  
+ 
+  # png(filename = paste0("./BAIRDI/Figures/DHARMa_post1988_", type, "_", stock2, "_", matsex2, "_", knots, ".png"), width=7, height=5, units="in", res=600)
+  # 
+  # plot(resid2, title= paste0("DHARMa residuals (Post-1988, ", type, ",", stock2, " ", matsex2, ", knots=", knots, ")"))
+  # 
+  # dev.off()
+  
+  resid1 <- simulate(pre.model, nsim = 300, type= "mle-mvn")|>
+    dharma_residuals(pre.model, return_DHARMa = TRUE)
+  resid2 <- simulate(post.model, nsim = 300, type= "mle-mvn")|>
+    dharma_residuals(post.model, return_DHARMa = TRUE)
+  
+  
+  if(stock2 != "All"){
+    data %>% 
+      filter(mat.sex == matsex2, stck == stock2) %>%
+      mutate(resids = c(resid1$scaledResiduals, resid2$scaledResiduals)) -> data2
+  } else{
+    data %>% 
+      filter(mat.sex == matsex2) %>%
+      mutate(resids = c(resid1$scaledResiduals, resid2$scaledResiduals)) -> data2
+  }
+  
   
   # visualize residuals across the EBS
-  ggplot(data) + 
+  ggplot(data2) + 
     #geom_sf(data = shoreline) +
-    geom_point(aes(y = lat, x = lon, color = s_glmm_resids), size = 1) +
+    geom_point(aes(y = lat, x = lon, color = resids), size = 1) +
     scale_color_gradient2(midpoint = 0) + 
     labs(y = "Latitude",
          x = "Longitude") +
     theme_gray() + 
-    ggtitle(paste("Bairdi", matsex, type, "residuals"))+
+    ggtitle(paste0(stock2," ", matsex2," ", type, " residuals (knots=", knots, ")"))+
     facet_wrap(~year)+
     theme(axis.title = element_text(size = 10),
           legend.position = "bottom") -> res_plot
   
-  ggsave(plot = res_plot, paste0("./BAIRDI/Figures/bairdi_", matsex, "_", type, "_resid.png"), height = 9, width = 8.5, units = "in")
+  ggsave(plot = res_plot, paste0("./BAIRDI/Figures/DHARMa", stock2, "_", matsex2, "_", type, knots, "_SPATIAL.png"), height = 9, width = 8.5, units = "in")
   
-  return(res_plot)
+  return(list(sanity_check_pre, sanity_check_post))
 }
 
 predict_and_getindex <- function(newdat, abund.mod, bio.mod, matsex, stock, years, period, knots){

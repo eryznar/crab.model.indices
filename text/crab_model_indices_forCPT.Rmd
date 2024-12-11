@@ -1,12 +1,12 @@
 ---
 title: "Spatiotemporal model-based index development for Bering Sea and Aleutian Islands crab stocks"
 subtitle: "Update for Crab Plan Team modeling workshop"
-authors: |
-  | Emily Ryznar$^{1,2}$, Caitlin Stern$^{3,4}$, and Jon Richar$^{1,5}$
-  | $^1$NOAA Fisheries 
-  | $^2$emily.ryznar@noaa.gov 
-  | $^3$Alaska Department of Fish and Game 
-  | $^4$caitlin.stern@alaska.gov 
+author: |
+  | Caitlin Stern$^{1,2}$, Emily Ryznar$^{3,4}$, and Jon Richar$^{3,5}$
+  | $^1$Alaska Department of Fish and Game 
+  | $^2$caitlin.stern@alaska.gov 
+  | $^3$NOAA Fisheries 
+  | $^4$emily.ryznar@noaa.gov 
   | $^5$jon.richar@noaa.gov 
 date: "`r format(Sys.time(), '%B %Y')`"
 output:
@@ -36,11 +36,11 @@ options(xtable.comment = FALSE)
 
 ```
 
-# Introduction
+# Introduction {-}
 
 The goal of this investigation was to develop spatiotemporal model-based indices of abundance for three Bering Sea and Aleutian Islands (BSAI) crab stocks: Tanner crab (*Chionoecetes bairdi*), Norton Sound red king crab (*Paralithodes camtschaticus*), and St. Matthew Island blue king crab (*Paralithodes platypus*). Research suggests that spatiotemporal model-based indices can be more robust to survey changes than are design-based indices, though the models must be well-specified (Yalcin et al. 2023). Spatiotemporal model-based indices are used in North Pacific Fishery Management Council (NPFMC) groundfish stock assessments for species including Eastern Bering Sea (EBS) walleye pollock (*Gadus chalcogrammus*) and EBS Pacific cod (*Gadus macrocephalus*), both of which use the vector-autoregressive spatial temporal (VAST) approach (Thorson 2019) to produce indices used in the assessments (Ianelli et al. 2024; Barbeaux et al. 2024). Previous BSAI crab stock assessments have presented models using spatiotemporal model-based indices (), although these models were not accepted for harvest specifications (). 
 
-We generated biomass and abundance estimates using the R packages *sdmTMB* (Anderson et al. 2022), which uses geostatistical time series data to estimate spatial and spatiotemporal generalized linear mixed effects models. This approach allows for index standardization when the set of stations surveyed is not consistent across years: one can generate a spatial grid that covers the area of interest, predict from the model onto that grid, and sum the predicted biomass to obtain an area-weighted biomass index that is independent of sampling locations (Anderson et al. 2022).
+We generated biomass and abundance estimates using the R package *sdmTMB* (Anderson et al. 2022), which uses geostatistical time series data to estimate spatial and spatiotemporal generalized linear mixed effects models. This approach allows for index standardization when the set of stations surveyed is not consistent across years: one can generate a spatial grid that covers the area of interest, predict from the model onto that grid, and sum the predicted biomass to obtain an area-weighted biomass index that is independent of sampling locations (Anderson et al. 2022).
 
 All three stock assessments for the crab stocks presented here use data from the National Marine Fisheries Service (NMFS) EBS bottom trawl survey (Stockhausen 2024; Hamazaki 2024; Stern and Palof 2024). The St. Matthew Island blue king crab stock assessment also uses data from the Alaska Department of Fish and Game (ADF&G) St. Matthew Island blue king crab pot survey, while the Norton Sound red king crab stock assessment uses data from the NMFS Northern Bering Sea bottom trawl survey and the ADF&G Norton Sound red king crab trawl survey. 
 
@@ -48,36 +48,38 @@ Spatiotemporal model-based index development is expected to confer distinct adva
 
 
 
-# Methods
+# Methods {-}
 
-Summary of methods in common among the stocks.
+We fit models using the R package *sdmTMB*. For all models fitted using *sdmTMB*, we used the R package *DHARMa* (Hartig 2022) for model diagnostics.
 
-## Tanner crab
+## Tanner crab {-}
 
 
-## Norton Sound red king crab
+## Norton Sound red king crab {-}
 
-### EBS NMFS trawl survey
+### EBS NMFS trawl survey {-}
 
 Note: combine EBS and NBS surveys into one index? This seems to be what EBS Pcod does.
 
-### NBS NMFS trawl survey
+### NBS NMFS trawl survey {-}
 
-### ADF&G trawl survey
-
-
-## St. Matthew Island blue king crab
-
-### EBS NMFS trawl survey
+### ADF&G trawl survey {-}
 
 
-### ADF&G pot survey
+## St. Matthew Island blue king crab {-}
+
+### EBS NMFS trawl survey {-}
+
+For model fitting, we used spatial meshes at four resolutions, specified in terms of the number of knots (vertices), where a higher number of knots indicates a higher resolution mesh: 120 knots, 100 knots, 90 knots, and 50 knots (Figures \@ref(fig:smbkc-mesh-120kn) - \@ref(fig:smbkc-mesh-50kn)). We used a prediction grid with resolution of 4 km$^2$ (Figure \@ref(fig:smbkc-pred-grid)).
 
 
-# Results
+### ADF&G pot survey {-}
 
 
-## Tanner crab
+# Results {-}
+
+
+## Tanner crab {-}
 ```{r, fig.align = "center", fig.cap = "Estimated abundance (millions) for Eastern Bering Sea Tanner crab (Chionoecetes bairdi). Colored lines represent abundance (±95% CI) estimated by sdmTMB, with pink and blue denoting models fit with a 50- and 120-knot mesh, respectively. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey."}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.abundance.index.png"))
@@ -87,30 +89,44 @@ knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.abundance.index.png
 knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.biomass.index.png"))
 ```
 
-## Norton Sound red king crab
+## Norton Sound red king crab {-}
 
-### EBS NMFS trawl survey
+### EBS NMFS trawl survey {-}
 
-### NBS NMFS trawl survey
+### NBS NMFS trawl survey {-}
 
-### ADF&G trawl survey
-
-
-## St. Matthew Island blue king crab
-
-### EBS NMFS trawl survey
+### ADF&G trawl survey {-}
 
 
-### ADF&G pot survey
+## St. Matthew Island blue king crab {-}
+
+### EBS NMFS trawl survey {-}
+
+#### Model diagnostics {-}
+
+Examination of DHARMa residuals for the three SMBKC models showed similar patterns (Figures \@ref(fig:smbkc-qq-50kn) - \@ref(fig:smbkc-qq-120kn)). All three models showed evidence of underdispersion, with observed data less dispersed than expected under the fitted models. None of the models showed evidence of outliers. All three models showed evidence of quantile deviations. The model with 120 knots showed evidence of zero inflation, with the observed data containing more zeros than would be expected under the fitted model, but the models with 50 and 90 knots did not show evidence of zero inflation.  
+
+#### Predicted abundance {-}
+
+Heat maps of predicted SMBKC abundance for the three models are show in figures \@ref(fig:smbkc-pred-50kn) - \@ref(fig:smbkc-pred-120kn).
+
+#### Predicted index fits to observations {-}
+
+The model-predicted indices varied in their fits to the survey biomass observations, with the model fit using a mesh with an intermediate number of knots seeming to fit the survey observations more closely than the models fit to meshes with either higher or lower numbers of knots (Figure \@ref(fig:smbkc-index-obs)).
+
+### ADF&G pot survey {-}
 
 
-# Conclusions
+# Conclusions {-}
 
 
-# Acknowledgements
+# Acknowledgements {-}
 
+The authors thank Katie Palof and Mike Litzow for their support and feedback on this work.
 
-# References
+\clearpage
+
+# References {-}
 
 Anderson, S.C.; Ward, E.J.; English, P.A.; Barnett, L.A.K. 2022. sdmTMB: An R package for fast, flexible, and user-friendly generalized linear mixed effects models with spatial and spatiotemporal random fields. bioRxiv.
 
@@ -119,6 +135,8 @@ Barbeaux, S.J., L. Barnett, P. Hulson, J. Nielsen, S.K. Shotwell, E. Siddon, I. 
 DeFilippo, L., S. Kotwicki, L. Barnett, J. Richar, M.A. Litzow, W.T. Stockhausen, K. Palof. 2023. Evaluating the impacts of reduced sampling density in a systematic fisheries-independent survey design. Frontiers in Marine Science 10:1219283. 
 
 Hamazaki, T. 2024. Norton Sound red king crab stock assessment for the fishing year 2024. In: Stock Assessment and Fishery Evaluation Report for the King and Tanner Crab Fisheries of the Bering Sea and Aleutian Islands: 2024 Final Crab SAFE. North Pacific Fishery Management Council, Anchorage AK.
+
+Hartig, F. 2022. DHARMa: Residual Diagnostics for Hierarchical (Multi-Level / Mixed) Regression Models. R package version 0.4.6, <https://CRAN.R-project.org/package=DHARMa>.
 
 Ianelli, J., T. Honkalehto, S. Wassermann, A. McCarthy, S. Steinessen, C. McGilliard, E. Siddon. 2024. Assessment of walleye pollock in the eastern Bering Sea. In: Stock Assessment and Fishery Evaluation report for the Groundfish Resources of the Bering Sea/Aleutian Islands regions. North Pacific Fishery Management Council, Anchorage, AK.
 
@@ -130,7 +148,66 @@ Thorson, J.T. 2019. Guidance for decisions using the vector autoregressive spati
 
 Yalcin, S., S.C. Anderson, P.M. Regular, P.A. English. 2023. Exploring the limits of spatiotemporal and design-based index standardization under reduced survey coverage. ICES Journal of Marine Sciences 80:2368-2379. https://doi.org/10.1093/icesjms/fsad155
 
-# Tables
+\clearpage
+
+# Tables {-}
 
 
-# Figures
+\clearpage
+
+# Figures {-}
+
+```{r smbkc-mesh-50kn, fig.align = "center", fig.cap = "Spatial mesh with 50 knots used for fitting St. Matthew Island blue king crab spatial models. Points represent observations and vertices represent knot locations."}
+
+knitr::include_graphics(here::here("SMBKC/plots/mesh_50kn.png"))
+```
+
+```{r smbkc-mesh-90kn, fig.align = "center", fig.cap = "Spatial mesh with 90 knots used for fitting St. Matthew Island blue king crab spatial models. Points represent observations and vertices represent knot locations."}
+
+knitr::include_graphics(here::here("SMBKC/plots/mesh_90kn.png"))
+```
+
+```{r smbkc-mesh-120kn, fig.align = "center", fig.cap = "Spatial mesh with 120 knots used for fitting St. Matthew Island blue king crab spatial models. Points represent observations and vertices represent knot locations."}
+
+knitr::include_graphics(here::here("SMBKC/plots/mesh_120kn.png"))
+```
+
+```{r smbkc-pred-grid, fig.align = "center", fig.cap = "Prediction grid used for St. Matthew Island blue king crab spatial abundance predictions. Spatial resolution is 4 km$^2$."}
+
+knitr::include_graphics(here::here("SMBKC/plots/prediction_grid_4km.png"))
+```
+
+```{r smbkc-qq-50kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the model with 50 knots.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("SMBKC/plots/smbkc_50kn_qq.png"))
+```
+
+```{r smbkc-qq-90kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the model with 90 knots.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("SMBKC/plots/smbkc_90kn_qq.png"))
+```
+
+```{r smbkc-qq-120kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the model with 120 knots.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("SMBKC/plots/smbkc_120kn_qq.png"))
+```
+
+```{r smbkc-pred-50kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance generated using the model with 50 knots."}
+
+knitr::include_graphics(here::here("SMBKC/plots/pred_heat_iid_50kn.png"))
+```
+
+```{r smbkc-pred-90kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance generated using the model with 90 knots."}
+
+knitr::include_graphics(here::here("SMBKC/plots/pred_heat_iid_90kn.png"))
+```
+
+```{r smbkc-pred-120kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance generated using the model with 120 knots."}
+
+knitr::include_graphics(here::here("SMBKC/plots/pred_heat_iid_120kn.png"))
+```
+
+```{r smbkc-index-obs, fig.align = "center", fig.cap = "Estimated biomass (t) for St. Matthew Island blue king crab. Colored lines represent biomass (±95% CI) estimated using sdmTMB. Black points represent biomass (±95% CI) estimated by the NMFS EBS bottom trawl survey."}
+
+knitr::include_graphics(here::here("SMBKC/plots/smbkc_model_fit.png"))
+```

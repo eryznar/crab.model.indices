@@ -128,9 +128,12 @@ evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knot
     theme(axis.text = element_text(size = 12),
           axis.title = element_text(size = 12)) -> r2.plot
   
-  cowplot::plot_grid(r1.plot, r2.plot) -> qqplot
+  rbind(resid1 %>% mutate(period = "<1988"), resid2 %>% mutate(period = "≥1988")) %>%
+    mutate(matsex = matsex2) -> all.resids
   
-  ggsave(qqplot, filename = paste0("./BAIRDI/Figures/DHARMa_", type, "_", stock2, "_", matsex2, "_", knots, ".png"), width=7, height=5, units="in")
+  #cowplot::plot_grid(r1.plot, r2.plot) -> qqplot
+  
+  #ggsave(qqplot, filename = paste0("./BAIRDI/Figures/DHARMa_", type, "_", stock2, "_", matsex2, "_", knots, ".png"), width=7, height=5, units="in")
   
  
   # png(filename = paste0("./BAIRDI/Figures/DHARMa_post1988_", type, "_", stock2, "_", matsex2, "_", knots, ".png"), width=7, height=5, units="in", res=600)
@@ -171,7 +174,7 @@ evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knot
   
   ggsave(plot = res_plot, paste0("./BAIRDI/Figures/DHARMa", stock2, "_", matsex2, "_", type, knots, "_SPATIAL.png"), height = 9, width = 8.5, units = "in")
   
-  return(list(sanity_check_pre, sanity_check_post))
+  return(list(sanity_check_pre, sanity_check_post, all.resids))
 }
 
 predict_and_getindex <- function(newdat, abund.mod, bio.mod, matsex, stock, years, period, knots){

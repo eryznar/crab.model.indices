@@ -72,6 +72,13 @@ u4u.ns <- add_utm_columns(u4.ns, c("Lon", "Lat"))
 predgrid_utm.ns <- rbind(u3u.ns, u4u.ns) %>%
   mutate(X = X / 1000, Y = Y / 1000) # convert UTM coordinates from meter to kilometers to reduce computing needs
 
+# plot prediction grid
+predgrid5kmplot <- ggplot(predgrid_utm.ns, aes(x = Lon, y = Lat, color = Area_km2)) +
+  geom_point() + 
+  theme(legend.position="none") +
+  labs(x = "Longitude", y = "Latitude")
+
+ggsave(file.path(plotdir.ns, "prediction_grid_5km.png"), plot = predgrid5kmplot, height = 4.2, width = 7, units = "in")
 
 # **************************************************************************************************************
 # read in and process survey data ----
@@ -80,24 +87,31 @@ predgrid_utm.ns <- rbind(u3u.ns, u4u.ns) %>%
 nsrkc.survey <- read.csv(paste0(here::here(), "/NSRKC/data/NSRKC_trawl_survey_abundance.csv"))
 
 nsrkc.dt <- nsrkc.survey %>%
-  select(Year, ADFG_Station, Latitude, Longitude, crab.km2) %>%
+  #select(Year, ADFG_Station, Latitude, Longitude, crab.km2) %>%
   arrange(Year, ADFG_Station) %>%
-  mutate("year_f" = factor(Year))
+  mutate("year_f" = factor(Year)) %>%
+  select(-X)
 
-nsrkc_utm_zone <- nsrkc.dt %>%  
+# check that all Lat/Lon combinations are valid. Norton Sound includes 
+# 160 < longitude < 168
+# 61.49 < latitude < 66 (source: https://www.adfg.alaska.gov/static/applications/dcfnewsrelease/750733004.pdf)
+filter(nsrkc.dt, Latitude > 66 | Latitude < 61.49)
+filter(nsrkc.dt, Longitude > -160 | Longitude < -168)
+
+nsrkc.dt2 <- nsrkc.dt %>%
+  filter(Latitude <= 65.9) %>%
+  filter(Latitude >= 61.49) %>%
+  filter(Longitude <= -160) %>%
+  filter(Longitude >= -168)
+
+nsrkc_utm_zone <- nsrkc.dt2 %>%  
   # get UTM zone
   mutate(zone = (floor((Longitude + 180)/6) %% 60) + 1) 
 
 unique(nsrkc_utm_zone$zone)
 
-nsrkc_utm_z2 <- nsrkc_utm_zone %>% filter(zone == 2)
 nsrkc_utm_z3 <- nsrkc_utm_zone %>% filter(zone == 3)
 nsrkc_utm_z4 <- nsrkc_utm_zone %>% filter(zone == 4)
-nsrkc_utm_z13 <- nsrkc_utm_zone %>% filter(zone == 13)
-
-d2 <- nsrkc_utm_z2
-get_crs(d2, c("Longitude", "Latitude"))
-d2u <- add_utm_columns(d2, c("Longitude", "Latitude"))
 
 d3 <- nsrkc_utm_z3
 get_crs(d3, c("Longitude", "Latitude"))
@@ -107,11 +121,7 @@ d4 <- nsrkc_utm_z4
 get_crs(d4, c("Longitude", "Latitude"))
 d4u <- add_utm_columns(d4, c("Longitude", "Latitude"))
 
-d13 <- nsrkc_utm_z13
-get_crs(d13, c("Longitude", "Latitude"))
-d13u <- add_utm_columns(d13, c("Longitude", "Latitude"))
-
-nsrkc_utm <- rbind(d2u, d3u, d4u) %>%
+nsrkc_utm <- rbind(d3u, d4u) %>%
   mutate(X = X / 1000, Y = Y / 1000) # convert UTM coordinates from meter to kilometers to reduce computing needs
 
 # number of unique stations
@@ -123,12 +133,34 @@ nsrkc_utm %>%
   count() %>%
   print(n = 50)
 
+# plot survey data
+ggplot(nsrkc_utm) + 
+  geom_point(aes(x = X, y = Y)) +
+  theme_bw() +
+  labs(x = "X", y = "Y")
 
-
+ggplot(nsrkc_utm) + 
+  geom_point(aes(x = Longitude, y = Latitude)) +
+  theme_bw()
 
 # **************************************************************************************************************
 # make SPDE mesh ----
 # **************************************************************************************************************
+
+NS_spde_100kn <- make_mesh(nsrkc_utm, xy_cols = c("X","Y"), n_knots = 100, type = "kmeans")
+
+plot(NS_spde_100kn)
+NS_spde_100kn$mesh$n
+
+NS_spde_70kn <- make_mesh(nsrkc_utm, xy_cols = c("X","Y"), n_knots = 70, type = "kmeans")
+
+plot(NS_spde_70kn)
+NS_spde_70kn$mesh$n
+
+NS_spde_60kn <- make_mesh(nsrkc_utm, xy_cols = c("X","Y"), n_knots = 60, type = "kmeans")
+
+plot(NS_spde_60kn)
+NS_spde_60kn$mesh$n
 
 NS_spde_50kn <- make_mesh(nsrkc_utm, xy_cols = c("X","Y"), n_knots = 50, type = "kmeans")
 
@@ -146,9 +178,48 @@ NS_spde_30kn <- make_mesh(nsrkc_utm, xy_cols = c("X","Y"), n_knots = 30, type = 
 plot(NS_spde_30kn)
 NS_spde_30kn$mesh$n
 
+# plot mesh with data points
+
+mesh.plot.100kn.ns <- ggplot(nsrkc_utm) + 
+  inlabru::gg(NS_spde_100kn$mesh) + 
+  geom_point(aes(x = X, y = Y)) +
+  theme_bw() +
+  labs(x = "X", y = "Y")
+
+mesh.plot.50kn.ns <- ggplot(nsrkc_utm) + 
+  inlabru::gg(NS_spde_50kn$mesh) + 
+  geom_point(aes(x = X, y = Y)) +
+  theme_bw() +
+  labs(x = "X", y = "Y")
+
+mesh.plot.30kn.ns <- ggplot(nsrkc_utm) + 
+  inlabru::gg(NS_spde_30kn$mesh) + 
+  geom_point(aes(x = X, y = Y)) +
+  theme_bw() +
+  labs(x = "X", y = "Y")
+
+# export mesh plots
+
+ggsave(file.path(plotdir.ns, "mesh_100kn_ns.png"), plot = mesh.plot.100kn.ns, height = 4.2, width = 7, units = "in")
+ggsave(file.path(plotdir.ns, "mesh_50kn_ns.png"), plot = mesh.plot.50kn.ns, height = 4.2, width = 7, units = "in")
+ggsave(file.path(plotdir.ns, "mesh_30kn_ns.png"), plot = mesh.plot.30kn.ns, height = 4.2, width = 7, units = "in")
+
 # **************************************************************************************************************
 # fit and check models ----
 # **************************************************************************************************************
+
+# fit a GLMM with spatiotemporal = IID and 100 knots
+m.nsrkc.iid.100kn <- sdmTMB(
+  data = nsrkc_utm, 
+  formula = crab.km2 ~ 0 + year_f, #the 0 is there so there is a factor predictor for each time slice
+  spatial = "on",
+  time = "Year", 
+  mesh = NS_spde_100kn, 
+  spatiotemporal = "iid",
+  #extra_time = c(2020),
+  silent = FALSE,
+  anisotropy = TRUE,
+  family = tweedie(link = "log"))
 
 # fit a GLMM with spatiotemporal = IID and 50 knots
 m.nsrkc.iid.50kn <- sdmTMB(
@@ -163,22 +234,43 @@ m.nsrkc.iid.50kn <- sdmTMB(
   anisotropy = TRUE,
   family = tweedie(link = "log"))
 
+# fit a GLMM with spatiotemporal = IID and 30 knots
+m.nsrkc.iid.30kn <- sdmTMB(
+  data = nsrkc_utm, 
+  formula = crab.km2 ~ 0 + year_f, #the 0 is there so there is a factor predictor for each time slice
+  spatial = "on",
+  time = "Year", 
+  mesh = NS_spde_30kn, 
+  spatiotemporal = "iid",
+  #extra_time = c(2020),
+  silent = FALSE,
+  anisotropy = TRUE,
+  family = tweedie(link = "log"))
 
 
 # save the fitted models
-saveRDS(m.nsrkc.iid.50kn, file = paste0(modeldir.ns, "/m_nsrkc_iid_2024_12_02.RDS"))
-
+saveRDS(m.nsrkc.iid.100kn, file = paste0(modeldir.ns, "/m_nsrkc_iid_100kn.RDS"))
+saveRDS(m.nsrkc.iid.50kn, file = paste0(modeldir.ns, "/m_nsrkc_iid_50kn.RDS"))
+saveRDS(m.nsrkc.iid.30kn, file = paste0(modeldir.ns, "/m_nsrkc_iid_30kn.RDS"))
 
 # print the model fit
+m.nsrkc.iid.100kn
+m.nsrkc.iid.100kn$sd_report
+
 m.nsrkc.iid.50kn
 m.nsrkc.iid.50kn$sd_report
 
+m.nsrkc.iid.30kn
+m.nsrkc.iid.30kn$sd_report
+
 # view parameters
-tidy.nsrkc.ar1 <- tidy(m.nsrkc.ar1, conf.int = TRUE)
-tidy.nsrkc.ran.ar1 <- tidy(m.nsrkc.ar1 , effects = "ran_pars", conf.int = TRUE)
+tidy.m.nsrkc.iid.50kn <- tidy(m.nsrkc.iid.50kn, conf.int = TRUE)
+tidy.m.nsrkc.iid.50kn <- tidy(m.nsrkc.iid.50kn, effects = "ran_pars", conf.int = TRUE)
 
 # run sanity checks
+sanity(m.nsrkc.iid.100kn)
 sanity(m.nsrkc.iid.50kn)
+sanity(m.nsrkc.iid.30kn)
 
 
 
@@ -187,12 +279,40 @@ sanity(m.nsrkc.iid.50kn)
 # **************************************************************************************************************
 
 # DHARMa residuals
+m.nsrkc.iid.100kn.resid <- simulate(update(m.nsrkc.iid.100kn, family = delta_lognormal()), nsim = 100, type = "mle-mvn") |>
+  dharma_residuals(m.nsrkc.iid.100kn, return_DHARMa = TRUE)
+plot(m.nsrkc.iid.100kn.resid)
+
 m.nsrkc.iid.50kn.resid <- simulate(update(m.nsrkc.iid.50kn, family = delta_lognormal()), nsim = 100, type = "mle-mvn") |>
   dharma_residuals(m.nsrkc.iid.50kn, return_DHARMa = TRUE)
-plot(m.nsrkc.iid.resid.50kn)
+plot(m.nsrkc.iid.50kn.resid)
 
+m.nsrkc.iid.30kn.resid <- simulate(update(m.nsrkc.iid.30kn, family = delta_lognormal()), nsim = 100, type = "mle-mvn") |>
+  dharma_residuals(m.nsrkc.iid.30kn, return_DHARMa = TRUE)
+plot(m.nsrkc.iid.30kn.resid)
 
+DHARMa::testOutliers(m.nsrkc.iid.30kn.resid)
+DHARMa::testOutliers(m.nsrkc.iid.50kn.resid)
+DHARMa::testOutliers(m.nsrkc.iid.100kn.resid)
 
+DHARMa::testQuantiles(m.nsrkc.iid.30kn.resid)
+DHARMa::testQuantiles(m.nsrkc.iid.50kn.resid)
+DHARMa::testQuantiles(m.nsrkc.iid.100kn.resid)
+
+DHARMa::testDispersion(m.nsrkc.iid.30kn.resid)
+DHARMa::testDispersion(m.nsrkc.iid.50kn.resid)
+DHARMa::testDispersion(m.nsrkc.iid.100kn.resid)
+
+DHARMa::testResiduals(m.nsrkc.iid.30kn.resid)
+DHARMa::testResiduals(m.nsrkc.iid.50kn.resid)
+DHARMa::testResiduals(m.nsrkc.iid.100kn.resid)
+
+DHARMa::testSpatialAutocorrelation(m.nsrkc.iid.90kn.resid, x = bkc_kgkm_utm$X, y = bkc_kgkm_utm$Y)
+DHARMa::testSpatialAutocorrelation(m.nsrkc.iid.120kn.dgs.resid, x = bkc_kgkm_utm$X, y = bkc_kgkm_utm$Y)
+
+DHARMa::testZeroInflation(m.nsrkc.iid.30kn.resid)
+DHARMa::testZeroInflation(m.nsrkc.iid.50kn.resid)
+DHARMa::testZeroInflation(m.nsrkc.iid.100kn.resid)
 
 
 # **************************************************************************************************************
@@ -205,12 +325,14 @@ pred_grid.ns$year_f <- factor(pred_grid.ns$Year)
 dplyr::glimpse(pred_grid.ns)
 
 # predictions on new data
+predictions.iid.100kn.ns <- predict(m.nsrkc.iid.100kn, newdata = pred_grid.ns, return_tmb_object = T)
 predictions.iid.50kn.ns <- predict(m.nsrkc.iid.50kn, newdata = pred_grid.ns, return_tmb_object = T)
+predictions.iid.30kn.ns <- predict(m.nsrkc.iid.30kn, newdata = pred_grid.ns, return_tmb_object = T)
 
 # save the predictions
-saveRDS(predictions.ar1.ns, file = paste0(modeldir.ns, "/m_nsrkc_predictions_ar1_2024_12_02.RDS"))
-saveRDS(predictions.50kn.ns, file = paste0(modeldir.ns, "/m_nsrkc_predictions_50kn_2024_12_02.RDS"))
-saveRDS(predictions.iid.ns, file = paste0(modeldir.ns, "/m_nsrkc_predictions_iid_2024_12_02.RDS"))
+write.csv(predictions.iid.100kn.ns$data, paste0(outdir, "/m_nsrkc_predictions_iid_100kn.csv"))
+write.csv(predictions.iid.50kn.ns$data, paste0(outdir, "/m_nsrkc_predictions_iid_50kn.csv"))
+write.csv(predictions.iid.30kn.ns$data, paste0(outdir, "/m_nsrkc_predictions_iid_30kn.csv"))
 
 # make a map function
 plot_map_utm <- function(dat, column) {
@@ -249,6 +371,54 @@ plot_map(predictions$data, epsilon_st) +
   ggtitle("Spatiotemporal random effects only") +
   scale_fill_gradient2()
 
+# heat map of predictions
+pred.heat.iid.100kn.ns <- ggplot(predictions.iid.100kn.ns$data, aes(y = Lat, x = Lon, color = exp(est))) +
+  #geom_tile(aes(y = Lat, x = Lon, color = exp(est1))) + 
+  geom_point(size = 1, alpha = 0.5) +
+  #scale_fill_gradient2() + 
+  labs(y = "Latitude",
+       x = "Longitude",
+       color = "Est BKC per sq.km") +
+  #theme_gray() + 
+  facet_wrap(~year_f)+
+  ggtitle("NSRKC predicted abundance, 100 knots")+
+  theme(axis.title = element_text(size = 10),
+        legend.position = "bottom", axis.text.x = element_text(size = 8, angle = 90)) +
+  scale_color_viridis_c(na.value = "white", limits = c(0, quantile(exp(predictions.iid.100kn.ns$data$est), 0.995)))
+
+pred.heat.iid.50kn.ns <- ggplot(predictions.iid.50kn.ns$data, aes(y = Lat, x = Lon, color = exp(est))) +
+  #geom_tile(aes(y = Lat, x = Lon, color = exp(est1))) + 
+  geom_point(size = 1, alpha = 0.5) +
+  #scale_fill_gradient2() + 
+  labs(y = "Latitude",
+       x = "Longitude",
+       color = "Est BKC per sq.km") +
+  #theme_gray() + 
+  facet_wrap(~year_f)+
+  ggtitle("NSRKC predicted abundance, 50 knots")+
+  theme(axis.title = element_text(size = 10),
+        legend.position = "bottom", axis.text.x = element_text(size = 8, angle = 90)) +
+  scale_color_viridis_c(na.value = "white", limits = c(0, quantile(exp(predictions.iid.50kn.ns$data$est), 0.995)))
+
+
+pred.heat.iid.30kn.ns <- ggplot(predictions.iid.30kn.ns$data, aes(y = Lat, x = Lon, color = exp(est))) +
+  #geom_tile(aes(y = Lat, x = Lon, color = exp(est1))) + 
+  geom_point(size = 1, alpha = 0.5) +
+  #scale_fill_gradient2() + 
+  labs(y = "Latitude",
+       x = "Longitude",
+       color = "Est BKC per sq.km") +
+  #theme_gray() + 
+  facet_wrap(~year_f)+
+  ggtitle("NSRKC predicted abundance, 30 knots")+
+  theme(axis.title = element_text(size = 10),
+        legend.position = "bottom", axis.text.x = element_text(size = 8, angle = 90)) +
+  scale_color_viridis_c(na.value = "white", limits = c(0, quantile(exp(predictions.iid.30kn.ns$data$est), 0.995)))
+
+
+ggsave(file.path(plotdir.ns, "pred_heat_iid_100kn.png"), plot = pred.heat.iid.100kn.ns, height = 7, width = 7, units = "in")
+ggsave(file.path(plotdir.ns, "pred_heat_iid_50kn.png"), plot = pred.heat.iid.50kn.ns, height = 7, width = 7, units = "in")
+ggsave(file.path(plotdir.ns, "pred_heat_iid_30kn.png"), plot = pred.heat.iid.30kn.ns, height = 7, width = 7, units = "in")
 
 # **************************************************************************************************************
 # generate index ----
@@ -262,25 +432,31 @@ plot_map(predictions$data, epsilon_st) +
 # to take average over the area. 
 # UTM is in meters
 
+index.iid.100kn.ns <- get_index(predictions.iid.100kn.ns, area = predictions.iid.100kn.ns$data$Area_km2, bias_correct = TRUE)
 index.iid.50kn.ns <- get_index(predictions.iid.50kn.ns, area = predictions.iid.50kn.ns$data$Area_km2, bias_correct = TRUE)
-
-# index values in metric tons rather than kg
-index.iid.50kn.ns.t <- index.iid.50kn.ns %>% 
-  mutate(est.t = est / 1000, lwr.t = lwr/1000, upr.t = upr/1000)
+index.iid.30kn.ns <- get_index(predictions.iid.30kn.ns, area = predictions.iid.30kn.ns$data$Area_km2, bias_correct = TRUE)
 
 # save index values
-write.csv(index.ar1.ns.t, paste0(here::here(), "/NSRKC/output/nsrkc_nmfs_trawl_index_ar1_2024_12_02.csv"))
-write.csv(index.50kn.ns.t, paste0(here::here(), "/NSRKC/output/nsrkc_nmfs_trawl_index_50kn_2024_12_02.csv"))
-write.csv(index.iid.ns.t, paste0(here::here(), "/NSRKC/output/nsrkc_nmfs_trawl_index_iid_2024_12_02.csv"))
+write.csv(index.iid.100kn.ns, paste0(here::here(), "/NSRKC/output/nsrkc_nmfs_trawl_index_iid_100kn.csv"))
+write.csv(index.iid.50kn.ns, paste0(here::here(), "/NSRKC/output/nsrkc_nmfs_trawl_index_iid_50kn.csv"))
+write.csv(index.iid.30kn.ns, paste0(here::here(), "/NSRKC/output/nsrkc_nmfs_trawl_index_iid_30kn.csv"))
+
+# combine indices to compare models
+mod.compare.iid.ns <- rbind(index.iid.100kn.ns %>% 
+                           mutate(model = "100 knots"), 
+                         index.iid.50kn.ns 
+                         %>% mutate(model = "50 knots")) %>%
+  rbind(index.iid.30kn.ns %>% mutate(model = "30 knots"))
 
 # plot index
-ggplot(index.iid.50kn.ns.t, aes(Year, est.t)) + geom_line() +
-  geom_ribbon(aes(ymin = lwr.t, ymax = upr.t), alpha = 0.4) +
-  xlab('Year') + ylab('Abundance estimate (crab / km2)') +
+ggplot(mod.compare.iid.ns, aes(Year, est, group = model)) + 
+  geom_line(aes(Year, est, color = model)) +
+  geom_ribbon(aes(ymin = lwr, ymax = upr, fill = model), alpha = 0.2) +
+  xlab('Year') + ylab('Abundance estimate (t)') +
   scale_y_continuous(label=scales::comma)
 
 # abundance estimates
-mutate(index.iid.50kn.ns.t, cv = sqrt(exp(se^2) - 1)) %>% 
+mutate(index.iid.50kn.ns, cv = sqrt(exp(se^2) - 1)) %>% 
   select(-log_est, -se) %>%
   knitr::kable(format = "pandoc", digits = c(0, 0, 0, 0, 2))
 
@@ -289,5 +465,98 @@ mutate(index.iid.50kn.ns.t, cv = sqrt(exp(se^2) - 1)) %>%
 # compare predicted index to observations ----
 # **************************************************************************************************************
 
+# Abundance and CV of the NMFS 1976-1991 surveys were provided by NOAA (Jon Richer NOAA personal communication).  
+# The abundance was estimated by averaging catch CPUE (#/nm2) of all stations (including survey stations out of Norton Sound)
+# that was multiplied by standard Norton Sound Area (7600 nm2) (i.e., N = 7600*mean CPUE). The ADF&G survey abundance is 
+# calculated at each station (i.e., n= CPUE*100 nm2) and summed across all surveyed stations (i.e., N = sum of 100*CPUEs) 
+# (Bell and Hamazaki 2019).  Extent of the ADF&G survey coverage differed among years due to survey conditions, and survey 
+# abundance has not been standardized.  NOAA NBS survey abundance is estimated by the author in similar manner as ADF&G 
+# survey with the data limited to the Norton Sound survey area that overlaps the ADF&G survey area (5841 nm2) 
+
+# abundance for 1976-1991 NMFS surveys
+abund.crab.noaa <- nsrkc_utm %>%
+  filter(Agent == "NOAA") %>%
+  group_by(Agent, Year) %>%
+  summarise(mean.crab.km2 = mean(crab.km2), 
+            sd.crab.km2 = sd(crab.km2, na.rm = TRUE),
+            n.station = length(ADFG_Station)) %>%
+  mutate(se.crab.km2 = sd.crab.km2 / sqrt(n.station)) %>%
+  mutate(total.ab = 7600 * 3.4299 * mean.crab.km2, 
+         se.total.ab = 7600 * 3.4299 * se.crab.km2) %>%
+  mutate(obs.lwr95 = total.ab - 1.96*se.total.ab, 
+         obs.upr95 = total.ab + 1.96*se.total.ab)
+
+# abundance for ADF&G survey
+abund.crab.adfg <- nsrkc_utm %>%
+  filter(Agent == "ADFG") %>%
+  group_by(Agent, Year) %>%
+  mutate(crab.ab = crab.km2 * area.km2) %>%
+  summarise(total.ab = sum(crab.ab),
+            mean.crab.ab = mean(crab.ab), 
+            sd.crab.ab = sd(crab.ab, na.rm = TRUE),
+            n.station = length(ADFG_Station)) %>%
+  mutate(se.crab.ab = sd.crab.ab / sqrt(n.station)) %>%
+  mutate(obs.mean.lwr95 = mean.crab.ab - 1.96*se.crab.ab,
+         obs.mean.upr95 = mean.crab.ab + 1.96*se.crab.ab,
+         obs.lwr95 = obs.mean.lwr95 * n.station,
+         obs.upr95 = obs.mean.upr95 * n.station)
+
+# abundance for NBS survey
+abund.crab.nbs <- nsrkc_utm %>%
+  filter(Agent == "NBS") %>%
+  group_by(Agent, Year) %>%
+  mutate(crab.ab = crab.km2 * area.km2) %>%
+  summarise(total.ab = sum(crab.ab),
+            mean.crab.ab = mean(crab.ab), 
+            sd.crab.ab = sd(crab.ab, na.rm = TRUE),
+            n.station = length(ADFG_Station)) %>%
+  mutate(se.crab.ab = sd.crab.ab / sqrt(n.station)) %>%
+  mutate(obs.mean.lwr95 = mean.crab.ab - 1.96*se.crab.ab,
+         obs.mean.upr95 = mean.crab.ab + 1.96*se.crab.ab,
+         obs.lwr95 = obs.mean.lwr95 * n.station,
+         obs.upr95 = obs.mean.upr95 * n.station)
+
+# total abundance
+abund.crab <- rbind(abund.crab.noaa, abund.crab.adfg, abund.crab.nbs)
+
+survey.plot.ns <- ggplot(abund.crab %>% rename("Survey" = "Agent"))+
+  geom_point(aes(x = Year, y = total.ab, color = Survey))+
+  geom_errorbar(aes(x = Year, ymin = obs.lwr95, ymax = obs.upr95, color = Survey), width = 0)+
+  xlab('Year') + 
+  ylab('Abundance estimate (number of crab)') +
+  scale_y_continuous(labels = scales::comma, expand = c(0, 0)) +
+  coord_cartesian(ylim = c(0, NA))+
+  scale_color_manual(values = cbpalette) +
+  scale_fill_manual(values = cbpalette) +
+  theme_bw() +
+  theme(axis.title = element_text(size = 12), axis.text = element_text(size = 12), legend.text = element_text(size = 12)) 
+
+ggsave(file.path(plotdir.ns, "nsrkc_survey_abundance.png"), plot = survey.plot.ns, height = 5, width = 7, units = "in")
+
+write.csv(abund.crab, paste0(here::here(), "/output/NSRKC_trawl_survey_total_abundance.csv"))
+
+# **************************************************************************************************************
+# compare predicted index to observations ----
+# **************************************************************************************************************
+
+obs.pred.ns <- left_join(mod.compare.iid.ns, abund.crab, by = "Year")
+
+obs.pred.plot.ns <- ggplot(obs.pred.ns)+
+  geom_line(aes(x = Year, y = est, color = model))+
+  geom_ribbon(aes(x = Year, y = est, ymin = lwr, ymax = upr, fill = model), alpha = 0.2) +
+  #geom_point(aes(x = Year, y = total.ab, color = Agent))+
+  #geom_errorbar(aes(x = Year, ymin = obs.lwr95, ymax = obs.upr95, color = Agent), width = 0)+
+  geom_point(aes(x = Year, y = total.ab), color = "grey20")+
+  geom_errorbar(aes(x = Year, ymin = obs.lwr95, ymax = obs.upr95), color = "grey20", width = 0)+
+  xlab('Year') + 
+  ylab('Abundance estimate (number of crab)') +
+  scale_y_continuous(labels = scales::comma, expand = c(0, 0)) +
+  coord_cartesian(ylim = c(0, NA))+
+  scale_color_manual(values = cbpalette) +
+  scale_fill_manual(values = cbpalette) +
+  theme_bw() +
+  theme(axis.title = element_text(size = 12), axis.text = element_text(size = 12), legend.text = element_text(size = 12)) 
+
+ggsave(file.path(plotdir.ns, "nsrkc_model_fit.png"), plot = obs.pred.plot.ns, height = 5, width = 7, units = "in")
 
 # ******************************************************************************

@@ -146,6 +146,14 @@ bkc_kgkm_utm <- rbind(d1u, d2u, d3u) %>%
 # number of unique stations
 length(unique(bkc_kgkm_utm$GIS_STATION))
 
+# check number of observations per year (this should be larger than the number of vertices in the mesh)
+bkc_kgkm_utm %>%
+  group_by(SURVEY_YEAR) %>%
+  count() %>%
+  print(n = 50)
+
+
+
 # **************************************************************************************************************
 # make SPDE mesh ----
 # **************************************************************************************************************
@@ -158,6 +166,7 @@ BK_spde_110kn <- make_mesh(bkc_kgkm_utm, xy_cols = c("X","Y"), n_knots = 110, ty
 BK_spde_100kn <- make_mesh(bkc_kgkm_utm, xy_cols = c("X","Y"), n_knots = 100, type = "kmeans")
 BK_spde_99kn <- make_mesh(bkc_kgkm_utm, xy_cols = c("X","Y"), n_knots = 99, type = "kmeans")
 BK_spde_90kn <- make_mesh(bkc_kgkm_utm, xy_cols = c("X","Y"), n_knots = 90, type = "kmeans")
+BK_spde_80kn <- make_mesh(bkc_kgkm_utm, xy_cols = c("X","Y"), n_knots = 80, type = "kmeans")
 BK_spde_75kn <- make_mesh(bkc_kgkm_utm, xy_cols = c("X","Y"), n_knots = 75, type = "kmeans")
 BK_spde_50kn <- make_mesh(bkc_kgkm_utm, xy_cols = c("X","Y"), n_knots = 50, type = "kmeans")
 BK_spde_25kn <- make_mesh(bkc_kgkm_utm, xy_cols = c("X","Y"), n_knots = 25, type = "kmeans")
@@ -166,6 +175,7 @@ BK_spde_25kn <- make_mesh(bkc_kgkm_utm, xy_cols = c("X","Y"), n_knots = 25, type
 plot(BK_spde_120kn)
 BK_spde_120kn$mesh$n
 BK_spde_90kn$mesh$n
+BK_spde_80kn$mesh$n
 BK_spde_50kn$mesh$n
 
 mesh.plot.120kn <- ggplot(bkc_kgkm_utm) + 
@@ -313,6 +323,19 @@ m.smbkc.iid.90kn <- sdmTMB(
   spatial = "on",
   time = "SURVEY_YEAR", 
   mesh = BK_spde_90kn, 
+  spatiotemporal = "iid",
+  extra_time = c(2020),
+  silent = FALSE,
+  anisotropy = TRUE,
+  family = tweedie(link = "log"))
+
+# fit a GLMM with spatiotemporal = IID and 80 knots
+m.smbkc.iid.80kn <- sdmTMB(
+  data = bkc_kgkm_utm, 
+  formula = kg.km ~ 0 + year_f, #the 0 is there so there is a factor predictor for each time slice
+  spatial = "on",
+  time = "SURVEY_YEAR", 
+  mesh = BK_spde_80kn, 
   spatiotemporal = "iid",
   extra_time = c(2020),
   silent = FALSE,

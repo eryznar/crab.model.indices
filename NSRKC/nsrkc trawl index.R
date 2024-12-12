@@ -378,7 +378,7 @@ pred.heat.iid.100kn.ns <- ggplot(predictions.iid.100kn.ns$data, aes(y = Lat, x =
   #scale_fill_gradient2() + 
   labs(y = "Latitude",
        x = "Longitude",
-       color = "Est BKC per sq.km") +
+       color = "Est RKC per sq.km") +
   #theme_gray() + 
   facet_wrap(~year_f)+
   ggtitle("NSRKC predicted abundance, 100 knots")+
@@ -392,7 +392,7 @@ pred.heat.iid.50kn.ns <- ggplot(predictions.iid.50kn.ns$data, aes(y = Lat, x = L
   #scale_fill_gradient2() + 
   labs(y = "Latitude",
        x = "Longitude",
-       color = "Est BKC per sq.km") +
+       color = "Est RKC per sq.km") +
   #theme_gray() + 
   facet_wrap(~year_f)+
   ggtitle("NSRKC predicted abundance, 50 knots")+
@@ -407,7 +407,7 @@ pred.heat.iid.30kn.ns <- ggplot(predictions.iid.30kn.ns$data, aes(y = Lat, x = L
   #scale_fill_gradient2() + 
   labs(y = "Latitude",
        x = "Longitude",
-       color = "Est BKC per sq.km") +
+       color = "Est RKC per sq.km") +
   #theme_gray() + 
   facet_wrap(~year_f)+
   ggtitle("NSRKC predicted abundance, 30 knots")+

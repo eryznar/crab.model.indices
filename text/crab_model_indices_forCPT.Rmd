@@ -84,7 +84,7 @@ knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.biomass.index.png")
 
 ### Model diagnostics {-}
 
-The DHARMa residuals diagnostic plots show evidence of quantile deviations for all three NSRKC models (Figures \@ref(fig:nsrkc-qq-50kn) - \@ref(fig:nsrkc-qq-120kn)). The models with 100 knots and 50 knots showed evidence of underdispersion, with observed data less dispersed than expected under the fitted models, while the model with 30 knots did not. None of the models showed evidence of outliers or zero inflation.  
+The DHARMa residuals diagnostic plots show evidence of quantile deviations for all three NSRKC models (Figures \@ref(fig:nsrkc-qq-30kn) - \@ref(fig:nsrkc-qq-100kn)). The models with 100 knots and 50 knots showed evidence of underdispersion, with observed data less dispersed than expected under the fitted models, while the model with 30 knots did not. None of the models showed evidence of outliers or zero inflation.  
 
 ### Predicted abundance {-}
 
@@ -186,17 +186,17 @@ knitr::include_graphics(here::here("NSRKC/plots/nsrkc_100kn_qq.png"))
 ```
 
 
-```{r nsrkc-pred-50kn, fig.align = "center", fig.cap = "Heat map of Norton Sound red king crab predicted abundance generated using the model with 50 knots."}
+```{r nsrkc-pred-30kn, fig.align = "center", fig.cap = "Heat map of Norton Sound red king crab predicted abundance generated using the model with 50 knots."}
 
 knitr::include_graphics(here::here("NSRKC/plots/pred_heat_iid_30kn.png"))
 ```
 
-```{r nsrkc-pred-90kn, fig.align = "center", fig.cap = "Heat map of Norton Sound red blue king crab predicted abundance generated using the model with 90 knots."}
+```{r nsrkc-pred-50kn, fig.align = "center", fig.cap = "Heat map of Norton Sound red blue king crab predicted abundance generated using the model with 90 knots."}
 
 knitr::include_graphics(here::here("NSRKC/plots/pred_heat_iid_50kn.png"))
 ```
 
-```{r nsrkc-pred-120kn, fig.align = "center", fig.cap = "Heat map of Norton Sound red blue king crab predicted abundance generated using the model with 120 knots."}
+```{r nsrkc-pred-100kn, fig.align = "center", fig.cap = "Heat map of Norton Sound red blue king crab predicted abundance generated using the model with 120 knots."}
 
 knitr::include_graphics(here::here("NSRKC/plots/pred_heat_iid_100kn.png"))
 ```

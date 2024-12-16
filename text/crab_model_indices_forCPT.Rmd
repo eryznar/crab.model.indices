@@ -46,23 +46,32 @@ All three stock assessments for the crab stocks presented here use data from the
 
 Spatiotemporal model-based index development is expected to confer distinct advantages for each of the three stocks. For the St. Matthew Island blue king crab stock, standardizing the survey indices could allow the assessment to use the existing survey data more rigorously. The NMFS EBS trawl survey is undergoing changes including dropping the high sampling density "corner stations" near St. Matthew Island from 2024 onward (DePhilippo et al. 2023; Stern & Palof 2024); index standardization will allow the assessment to continue using the full time series of data despite changes in the spatial footprint of the survey. For Norton Sound red king crab, a model-based approach could provide a more consistent way to combine the three existing trawl survey data sets into a single index of abundance. 
 
-
-
 # Methods {-}
 
-We fit models using the R package *sdmTMB*. For all models fitted using *sdmTMB*, we used the R package *DHARMa* (Hartig 2022) for model diagnostics. After calculating the DHARMa residuals using the function DHARMa::dharma_residuals(), we tested for quantile deviations, under/overdispersion, outliers, and zero inflation using the functions DHARMa::testQuantiles(), DHARMa::testDispersion(), DHARMa::testOutliers(), and DHARMa::testZeroInflation(), respectively.
+We fit models using the R package *sdmTMB*. After fitting a model, we used the sanity() command to check whether the model converged, the Hessian matrix was positive definite, and any extreme eigenvalues were detected, among other checks. For models that passed the sanity() checks, we used the R package *DHARMa* (Hartig 2022) for model diagnostics. After calculating the DHARMa residuals using the function DHARMa::dharma_residuals(), we tested for quantile deviations, under/overdispersion, outliers, and zero inflation using the functions DHARMa::testQuantiles(), DHARMa::testDispersion(), DHARMa::testOutliers(), and DHARMa::testZeroInflation(), respectively.
+
+A number of decision points arise when fitting models using *sdmTMB*, including:
+- the resolution of the spatial mesh used in fitting the model. A higher number of knots, specified when creating the spatial mesh using the make_mesh() function, indicates a higher resolution mesh. Few guidelines exist to aid in selection of an appropriate mesh resolution for a given dataset. 
+- the spatiotemporal random fields estimation method. The spatiotemporal random fields can be estimated as independent and identically distributed (IID), first-order autoregressive (AR1), a random walk, or fixed at zero.
+- the model family. Many options exist, including tweedie(), delta_gamma(), and delta_lognormal(). 
+
+Further decision points arise when evaluating fitted models:
+- the relative importance of different model diagnostics in selecting a preferred model.
+- the importance of visual model fit to survey observations in selecting a preferred model.
+
+For each stock, we present a range of models to show the effects of the decision points that arise when fitting models, and discuss the evaluation of fitted models. 
 
 ## Tanner crab {-}
 
 
 ## Norton Sound red king crab {-}
 
-We combined data from the NMFS trawl survey (1976-1991), ADF&G trawl survey (1996-2024), and NMFS NBS trawl survey (2010-2023) into a single data set to which we fit models in *sdmTMB*. We filtered the data set to ensure that it included only observations with coordinates falling within the Norton Sound Section of Statistical Area Q. For model fitting, we used spatial meshes at three resolutions, specified in terms of the number of knots (vertices), where a higher number of knots indicates a higher resolution mesh: 100 knots, 50 knots, and 30 knots (Figures \@ref(fig:nsrkc-mesh-100kn) - \@ref(fig:nsrkc-mesh-30kn)). We used a prediction grid with resolution of 5 km$^2$ (Figure \@ref(fig:nsrkc-pred-grid)).
+We combined data from the NMFS trawl survey (1976-1991), ADF&G trawl survey (1996-2024), and NMFS NBS trawl survey (2010-2023) into a single data set to which we fit models in *sdmTMB*. We filtered the data set to ensure that it included only observations with coordinates falling within the Norton Sound Section of Statistical Area Q. For model fitting, we used spatial meshes at three resolutions, specified in terms of the number of knots (vertices): 100 knots, 50 knots, and 30 knots (Figures \@ref(fig:nsrkc-mesh-100kn) - \@ref(fig:nsrkc-mesh-30kn)). We used a prediction grid with resolution of 5 km$^2$ (Figure \@ref(fig:nsrkc-pred-grid)).
 
 
 ## St. Matthew Island blue king crab {-}
 
-For model fitting, we used spatial meshes at three resolutions, specified in terms of the number of knots (vertices), where a higher number of knots indicates a higher resolution mesh: 120 knots, 90 knots, and 50 knots (Figures \@ref(fig:smbkc-mesh-120kn) - \@ref(fig:smbkc-mesh-50kn)). We used a prediction grid with resolution of 4 km$^2$ (Figure \@ref(fig:smbkc-pred-grid)).
+For model fitting, we used spatial meshes at three resolutions, specified in terms of the number of knots (vertices): 120 knots, 90 knots, and 50 knots (Figures \@ref(fig:smbkc-mesh-120kn) - \@ref(fig:smbkc-mesh-50kn)). We used a prediction grid with resolution of 4 km$^2$ (Figure \@ref(fig:smbkc-pred-grid)).
 
 
 

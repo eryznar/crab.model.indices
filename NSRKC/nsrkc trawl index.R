@@ -147,7 +147,7 @@ ggplot(nsrkc_utm) +
 # make SPDE mesh ----
 # **************************************************************************************************************
 
-NS_spde_100kn <- make_mesh(nsrkc_utm, xy_cols = c("X","Y"), n_knots = 100, type = "kmeans")
+NS_spde_100kn <- make_mesh(nsrkc_utm, xy_cols = c("X","Y"), n_knots = 100, type = "kmeans", max.edge = c(1,2)*max.edge)
 
 plot(NS_spde_100kn)
 NS_spde_100kn$mesh$n
@@ -177,6 +177,18 @@ NS_spde_30kn <- make_mesh(nsrkc_utm, xy_cols = c("X","Y"), n_knots = 30, type = 
 
 plot(NS_spde_30kn)
 NS_spde_30kn$mesh$n
+
+
+max.edge = diff(range(st_coordinates(nsrkc_utm)[,1]))/(3*5)
+inla_mesh <- fmesher::fm_mesh_2d_inla(
+  loc = cbind(nsrkc_utm$X, nsrkc_utm$Y), # coordinates
+  max.edge = c(1,2)*max.edge, # max triangle edge length; inner and outer meshes
+  #offset = c(5, 25),  # inner and outer border widths
+  #cutoff = 5 # minimum triangle edge length
+)
+
+mesh <- make_mesh(nsrkc_utm, c("X", "Y"), mesh = inla_mesh)
+plot(mesh)
 
 # plot mesh with data points
 

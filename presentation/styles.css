@@ -1,0 +1,34 @@
+slides slide { background-image: none; }
+
+slides > slide.title-slide hgroup h1 {
+      font-weight: bold;
+      font-size: 30pt;
+      color: black;
+    }
+
+ul {
+  color: black;
+}
+
+p {
+  color: black;
+}
+
+p {
+  line-height: 1;
+}
+
+
+.reduceTopMarginText p {
+  margin-top: -50px
+  margin-bottom: -50px
+}
+
+.title {
+    grid-template-areas:"image" "title"
+    margin-bottom: -50;
+}
+
+slides > slide:not(.nobackground):after {
+  content: ""
+}

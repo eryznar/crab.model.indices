@@ -1,0 +1,64 @@
+---
+title: "Spatiotemporal model-based indices of abundance for BSAI crab stocks"
+subtitle: "Update for Crab Plan Team modeling workshop"
+author: "Caitlin Stern, Emily Ryznar, and Jon Richar"
+date: "January 2025"
+output: 
+  ioslides_presentation: 
+    css: styles.css
+
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r load, include = FALSE}
+
+library(knitr)
+library(kableExtra)
+library(xtable)
+library(tidyverse)
+
+options(xtable.comment = FALSE)
+
+cur_yr <- 2024 
+
+
+
+```
+<style>
+.forceBreak { -webkit-column-break-after: always; break-after: column; }
+</style>
+
+<style>
+table {
+  background-color: white !important;
+  color: black !important;
+}
+</style>
+
+## Goals  {.columns-2}
+
+Develop spatiotemporal model-based indices for
+
+- Bering Sea Tanner crab
+- St. Matthew Island blue king crab
+- Norton Sound red king crab
+
+<p class="forceBreak"></p>
+
+```{r baby-crab, out.width = "100%", out.height = "100%", echo = FALSE}
+
+knitr::include_graphics(paste0(here::here(), "/presentation/photos/DSCN2724_n.jpg"), dpi = 450)
+```
+
+
+
+## Thanks!
+
+```{r adult-crab, out.width = "100%", out.height = "100%", echo = FALSE}
+
+knitr::include_graphics(paste0(here::here(), "/presentation/photos/BKC_legalmale_DanUrban_n.jpg"), dpi = 450)
+```
+

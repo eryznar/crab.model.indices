@@ -151,13 +151,17 @@ Yalcin, S., S.C. Anderson, P.M. Regular, P.A. English. 2023. Exploring the limit
 # Tables {-}
 
 
-<<<<<<< HEAD
 # Figures
 
-```{r, fig.align = "center", fig.cap = "Q-Q plot of DHARMa residuals for EBS-wide male abundance models fit using NMFS summer bottom trawl survey data before 1988 (left) and 1988 onward (right)."}
+```{r, fig.align = "center", fig.cap = "Q-Q plot of DHARMa residuals for EBS-wide abundance models fit using NMFS summer bottom trawl survey data before 1988 (left) and 1988 onward (right) using 120 knots in the model mesh."}
 
-knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_abundance_All_Male_120.png"))
+knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_abundance_EBS_QQplot.png"))
 ```
+```{r, fig.align = "center", fig.cap = "Q-Q plot of DHARMa residuals for EBS-wide biomass models fit using NMFS summer bottom trawl survey data before 1988 (left) and 1988 onward (right) using 120 knots in the model mesh."}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_biomass_EBS_QQplot.png"))
+```
+
 ```{r, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide male abundance models fit using NMFS summer bottom trawl survey data before 1988 and 1988 onward. Predictions from both these periods/models are combined in this figure."}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Male_abundance120_SPATIAL.png"))

@@ -18,7 +18,7 @@ header-includes:
    - \usepackage{caption}
 
 ---
-
+\begin{document}
 \pagenumbering{arabic}
 
 ```{r global_options, include=FALSE, echo = FALSE, message = FALSE, warning=FALSE}

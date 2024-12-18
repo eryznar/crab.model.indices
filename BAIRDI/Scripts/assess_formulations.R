@@ -91,7 +91,7 @@ stock <- "All"
       pred.abund <- predict(abund, newdata= newdat2, return_tmb_object = T)
       
       gc()
-      get_index_split(abund, area = unique(newdat2$Area_km2), bias_correct = TRUE, nsplit = 6) -> ind.abund
+      get_index_split(abund, newdata = newdat2, area = unique(newdat2$Area_km2), bias_correct = TRUE, nsplit = 3) -> ind.abund
       
       write.csv(ind.abund, paste0(dir,"Output/Male_abundance_All_post-1982_90_DG_IID_index.csv"))
 
@@ -156,8 +156,6 @@ stock <- "All"
       
       saveRDS(abund, paste0(dir, "Models/bairdi_Male_All_post-1982_90_abund_DG_IID.rda"))
       
-      abund <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_90_abund_DG_IID.rda"))
-      
       # Predict and get index  
       newdat %>%
         filter(year %in% years) %>%
@@ -166,7 +164,7 @@ stock <- "All"
       pred.abund <- predict(abund, newdata= newdat2, return_tmb_object = T)
       
       gc()
-      get_index(pred.abund, area = unique(newdat2$Area_km2), bias_correct = TRUE) -> ind.abund
+      get_index_split(abund, newdata = newdat2, area = unique(newdat2$Area_km2), bias_correct = TRUE, nsplit = 3) -> ind.abund
       
       write.csv(ind.abund, paste0(dir, "Output/Male_abundance_All_post-1982_90_DLN_IID_index.csv"))
     
@@ -193,7 +191,7 @@ stock <- "All"
                       anisotropy = TRUE,
                       data = data2)
       
-      saveRDS(abund, "./BAIRDI/Models/bairdi_Male_All_pre-1982_90_abund_T_AR1.rda")
+      saveRDS(abund, paste0(dir, "Models/bairdi_Male_All_pre-1982_90_abund_T_AR1.rda"))
       
       # Predict and get index  
       newdat %>%
@@ -205,7 +203,7 @@ stock <- "All"
       gc()
       get_index(pred.abund, area = unique(newdat2$Area_km2), bias_correct = TRUE) -> ind.abund
       
-      write.csv(ind.abund, "./BAIRDI/Output/Male_abundance_All_pre-1982_90_T_AR1_index.csv")
+      write.csv(ind.abund, paste0(dir, "Output/Male_abundance_All_pre-1982_90_T_AR1_index.csv"))
   
   ### Post-1982
   years <- c(1982:2019, 2021:2024)
@@ -229,7 +227,7 @@ stock <- "All"
                       anisotropy = TRUE,
                       data = data2)
       
-      saveRDS(abund, "./BAIRDI/Models/bairdi_Male_All_post-1982_90_abund_T_AR1.rda")
+      saveRDS(abund, paste0(dir, "Models/bairdi_Male_All_post-1982_90_abund_T_AR1.rda"))
 
       # Predict and get index  
       newdat %>%
@@ -239,32 +237,32 @@ stock <- "All"
       pred.abund <- predict(abund, newdata= newdat2, return_tmb_object = T)
       
       gc()
-      get_index(pred.abund, area = unique(newdat2$Area_km2), bias_correct = TRUE) -> ind.abund
+      get_index_split(abund, newdata = newdat2, area = unique(newdat2$Area_km2), bias_correct = TRUE, nsplit = 3) -> ind.abund
       
-      write.csv(ind.abund, "./BAIRDI/Output/Male_abundance_All_post-1982_90_T_AR1_index.csv")
+      write.csv(ind.abund, paste0(dir, "Output/Male_abundance_All_post-1982_90_T_AR1_index.csv"))
 
 ## PLOT ----
   # Load data
-  DG_IID <- rbind(read.csv("./BAIRDI/Output/Male_abundance_All_pre-1982_90_DG_IID_index.csv"),
-                              read.csv("./BAIRDI/Output/Male_abundance_All_post-1982_90_DG_IID_index.csv")) %>%
+  DG_IID <- rbind(read.csv(paste0(dir, "Output/Male_abundance_All_pre-1982_90_DG_IID_index.csv")),
+                              read.csv(paste0(dir, "Output/Male_abundance_All_post-1982_90_DG_IID_index.csv"))) %>%
                               rename(abundance = est, Year = year) %>%
                               mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
                               mutate(model = "Delta-gamma, IID, 90kn")
   
-  DLN_IID <- rbind(read.csv("./BAIRDI/Output/Male_abundance_All_pre-1982_90_DLN_IID_index.csv"),
-                              read.csv("./BAIRDI/Output/Male_abundance_All_post-1982_90_DLN_IID_index.csv")) %>%
+  DLN_IID <- rbind(read.csv(paste0(dir, "Output/Male_abundance_All_pre-1982_90_DLN_IID_index.csv")),
+                              read.csv(paste0(dir, "Output/Male_abundance_All_post-1982_90_DLN_IID_index.csv"))) %>%
                               rename(abundance = est, Year = year) %>%
                               mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
                               mutate(model = "Delta-lognormal, IID, 90kn")
   
-  T_AR1 <- rbind(read.csv("./BAIRDI/Output/Male_abundance_All_pre-1982_90_T_AR1_index.csv"),
-                              read.csv("./BAIRDI/Output/Male_abundance_All_post-1982_90_T_AR1_index.csv")) %>%
+  T_AR1 <- rbind(read.csv(paste0(dir, "Output/Male_abundance_All_pre-1982_90_T_AR1_index.csv")),
+                              read.csv(paste0(dir, "Output/Male_abundance_All_post-1982_90_T_AR1_index.csv"))) %>%
                               rename(abundance = est, Year = year) %>%
                               mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
                               mutate(model = "Tweedie, AR1, 90kn")
   
-  T_IID <- rbind(read.csv("./BAIRDI/Output/Male_abundance_All_pre-1982_90_index.csv"),
-                              read.csv("./BAIRDI/Output/Male_abundance_All_post-1982_90_index.csv")) %>%
+  T_IID <- rbind(read.csv(paste0(dir, "Output/Male_abundance_All_pre-1982_90_index.csv")),
+                              read.csv(paste0(dir, "Output/Male_abundance_All_post-1982_90_index.csv"))) %>%
                               rename(abundance = est, Year = year) %>%
                               mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
                               mutate(model = "Tweedie, IID, 90kn")

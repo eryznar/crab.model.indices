@@ -40,10 +40,12 @@ fit_models <- function(data, matsex, stock, years, period, knots){
   # Filter data by params
   if(stock != "All"){
     data %>%
-      filter(mat.sex == matsex, stck == stock, year %in% years) -> data2
+      filter(mat.sex == matsex, stck == stock, year %in% years) %>%
+      mutate(year_fac = as.factor(year)) -> data2
   }else{
     data %>%
-      filter(mat.sex == matsex, year %in% years) -> data2
+      filter(mat.sex == matsex, year %in% years) %>%
+      mutate(year_fac = as.factor(year)) -> data2
   }
   
   # Make mesh
@@ -52,7 +54,7 @@ fit_models <- function(data, matsex, stock, years, period, knots){
   
   # Fit models
   print("Fitting abundance model")
-  abund <- sdmTMB(cpue_km ~ 0 + as.factor(year), #the 0 is there so there is a factor predictor for each time slice
+  abund <- sdmTMB(cpue_km ~ 0 + year_fac, #the 0 is there so there is a factor predictor for each time slice
                   spatial = "on",
                   spatiotemporal = "iid",
                   mesh = mesh2,
@@ -65,7 +67,7 @@ fit_models <- function(data, matsex, stock, years, period, knots){
   saveRDS(abund, paste0("./BAIRDI/Models/bairdi_", matsex, "_", stock, "_", period, "_", knots, "_abundTMB.rda"))
   
   print("Fitting biomass model")
-  bio <- sdmTMB(cpue_kg_km ~ 0 + as.factor(year), #the 0 is there so there is a factor predictor for each time slice
+  bio <- sdmTMB(cpue_kg_km ~ 0 + year_fac, #the 0 is there so there is a factor predictor for each time slice
                 spatial = "on",
                 spatiotemporal = "iid",
                 mesh = mesh2,
@@ -83,9 +85,9 @@ fit_models <- function(data, matsex, stock, years, period, knots){
 evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knots, matsex2){
   
   # Run sanity check
-  print("Pre-1988 model")
+  print("Pre-1982 model")
   sanity_check_pre <- sanity(pre.model) 
-  print("Post-1988 model")
+  print("Post-1982 model")
   sanity_check_post <- sanity(post.model) 
   
   # Calculate Dharma residuals
@@ -97,11 +99,11 @@ evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knot
   
   ggplot()+
     theme_bw()+
-    geom_abline(slope = 1, intercept = 0, color = "red", linewidth = 1)+
     geom_point(resid1, mapping = aes(expected, observed), size = 2, fill = "black")+
+    geom_abline(slope = 1, intercept = 0, color = "red", linewidth = 1)+
     ylab("Expected")+
     xlab("Observed")+
-    ggtitle("<1988")+
+    ggtitle("<1982")+
     theme(axis.text = element_text(size = 12),
           axis.title = element_text(size = 12)) -> r1.plot
   
@@ -120,15 +122,15 @@ evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knot
   
   ggplot()+
     theme_bw()+
-    geom_abline(slope = 1, intercept = 0, color = "red", linewidth = 1)+
     geom_point(resid2, mapping = aes(expected, observed), size = 2, fill = "black")+
+    geom_abline(slope = 1, intercept = 0, color = "red", linewidth = 1)+
     ylab("Expected")+
     xlab("Observed")+
-    ggtitle("≥1988")+
+    ggtitle("≥1982")+
     theme(axis.text = element_text(size = 12),
           axis.title = element_text(size = 12)) -> r2.plot
   
-  rbind(resid1 %>% mutate(period = "<1988"), resid2 %>% mutate(period = "≥1988")) %>%
+  rbind(resid1 %>% mutate(period = "<1982"), resid2 %>% mutate(period = "≥1982")) %>%
     mutate(matsex = matsex2) -> all.resids
   
   #cowplot::plot_grid(r1.plot, r2.plot) -> qqplot
@@ -179,7 +181,8 @@ evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knot
 
 predict_and_getindex <- function(newdat, abund.mod, bio.mod, matsex, stock, years, period, knots){
   newdat %>%
-    filter(year %in% years) -> newdat2
+    filter(year %in% years) %>%
+    mutate(year_fac = as.factor(year)) -> newdat2
   
   print("predicting abundance")
   pred.abund <- predict(abund.mod, newdata= newdat2, return_tmb_object = T)
@@ -189,11 +192,13 @@ predict_and_getindex <- function(newdat, abund.mod, bio.mod, matsex, stock, year
   write.csv(pred.abund$data, paste0("./BAIRDI/Output/", matsex, "_abundance_", stock, "_", period, "_", knots, "_spatialpreds.csv"))
   write.csv(pred.bio$data, paste0("./BAIRDI/Output/", matsex, "_biomass_", stock, "_", period, "_", knots, "_spatialpreds.csv"))
   
+  gc()
   # Get index
   print("getting abundance index")
-  get_index(pred.abund, area = unique(newdat$Area_km2), bias_correct = TRUE) -> ind.abund
+  get_index(pred.abund, area = unique(newdat2$Area_km2), bias_correct = TRUE) -> ind.abund
+  gc()
   print("getting biomass index")
-  get_index(pred.bio, area = unique(newdat$Area_km2), bias_correct = TRUE) -> ind.bio
+  get_index(pred.bio, area = unique(newdat2$Area_km2), bias_correct = TRUE) -> ind.bio
   
   
   write.csv(ind.abund, paste0("./BAIRDI/Output/", matsex, "_abundance_", stock, "_", period, "_", knots, "_index.csv"))
@@ -219,6 +224,12 @@ tan.cpue <- read.csv("./BAIRDI/Data/bairdi_cpue2.csv") %>%
          lon = lon/1000) %>%
   dplyr::select(year, matsex, cpue, cpue_kg, cpue_km, cpue_kg_km, stock, lon, lat)
 
+# Create dummy 2020 data
+# tan.cpue %>% 
+#   filter(year == 2024) %>%
+#   mutate(year = 2020) -> dummy
+# 
+# rbind(tan.cpue, dummy) -> tan.cpue
 
 # group male categories
 tan.cpue2 <- tan.cpue %>%
@@ -233,44 +244,6 @@ tan.cpue2 <- tan.cpue %>%
 
 
 # Load observed abundance/biomass
-tanE.obs <- rbind(read.csv("Y:/KOD_Survey/EBS Shelf/2024/Tech Memo/Outputs/abund_EBS_TannerE.csv") %>% mutate(type = "abundance"),
-                  read.csv("Y:/KOD_Survey/EBS Shelf/2024/Tech Memo/Outputs/bio_EBS_TannerE.csv") %>% mutate(type = "biomass"))
-
-tanW.obs <- rbind(read.csv("Y:/KOD_Survey/EBS Shelf/2024/Tech Memo/Outputs/abund_EBS_TannerW.csv") %>% mutate(type = "abundance"),
-                  read.csv("Y:/KOD_Survey/EBS Shelf/2024/Tech Memo/Outputs/bio_EBS_TannerW.csv") %>% mutate(type = "biomass"))
-
-# Process observed abundance/biomass
-tanE.obs %>%
-  dplyr::select(Year, Small.male...113.mm., Large.male...113.mm., Immature.female, Mature.female, type) %>%
-  rename(smmale = Small.male...113.mm., lgmale = Large.male...113.mm., 'Immature Female' = Immature.female, 'Mature Female' = Mature.female) %>%
-  pivot_longer(., cols = c(2:5), names_to = "matsex", values_to = "value") %>%
-  mutate(CI = as.numeric(gsub(",", "", sapply(str_extract_all(value, "(?<=\\()[^)(]+(?=\\))"), paste0, collapse =","))),
-         value = as.numeric(gsub(",", "", gsub("\\([^()]*\\)", "", value))),
-         stock = "TannerE",
-         matsex = case_when((matsex %in% c("smmale", "lgmale")) ~ "Male",
-                            TRUE ~ matsex)) %>%
-  group_by(Year, type, matsex, stock) %>%
-  reframe(value = sum(value),
-          CI = sum(CI)) -> tanE.obs2
-
-
-tanW.obs %>%
-  dplyr::select(Year, Small.male...103.mm., Large.male...103.mm., Immature.female, Mature.female, type) %>%
-  rename(smmale = Small.male...103.mm., lgmale = Large.male...103.mm., 'Immature Female' = Immature.female, 'Mature Female' = Mature.female) %>%
-  pivot_longer(., cols = c(2:5), names_to = "matsex", values_to = "value") %>%
-  mutate(CI = as.numeric(gsub(",", "", sapply(str_extract_all(value, "(?<=\\()[^)(]+(?=\\))"), paste0, collapse =","))),
-         value = as.numeric(gsub(",", "", gsub("\\([^()]*\\)", "", value))),
-         stock = "TannerW",
-         matsex = case_when((matsex %in% c("smmale", "lgmale")) ~ "Male",
-                            TRUE ~ matsex)) %>%
-  group_by(Year, type, matsex, stock) %>%
-  reframe(value = sum(value),
-          CI = sum(CI)) -> tanW.obs2
-
-
-tan.obs <- rbind(tanE.obs2, tanW.obs2)
-
-# LOAD
 tan.obs <- right_join(rbind(read.csv("./BAIRDI/Data/E166_CB_OBSERVEDabundbio.csv"),
                             read.csv("./BAIRDI/Data/W166_CB_OBSERVEDabundbio.csv")) %>%
                         rename(Year = AKFIN_SURVEY_YEAR, matsex = MAT_SEX, stock = STOCK, abundance= ABUNDANCE, biomass = BIOMASS) %>%

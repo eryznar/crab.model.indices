@@ -142,6 +142,7 @@ pred_grid2 <- pred_grid %>%
   rename(lon = X, lat = Y)
 
 
+## 50 knots ----
   ## Males -----  
   data <- tan.cpue2
   matsex2 <- "Male"
@@ -149,17 +150,112 @@ pred_grid2 <- pred_grid %>%
   
   # Abundance
   type <- "abundance"
-  pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1988_120_abundTMB.rda")
-  post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1988_120_abundTMB.rda")
+  pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_50_abundTMB.rda")
+  post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_50_abundTMB.rda")
   
-  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> ab.males
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, matsex2) -> ab.males
   
   # Biomass
   type <- "biomass"
-  pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1988_120_bioTMB.rda")
-  post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1988_120_bioTMB.rda")
+  pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_50_bioTMB.rda")
+  post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_50_bioTMB.rda")
   
-  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> bio.males
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, matsex2) -> bio.males
+  
+  ## Immature Females -----  
+  data <- tan.cpue2
+  matsex2 <- "Immature Female"
+  stock2 <- "All"
+  
+  # Abundance
+  type <- "abundance"
+  pre.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1982_50_abundTMB.rda")
+  post.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1982_50_abundTMB.rda")
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, matsex2) -> ab.imfem
+  
+  # Biomass
+  type <- "biomass"
+  pre.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1982_50_bioTMB.rda")
+  post.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1982_50_bioTMB.rda")
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, matsex2) -> bio.imfem
+  
+  ## Mature Females -----  
+  data <- tan.cpue2
+  matsex2 <- "Mature Female"
+  stock2 <- "All"
+  
+  # Abundance
+  type <- "abundance"
+  pre.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1982_50_abundTMB.rda")
+  post.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1982_50_abundTMB.rda")
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, matsex2) -> ab.matfem
+  
+  # Biomass
+  type <- "biomass"
+  pre.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1982_50_bioTMB.rda")
+  post.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1982_50_bioTMB.rda")
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, matsex2) -> bio.matfem
+  
+  
+  
+  ## All abundance QQ plots ----
+  rbind(ab.males[[3]], ab.imfem[[3]], ab.matfem[[3]]) %>%
+    mutate(period = case_when((period == "<1988") ~ "<1982",
+                              TRUE ~ "≥1982")) -> ab.resid
+  
+  ggplot()+
+    theme_bw()+
+    geom_abline(slope = 1, intercept = 0, color = "red", linewidth = 1)+
+    geom_point(ab.resid, mapping = aes(expected, observed), size = 1.5)+
+    facet_grid(factor(matsex, levels = c("Male", "Mature Female", "Immature Female")) ~ period)+
+    ylab("Expected")+
+    xlab("Observed")+
+    ggtitle("Tanner crab abundance DHARMa residual Q-Q plot (knots=50)")+
+    theme(axis.text = element_text(size = 12),
+          axis.title = element_text(size = 12))
+  
+  ggsave(filename = paste0("./BAIRDI/Figures/DHARMa_abundance_EBS_50_QQplot.png"), width=6, height=7, units="in")
+  
+  # All biomass QQ plots
+  rbind(bio.males[[3]], bio.imfem[[3]], bio.matfem[[3]]) -> bio.resid
+  
+  ggplot()+
+    theme_bw()+
+    geom_abline(slope = 1, intercept = 0, color = "red", linewidth = 1)+
+    geom_point(ab.resid, mapping = aes(expected, observed), size = 1.5)+
+    facet_grid(factor(matsex, levels = c("Male", "Mature Female", "Immature Female")) ~ period)+
+    ylab("Expected")+
+    xlab("Observed")+
+    ggtitle("Tanner crab biomass DHARMa residual Q-Q plot (knots=50)")+
+    theme(axis.text = element_text(size = 12),
+          axis.title = element_text(size = 12))
+  
+  ggsave(filename = paste0("./BAIRDI/Figures/DHARMa_biomass_EBS_50_QQplot.png"), width=6, height=7, units="in")
+  
+  
+## 90 knots ----
+  ## Males -----  
+  data <- tan.cpue2
+  matsex2 <- "Male"
+  stock2 <- "All"
+  
+  # Abundance
+  type <- "abundance"
+  pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_90_abundTMB.rda")
+  post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_90_abundTMB.rda")
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, matsex2) -> ab.males
+  
+  # Biomass
+  type <- "biomass"
+  pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_90_bioTMB.rda")
+  post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_90_bioTMB.rda")
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, matsex2) -> bio.males
 
   ## Immature Females -----  
   data <- tan.cpue2
@@ -168,17 +264,17 @@ pred_grid2 <- pred_grid %>%
   
   # Abundance
   type <- "abundance"
-  pre.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1988_120_abundTMB.rda")
-  post.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1988_120_abundTMB.rda")
+  pre.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1982_90_abundTMB.rda")
+  post.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1982_90_abundTMB.rda")
   
-  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> ab.imfem
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, matsex2) -> ab.imfem
   
   # Biomass
   type <- "biomass"
-  pre.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1988_120_bioTMB.rda")
-  post.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1988_120_bioTMB.rda")
+  pre.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1982_90_bioTMB.rda")
+  post.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1982_90_bioTMB.rda")
   
-  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> bio.imfem
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, matsex2) -> bio.imfem
   
   
   ## Mature Females -----  
@@ -188,22 +284,24 @@ pred_grid2 <- pred_grid %>%
   
   # Abundance
   type <- "abundance"
-  pre.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1988_120_abundTMB.rda")
-  post.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1988_120_abundTMB.rda")
+  pre.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1982_90_abundTMB.rda")
+  post.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1982_90_abundTMB.rda")
   
-  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> ab.matfem
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, matsex2) -> ab.matfem
   
   # Biomass
   type <- "biomass"
-  pre.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1988_120_bioTMB.rda")
-  post.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1988_120_bioTMB.rda")
+  pre.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1982_90_bioTMB.rda")
+  post.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1982_90_bioTMB.rda")
   
-  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> bio.matfem
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, matsex2) -> bio.matfem
   
   
   
- # All abundance QQ plots
- rbind(ab.males[[3]], ab.imfem[[3]], ab.matfem[[3]]) -> ab.resid
+  ## All abundance QQ plots -----
+ rbind(ab.males[[3]], ab.imfem[[3]], ab.matfem[[3]]) %>%
+   mutate(period = case_when((period == "<1988") ~ "<1982",
+                             TRUE ~ "≥1982")) -> ab.resid
  
  ggplot()+
    theme_bw()+
@@ -212,13 +310,13 @@ pred_grid2 <- pred_grid %>%
    facet_grid(factor(matsex, levels = c("Male", "Mature Female", "Immature Female")) ~ period)+
    ylab("Expected")+
    xlab("Observed")+
-   ggtitle("Tanner crab abundance DHARMa residual Q-Q plot")+
+   ggtitle("Tanner crab abundance DHARMa residual Q-Q plot (knots=90)")+
    theme(axis.text = element_text(size = 12),
          axis.title = element_text(size = 12))
  
- ggsave(filename = paste0("./BAIRDI/Figures/DHARMa_abundance_EBS_QQplot.png"), width=6, height=7, units="in")
+ ggsave(filename = paste0("./BAIRDI/Figures/DHARMa_abundance_EBS_90_QQplot.png"), width=6, height=7, units="in")
  
- # All abundance QQ plots
+ # All biomass QQ plots
  rbind(bio.males[[3]], bio.imfem[[3]], bio.matfem[[3]]) -> bio.resid
  
  ggplot()+
@@ -228,9 +326,190 @@ pred_grid2 <- pred_grid %>%
    facet_grid(factor(matsex, levels = c("Male", "Mature Female", "Immature Female")) ~ period)+
    ylab("Expected")+
    xlab("Observed")+
-   ggtitle("Tanner crab biomass DHARMa residual Q-Q plot")+
+   ggtitle("Tanner crab biomass DHARMa residual Q-Q plot (knots=90)")+
    theme(axis.text = element_text(size = 12),
          axis.title = element_text(size = 12))
  
- ggsave(filename = paste0("./BAIRDI/Figures/DHARMa_biomass_EBS_QQplot.png"), width=6, height=7, units="in")
+ ggsave(filename = paste0("./BAIRDI/Figures/DHARMa_biomass_EBS_90_QQplot.png"), width=6, height=7, units="in")
  
+ 
+## 120 knots ----
+ ## Males -----  
+ data <- tan.cpue2
+ matsex2 <- "Male"
+ stock2 <- "All"
+ 
+ # Abundance
+ type <- "abundance"
+ pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_120_abundTMB.rda")
+ post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_120_abundTMB.rda")
+ 
+ evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> ab.males
+ 
+ # Biomass
+ type <- "biomass"
+ pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_120_bioTMB.rda")
+ post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_120_bioTMB.rda")
+ 
+ evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> bio.males
+ 
+ ## Immature Females -----  
+ data <- tan.cpue2
+ matsex2 <- "Immature Female"
+ stock2 <- "All"
+ 
+ # Abundance
+ type <- "abundance"
+ pre.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1982_120_abundTMB.rda")
+ post.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1982_120_abundTMB.rda")
+ 
+ evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> ab.imfem
+ 
+ # Biomass
+ type <- "biomass"
+ pre.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1982_120_bioTMB.rda")
+ post.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1982_120_bioTMB.rda")
+ 
+ evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> bio.imfem
+ 
+ 
+ ## Mature Females -----  
+ data <- tan.cpue2
+ matsex2 <- "Mature Female"
+ stock2 <- "All"
+ 
+ # Abundance
+ type <- "abundance"
+ pre.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1982_120_abundTMB.rda")
+ post.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1982_120_abundTMB.rda")
+ 
+ evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> ab.matfem
+ 
+ # Biomass
+ type <- "biomass"
+ pre.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1982_120_bioTMB.rda")
+ post.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1982_120_bioTMB.rda")
+ 
+ evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> bio.matfem
+ 
+ ## All abundance QQ plots -----
+ rbind(ab.males[[3]], ab.imfem[[3]], ab.matfem[[3]]) %>%
+   mutate(period = case_when((period == "<1988") ~ "<1982",
+                             TRUE ~ "≥1982")) -> ab.resid
+ 
+ ggplot()+
+   theme_bw()+
+   geom_abline(slope = 1, intercept = 0, color = "red", linewidth = 1)+
+   geom_point(ab.resid, mapping = aes(expected, observed), size = 1.5)+
+   facet_grid(factor(matsex, levels = c("Male", "Mature Female", "Immature Female")) ~ period)+
+   ylab("Expected")+
+   xlab("Observed")+
+   ggtitle("Tanner crab abundance DHARMa residual Q-Q plot (knots=120)")+
+   theme(axis.text = element_text(size = 12),
+         axis.title = element_text(size = 12))
+ 
+ ggsave(filename = paste0("./BAIRDI/Figures/DHARMa_abundance_EBS_120_QQplot.png"), width=6, height=7, units="in")
+ 
+ # All biomass QQ plots
+ rbind(bio.males[[3]], bio.imfem[[3]], bio.matfem[[3]]) -> bio.resid
+ 
+ ggplot()+
+   theme_bw()+
+   geom_abline(slope = 1, intercept = 0, color = "red", linewidth = 1)+
+   geom_point(ab.resid, mapping = aes(expected, observed), size = 1.5)+
+   facet_grid(factor(matsex, levels = c("Male", "Mature Female", "Immature Female")) ~ period)+
+   ylab("Expected")+
+   xlab("Observed")+
+   ggtitle("Tanner crab biomass DHARMa residual Q-Q plot (knots=120)")+
+   theme(axis.text = element_text(size = 12),
+         axis.title = element_text(size = 12))
+ 
+ ggsave(filename = paste0("./BAIRDI/Figures/DHARMa_biomass_EBS_120_QQplot.png"), width=6, height=7, units="in")
+ 
+ 
+ 
+### EVALUATE MESH ----------------------------------------------------------------
+tan.cpue2 %>%
+   mutate(period = case_when((year <1982) ~ "<1982",
+                             TRUE ~ "≥1982")) %>%
+   group_by(year, period, mat.sex) %>%
+   reframe(N = n()) %>%
+   group_by(period, mat.sex) %>%
+   reframe(min.N = min(N)) 
+
+    # Mesh is the same across matsex and abund/biomass, so just evaluating male models @ diff knots below
+ 
+    # 120
+    pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_120_abundTMB.rda")
+    post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_120_abundTMB.rda")
+    
+    pre.model$spde$mesh$n # needs to be <136
+    post.model$spde$mesh$n # needs to be <342
+    
+    ggplot(tan.cpue2 %>% filter(year %in% 1975:1981)) + 
+      inlabru::gg(pre.model$spde$mesh) + 
+      geom_point(aes(x = lon, y = lat)) +
+      theme_bw() +
+      ggtitle(paste0("<1982 mesh (knots=", post.model$spde$mesh$n, ")"))+
+      labs(x = "X", y = "Y") -> mesh.1
+    
+    ggplot(tan.cpue2 %>% filter(year %in% 1982:2024)) + 
+      inlabru::gg(post.model$spde$mesh) + 
+      geom_point(aes(x = lon, y = lat)) +
+      theme_bw() +
+      ggtitle(paste0("≥1982 mesh (knots=", post.model$spde$mesh$n, ")"))+
+    labs(x = "X", y = "Y") -> mesh.2
+    
+    
+    ggpubr::ggarrange(mesh.1, mesh.2, nrow = 2)
+    ggsave("./BAIRDI/Figures/mesh120.png", height = 8, width = 6, units = "in")
+    
+    
+    # 90
+    pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_90_abundTMB.rda")
+    post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_90_abundTMB.rda")
+    
+    pre.model$spde$mesh$n # needs to be <136
+    post.model$spde$mesh$n # needs to be <342
+    
+    ggplot(tan.cpue2 %>% filter(year %in% 1975:1981)) + 
+      inlabru::gg(pre.model$spde$mesh) + 
+      geom_point(aes(x = lon, y = lat)) +
+      theme_bw() +
+      ggtitle(paste0("<1982 mesh (knots=", post.model$spde$mesh$n, ")"))+
+    labs(x = "X", y = "Y") -> mesh.1
+    
+    ggplot(tan.cpue2 %>% filter(year %in% 1982:2024)) + 
+      inlabru::gg(post.model$spde$mesh) + 
+      geom_point(aes(x = lon, y = lat)) +
+      theme_bw() +
+      ggtitle(paste0("≥1982 mesh (knots=", post.model$spde$mesh$n, ")"))+
+    labs(x = "X", y = "Y") -> mesh.2
+    
+    ggpubr::ggarrange(mesh.1, mesh.2, nrow = 2)
+    ggsave("./BAIRDI/Figures/mesh90.png", height = 8, width = 6, units = "in")
+    
+    # 50
+    pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_50_abundTMB.rda")
+    post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_50_abundTMB.rda")
+    
+    pre.model$spde$mesh$n # needs to be <136
+    post.model$spde$mesh$n # needs to be <342
+  
+    ggplot(tan.cpue2 %>% filter(year %in% 1975:1981)) + 
+      inlabru::gg(pre.model$spde$mesh) + 
+      geom_point(aes(x = lon, y = lat)) +
+      theme_bw() +
+      ggtitle(paste0("<1982 mesh (knots=", pre.model$spde$mesh$n, ")"))+
+    labs(x = "X", y = "Y") -> mesh.1
+    
+    ggplot(tan.cpue2 %>% filter(year %in% 1982:2024)) + 
+      inlabru::gg(post.model$spde$mesh) + 
+      geom_point(aes(x = lon, y = lat)) +
+      theme_bw() +
+      ggtitle(paste0("≥1982 mesh (knots=", post.model$spde$mesh$n, ")"))+
+    labs(x = "X", y = "Y") -> mesh.2
+    
+    ggpubr::ggarrange(mesh.1, mesh.2, nrow = 2)
+    ggsave("./BAIRDI/Figures/mesh50.png", height = 8, width = 6, units = "in")
+   

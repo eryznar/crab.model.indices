@@ -450,7 +450,7 @@ tan.cpue2 %>%
       inlabru::gg(pre.model$spde$mesh) + 
       geom_point(aes(x = lon, y = lat)) +
       theme_bw() +
-      ggtitle(paste0("<1982 mesh (knots=", post.model$spde$mesh$n, ")"))+
+      ggtitle(paste0("<1982 mesh (knots=", pre.model$spde$mesh$n, ")"))+
       labs(x = "X", y = "Y") -> mesh.1
     
     ggplot(tan.cpue2 %>% filter(year %in% 1982:2024)) + 
@@ -476,7 +476,7 @@ tan.cpue2 %>%
       inlabru::gg(pre.model$spde$mesh) + 
       geom_point(aes(x = lon, y = lat)) +
       theme_bw() +
-      ggtitle(paste0("<1982 mesh (knots=", post.model$spde$mesh$n, ")"))+
+      ggtitle(paste0("<1982 mesh (knots=", pre.model$spde$mesh$n, ")"))+
     labs(x = "X", y = "Y") -> mesh.1
     
     ggplot(tan.cpue2 %>% filter(year %in% 1982:2024)) + 

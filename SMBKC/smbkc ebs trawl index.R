@@ -71,6 +71,14 @@ u2u <- add_utm_columns(u2, c("Lon", "Lat"))
 predgrid_utm <- rbind(u1u, u2u) %>%
   mutate(X = X / 1000, Y = Y / 1000) # convert UTM coordinates from meters to kilometers to reduce computing needs
 
+# plot prediction grid
+predgrid4kmplot <- ggplot(predgrid_utm, aes(x = Lon, y = Lat, color = Area_km2)) +
+  geom_point() + 
+  theme(legend.position="none") +
+  labs(x = "Longitude", y = "Latitude")
+
+ggsave(file.path(plotdir, "prediction_grid_4km.png"), plot = predgrid4kmplot, height = 4.2, width = 7, units = "in")
+
 # **************************************************************************************************************
 # read in and process survey data ----
 # **************************************************************************************************************
@@ -144,7 +152,7 @@ length(unique(bkc_kgkm_utm$GIS_STATION))
 #BK_spde <- make_mesh(bkc_kgkm, c("LONGITUDE","LATITUDE"), cutoff="10") 
 #BK_spde <- make_mesh(bkc_kgkm, c("LONGITUDE","LATITUDE"), n_knots = 100)
 #BK_spde <- make_mesh(bkc_kgkm, c("LONGITUDE","LATITUDE"), n_knots = 50)
-BK_spde <- make_mesh(bkc_kgkm_utm, xy_cols = c("X","Y"), n_knots = 120, type = "kmeans")
+BK_spde_120kn <- make_mesh(bkc_kgkm_utm, xy_cols = c("X","Y"), n_knots = 120, type = "kmeans")
 BK_spde_110kn <- make_mesh(bkc_kgkm_utm, xy_cols = c("X","Y"), n_knots = 110, type = "kmeans")
 BK_spde_100kn <- make_mesh(bkc_kgkm_utm, xy_cols = c("X","Y"), n_knots = 100, type = "kmeans")
 BK_spde_90kn <- make_mesh(bkc_kgkm_utm, xy_cols = c("X","Y"), n_knots = 90, type = "kmeans")
@@ -159,6 +167,31 @@ BK_spde$mesh$n
 
 # look at spatial range of the model (Matern range - want 2 knots per range distance)
 
+# plot mesh with data points
+
+mesh.plot.120kn.sm <- ggplot(bkc_kgkm_utm) + 
+  inlabru::gg(BK_spde_120kn$mesh) + 
+  geom_point(aes(x = X, y = Y)) +
+  theme_bw() +
+  labs(x = "X", y = "Y")
+
+mesh.plot.90kn.sm <- ggplot(bkc_kgkm_utm) + 
+  inlabru::gg(BK_spde_90kn$mesh) + 
+  geom_point(aes(x = X, y = Y)) +
+  theme_bw() +
+  labs(x = "X", y = "Y")
+
+mesh.plot.50kn.sm <- ggplot(bkc_kgkm_utm) + 
+  inlabru::gg(BK_spde_50kn$mesh) + 
+  geom_point(aes(x = X, y = Y)) +
+  theme_bw() +
+  labs(x = "X", y = "Y")
+
+# export mesh plots
+
+ggsave(file.path(plotdir, "mesh_120kn_sm.png"), plot = mesh.plot.120kn.sm, height = 4.2, width = 7, units = "in")
+ggsave(file.path(plotdir, "mesh_90kn_sm.png"), plot = mesh.plot.90kn.sm, height = 4.2, width = 7, units = "in")
+ggsave(file.path(plotdir, "mesh_50kn_sm.png"), plot = mesh.plot.50kn.sm, height = 4.2, width = 7, units = "in")
 
 # **************************************************************************************************************
 # fit and check models ----

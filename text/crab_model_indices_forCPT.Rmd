@@ -16,6 +16,8 @@ output:
     toc: no
 header-includes:
    - \usepackage{caption}
+   - \newcommand{\blandscape}{\begin{landscape}}
+   - \newcommand{\elandscape}{\end{landscape}}
 
 ---
 \begin{document}
@@ -36,6 +38,12 @@ options(xtable.comment = FALSE)
 
 ```
 
+```{r, load_data, echo = FALSE, include = FALSE}
+
+nsrkc.loglik <- read.csv(paste0(here::here(), "NSRKC/output/nsrkc_compare_loglik.csv"))
+
+```
+
 # Introduction {-}
 
 The goal of this investigation was to develop spatiotemporal model-based indices of abundance for three Bering Sea and Aleutian Islands (BSAI) crab stocks: Tanner crab (*Chionoecetes bairdi*), Norton Sound red king crab (*Paralithodes camtschaticus*), and St. Matthew Island blue king crab (*Paralithodes platypus*). Research suggests that spatiotemporal model-based indices can be more robust to survey changes than are design-based indices, though the models must be well-specified (Yalcin et al. 2023). Spatiotemporal model-based indices are used in North Pacific Fishery Management Council (NPFMC) groundfish stock assessments for species including Eastern Bering Sea (EBS) walleye pollock (*Gadus chalcogrammus*) and EBS Pacific cod (*Gadus macrocephalus*), both of which use the vector-autoregressive spatial temporal (VAST) approach (Thorson 2019) to produce indices used in the assessments (Ianelli et al. 2024; Barbeaux et al. 2024). Previous BSAI crab stock assessments have presented models using spatiotemporal model-based indices (e.g., Ianelli et al. 2017), although these models were not accepted for harvest specifications (SSC 2017). 
@@ -48,9 +56,19 @@ Spatiotemporal model-based index development is expected to confer distinct adva
 
 # Methods {-}
 
-We fit models using the R package *sdmTMB*. After fitting each model, we used the following steps to evaluate models:
+We fit models using the R package *sdmTMB*. 
 
-- the sdmTMB::sanity() function. Output of this function for a model that passes all sanity checks looks like this:
+A number of decision points arise when fitting models using *sdmTMB*, including:
+
+- The resolution of the spatial mesh used in fitting the model. A higher number of knots, specified when creating the spatial mesh using the make_mesh() function, indicates a higher resolution mesh. Few guidelines exist to aid in selection of an appropriate mesh resolution for a given dataset. 
+
+- The spatiotemporal random fields estimation method. The spatiotemporal random fields can be estimated as independent and identically distributed (IID), first-order autoregressive (AR1), a random walk, or fixed at zero.
+
+- The model family. Many options exist, including tweedie(), delta_gamma(), and delta_lognormal(). 
+
+For each stock, we present a range of models to show the effects of choices at each of these decision points. After fitting models, we used the following steps for model evaluation:
+
+- Run the sdmTMB::sanity() function. Output of this function for a model that passes all sanity checks looks like this:
 
 ✔ Non-linear minimizer suggests successful convergence
 ✔ Hessian matrix is positive definite
@@ -62,32 +80,25 @@ We fit models using the R package *sdmTMB*. After fitting each model, we used th
 ✔ No sigma parameters are > 100
 ✔ Range parameter doesn't look unreasonably large
 
-- If a model passed all the sanity checks, we used the R package *DHARMa* (Hartig 2022) to calculate the DHARMa residuals using the function DHARMa::dharma_residuals().
+- If a model passed all the sanity checks, we used the R package *DHARMa* (Hartig 2022) to calculate the DHARMa residuals using the function DHARMa::dharma_residuals(). Models that did not pass the sanity checks were excluded from further consideration.
 
 - We tested for quantile deviations, under/overdispersion, outliers, and zero inflation using the functions DHARMa::testQuantiles(), DHARMa::testDispersion(), DHARMa::testOutliers(), and DHARMa::testZeroInflation(), respectively.
 
-A number of decision points arise when fitting models using *sdmTMB*, including:
-- the resolution of the spatial mesh used in fitting the model. A higher number of knots, specified when creating the spatial mesh using the make_mesh() function, indicates a higher resolution mesh. Few guidelines exist to aid in selection of an appropriate mesh resolution for a given dataset. 
-- the spatiotemporal random fields estimation method. The spatiotemporal random fields can be estimated as independent and identically distributed (IID), first-order autoregressive (AR1), a random walk, or fixed at zero.
-- the model family. Many options exist, including tweedie(), delta_gamma(), and delta_lognormal(). 
+- We evaluated model predictive log-likelihood (the predictive ability of the model for new observations; Anderson *et al.* 2024) using the function sdmTMB_cv(). This function measures model predictive log-likelihood by holding out subsets of the data in turn and using each as a test set. These subsets of data are termed "folds" and the number of folds to use can be specified using the k_folds argument. To compare models, we ran this function with the same number of folds specified for each model, then extracted the summed log-likelihood value for each model.  
 
-Further decision points arise when evaluating fitted models:
-- the relative importance of different model diagnostics in selecting a preferred model.
-- the importance of visual model fit to survey observations in selecting a preferred model.
 
-For each stock, we present a range of models to show the effects of the decision points that arise when fitting models, and discuss the evaluation of fitted models. 
 
 ## Tanner crab {-}
 
 
 ## Norton Sound red king crab {-}
 
-We combined data from the NMFS trawl survey (1976-1991), ADF&G trawl survey (1996-2024), and NMFS NBS trawl survey (2010-2023) into a single data set to which we fit models in *sdmTMB*. We filtered the data set to ensure that it included only observations with coordinates falling within the Norton Sound Section of Statistical Area Q. For model fitting, we used spatial meshes at three resolutions, specified in terms of the number of knots (vertices): 100 knots, 50 knots, and 30 knots (Figures \@ref(fig:nsrkc-mesh-100kn) - \@ref(fig:nsrkc-mesh-30kn)). We used a prediction grid with resolution of 5 km$^2$ (Figure \@ref(fig:nsrkc-pred-grid)).
+We combined data from the NMFS trawl survey (1976-1991), ADF&G trawl survey (1996-2024), and NMFS NBS trawl survey (2010-2023) into a single data set to which we fit models in *sdmTMB*. We filtered the data set to ensure that it included only observations with coordinates falling within the Norton Sound Section of Statistical Area Q. For model fitting, we used spatial meshes at three resolutions: 100 knots, 50 knots, and 30 knots (Figures \@ref(fig:nsrkc-mesh-100kn) - \@ref(fig:nsrkc-mesh-30kn)). We used a prediction grid with resolution of 5 km$^2$ (Figure \@ref(fig:nsrkc-pred-grid)).
 
 
 ## St. Matthew Island blue king crab {-}
 
-For model fitting, we used spatial meshes at three resolutions, specified in terms of the number of knots (vertices): 120 knots, 90 knots, and 50 knots (Figures \@ref(fig:smbkc-mesh-120kn) - \@ref(fig:smbkc-mesh-50kn)). We used a prediction grid with resolution of 4 km$^2$ (Figure \@ref(fig:smbkc-pred-grid)).
+For model fitting, we used spatial meshes at three resolutions: 120 knots, 90 knots, and 50 knots (Figures \@ref(fig:smbkc-mesh-120kn) - \@ref(fig:smbkc-mesh-50kn)). We used a prediction grid with a resolution of 4 km$^2$ (Figure \@ref(fig:smbkc-pred-grid)).
 
 
 
@@ -148,7 +159,9 @@ The authors thank Katie Palof and Mike Litzow for their support and feedback on 
 
 # References {-}
 
-Anderson, S.C.; Ward, E.J.; English, P.A.; Barnett, L.A.K. 2022. sdmTMB: An R package for fast, flexible, and user-friendly generalized linear mixed effects models with spatial and spatiotemporal random fields. bioRxiv.
+Anderson, S.C., Ward, E.J., English, P.A., Barnett, L.A.K. 2022. sdmTMB: An R package for fast, flexible, and user-friendly generalized linear mixed effects models with spatial and spatiotemporal random fields. bioRxiv.
+
+Anderson, S.C., Ward, E.J., English, P.A., Barnett, L.A.K., Thorson, J.T. 2024. Cross-validation for model evaluation and comparison. Retrieved from https://pbs-assess.github.io/sdmTMB/articles/cross-validation.html.
 
 Barbeaux, S.J., L. Barnett, P. Hulson, J. Nielsen, S.K. Shotwell, E. Siddon, I. Spies. 2024. Assessment of the Pacific cod stock in the Eastern Bering Sea. In: Stock Assessment and Fishery Evaluation report for the Groundfish Resources of the Bering Sea/Aleutian Islands regions. North Pacific Fishery Management Council, Anchorage, AK.
 
@@ -175,6 +188,21 @@ Yalcin, S., S.C. Anderson, P.M. Regular, P.A. English. 2023. Exploring the limit
 \clearpage
 
 # Tables {-}
+
+\blandscape
+
+```{r nsrkc-loglik, results = "asis"}
+
+df <- nsrkc.loglik %>%
+  rename("Family" = family, "Estimation method" = estimation, "Knots" = knots, "Log-likelihood" = loglik)
+
+tab <- xtable(df, caption = "Norton Sound red king crab fitted model log-likelihood values, estimated using sdmTMB::sdmTMB_cv() with 3 folds, for models fitted with Tweedie, delta gamma, or delta lognormal model familes; spatial random fields estimated using independent and identically distributed (IID), random walk (RW), or first-order autoregressive (AR1) methods; and spatial resolution of 30, 50, or 100 knots.", label = "tab:nsrkc.loglik", digits = c(0))
+
+print(tab, caption.placement = "top", include.rownames = FALSE, booktabs = T)
+
+```
+
+\elandscape
 
 
 # Figures

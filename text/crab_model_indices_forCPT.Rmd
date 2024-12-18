@@ -18,7 +18,7 @@ header-includes:
    - \usepackage{caption}
 
 ---
-\begin{document}
+
 \pagenumbering{arabic}
 
 ```{r global_options, include=FALSE, echo = FALSE, message = FALSE, warning=FALSE}
@@ -63,6 +63,8 @@ For each stock, we present a range of models to show the effects of the decision
 
 ## Tanner crab {-}
 
+We utilized abundance and biomass data collected from the NMFS summer bottom trawl survey (1975-2024) to fit Tanner crab models in *sdmTMB*. Sex-size/maturity categories included all males combined, immature females, and mature females, and data were filtered to only include crab with a carapace width greater than or equal to 25mm. As the survey gear and methods were standardized in 1982 (Stauffer 2004), we fit separate models to data before 1982 and data in and after 1982 for each sex-size/maturity category. Models were fit to data across entire Eastern Bering Sea survey grid using a 50-knot, 90-knot, and 120-knot mesh (Figures \@ref(fig:bairdi-50-mesh) - \@ref(fig:bairdi-120-mesh)). These models were then predicted on an EBS-wide survey grid (Figure \@ref(fig:bairdi-EBS-grid)), a grid encompassing the EBS area west of 166° (for the Tanner West stock; Figure XX, Appendix), and a grid encompassing the EBS area east of 166° (for the Tanner East stock; Figure XX, Appendix). Each prediction grid was a resolution of 5 km$^2$.
+
 
 ## Norton Sound red king crab {-}
 
@@ -80,20 +82,9 @@ For model fitting, we used spatial meshes at three resolutions, specified in ter
 
 ## Tanner crab {-}
 
-
-
-## Tanner crab
-=======
-```{r, fig.align = "center", fig.cap = "Estimated abundance (millions) for Eastern Bering Sea Tanner crab (Chionoecetes bairdi). Colored lines represent abundance (±95% CI) estimated by sdmTMB, with pink and blue denoting models fit with a 50- and 120-knot mesh, respectively. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey."}
-
-knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.abundance.index.png"))
-```
-```{r, fig.align = "center", fig.cap = "Estimated biomass (tons) for Eastern Bering Sea Tanner crab (Chionoecetes bairdi). Colored lines represent abundance (±95% CI) estimated by sdmTMB, with pink and blue denoting models fit with a 50- and 120-knot mesh, respectively. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey."}
-
-knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.biomass.index.png"))
-```
-
-
+### Model diagnostics {-}
+### Predicted abundance {-}
+### Predicted index fits to observations {-}
 
 ## Norton Sound red king crab {-}
 
@@ -148,6 +139,8 @@ Ianelli, J., T. Honkalehto, S. Wassermann, A. McCarthy, S. Steinessen, C. McGill
 
 SSC. 2017. Scientific and Statistical Committee report to the North Pacific Fishery Management Council, October 2nd-4th, 2017. North Pacific Fishery Management Council, Anchorage, AK.
 
+Stauffer, G.A. 2004. NOAA protocols for groundfish bottom trawl surveys of the Nation's fishery resources. U.S. Dep. Commer., NOAA Tech. Memo. NMFS-F/SPO-65, 205p.
+
 Stern, C., K. Palof. 2024. Saint Matthew Island blue king crab stock assessment 2024. In: Stock Assessment and Fishery Evaluation Report for the King and Tanner Crab Fisheries of the Bering Sea and Aleutian Islands: 2024 Final Crab SAFE. North Pacific Fishery Management Council, Anchorage AK.
 
 Stockhausen, W.T. 2024. 2024 stock assessment and fishery evaluation report for the Tanner crab fisheries of the Bering Sea and Aleutians Islands regions. In: Stock Assessment and Fishery Evaluation Report for the King and Tanner Crab Fisheries of the Bering Sea and Aleutian Islands: 2024 Final Crab SAFE. North Pacific Fishery Management Council, Anchorage AK.
@@ -160,36 +153,79 @@ Yalcin, S., S.C. Anderson, P.M. Regular, P.A. English. 2023. Exploring the limit
 
 # Tables {-}
 
+\clearpage
 
-# Figures
+# Figures {-}
+```{r bairdi-EBS-grid, fig.align = "center", fig.cap = "Prediction grid used for Tanner crab spatial abundance and biomass predictions. Spatial resolution is 5$^2$ and does not include land."}
 
-```{r, fig.align = "center", fig.cap = "Q-Q plot of DHARMa residuals for EBS-wide abundance models fit using NMFS summer bottom trawl survey data before 1988 (left) and 1988 onward (right) using 120 knots in the model mesh."}
-
-knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_abundance_EBS_QQplot.png"))
-```
-```{r, fig.align = "center", fig.cap = "Q-Q plot of DHARMa residuals for EBS-wide biomass models fit using NMFS summer bottom trawl survey data before 1988 (left) and 1988 onward (right) using 120 knots in the model mesh."}
-
-knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_biomass_EBS_QQplot.png"))
 ```
 
-```{r, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide male abundance models fit using NMFS summer bottom trawl survey data before 1988 and 1988 onward. Predictions from both these periods/models are combined in this figure."}
+```{r bairdi-50-mesh, fig.align = "center", fig.cap = "Spatial mesh with 50 knots used for fitting Tanner crab spatial models. Points represent observations and vertices represent knot locations."}
 
-knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Male_abundance120_SPATIAL.png"))
+knitr::include_graphics(here::here("BAIRDI/Figures/mesh50.png"))
 ```
 
-```{r, fig.align = "center", fig.cap = "Estimated abundance (millions) for Eastern Bering Sea Tanner crab (Chionoecetes bairdi). Colored lines represent abundance (±95% CI) estimated by sdmTMB, with pink and blue denoting models fit with a 50- and 120-knot mesh, respectively. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey."}
+```{r bairdi-90-mesh, fig.align = "center", fig.cap = "Spatial mesh with 90 knots used for fitting Tanner crab spatial models. Points represent observations and vertices represent knot locations."}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/mesh90.png"))
+```
+
+```{r bairdi-120-mesh, fig.align = "center", fig.cap = "Spatial mesh with 120 knots used for fitting Tanner crab spatial models. Points represent observations and vertices represent knot locations."}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/mesh120.png"))
+```
+
+```{r DHARMa-abund-QQ-90, fig.align = "center", fig.cap = "Q-Q plot of DHARMa residuals for EBS-wide abundance models fit with NMFS summer bottom trawl survey data before 1988 (left) and 1988 onward (right) using 90 knots in the model mesh."}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_abundance_EBS_90_QQplot.png"))
+```
+
+```{r DHARMa-bio-QQ-90, fig.align = "center", fig.cap = "Q-Q plot of DHARMa residuals for EBS-wide biomass models fit with NMFS summer bottom trawl survey data before 1988 (left) and 1988 onward (right) using 90 knots in the model mesh."}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_biomass_EBS_90_QQplot.png"))
+```
+
+```{r DHARMa-abund-spat-90-male, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide male abundance models fit using NMFS summer bottom trawl survey data before 1988 and 1988 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure."}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Male_abundance90_SPATIAL.png"))
+```
+
+```{r DHARMa-abund-spat-90-imfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide immature female abundance models fit using NMFS summer bottom trawl survey data before 1988 and 1988 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure."}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Immature Female_abundance90_SPATIAL.png"))
+```
+
+```{r DHARMa-abund-spat-90-matfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide mature female abundance models fit using NMFS summer bottom trawl survey data before 1988 and 1988 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure."}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Mature Female_abundance90_SPATIAL.png"))
+```
+
+```{r DHARMa-bio-spat-90-male, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide male biomass models fit using NMFS summer bottom trawl survey data before 1988 and 1988 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure."}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Male_biomass90_SPATIAL.png"))
+```
+
+```{r DHARMa-bio-spat-90-imfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide immature female biomass models fit using NMFS summer bottom trawl survey data before 1988 and 1988 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure."}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Immature Female_biomass90_SPATIAL.png"))
+```
+
+```{r DHARMa-bio-spat-90-matfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide mature female biomass models fit using NMFS summer bottom trawl survey data before 1988 and 1988 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure."}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Mature Female_biomass90_SPATIAL.png"))
+```
+
+
+```{r bairdi-abund-index, fig.align = "center", fig.cap = "Estimated abundance (millions) for Tanner crab. Colored lines represent abundance (±95% CI) estimated by sdmTMB, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey."}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.abundance.index.png"))
 ```
 
-```{r, fig.align = "center", fig.cap = "Estimated biomass (tons) for Eastern Bering Sea Tanner crab (Chionoecetes bairdi). Colored lines represent abundance (±95% CI) estimated by sdmTMB, with pink and blue denoting models fit with a 50- and 120-knot mesh, respectively. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey."}
+```{r bairdi-bio-index, fig.align = "center", fig.cap = "Estimated biomass (tons) for Eastern Bering Sea Tanner crab. Colored lines represent abundance (±95% CI) estimated by sdmTMB, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent biomass (±95% CI) estimated by the NMFS summer bottom trawl survey."}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.biomass.index.png"))
 ```
 
-\clearpage
-
-# Figures {-}
 
 ```{r nsrkc-pred-grid, fig.align = "center", fig.cap = "Prediction grid used for Norton Sound red king crab spatial abundance predictions. Spatial resolution is 5 km$^2$."}
 
@@ -306,3 +342,7 @@ knitr::include_graphics(here::here("SMBKC/plots/pred_heat_iid_120kn.png"))
 
 knitr::include_graphics(here::here("SMBKC/plots/smbkc_model_fit.png"))
 ```
+
+\clearpage
+
+# Appendix {-}

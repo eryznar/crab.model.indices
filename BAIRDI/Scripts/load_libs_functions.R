@@ -32,10 +32,11 @@ source("Y:/KOD_Survey/EBS Shelf/Spatial crab/load.spatialdata.R")
 # Set coordinate reference system
 ncrs <- "+proj=aea +lat_0=50 +lon_0=-154 +lat_1=55 +lat_2=65 +x_0=0 +y_0=0 +datum=NAD83 +units=km +no_defs"
 
-pred_grid <- readRDS(here::here("BAIRDI/data/EBS_bairdi_grid_5km_No_Land.rds")) 
-
 # Set directory on the Y:: drive to save models, outputs, etc.
 dir <- "Y:/KOD_Research/Ryznar/Model-based indices/BAIRDI/"
+
+# Load prediction grid
+pred_grid <- readRDS(here::here(paste0(dir, "Data/EBS_bairdi_grid_5km_No_Land.rds")) )
 
 ### LOAD FUNCTIONS -------------------------------------------------------------
 fit_models <- function(data, matsex, stock, years, period, knots){
@@ -67,7 +68,7 @@ fit_models <- function(data, matsex, stock, years, period, knots){
                   anisotropy = TRUE,
                   data = data2)
   
-  saveRDS(abund, paste0("./BAIRDI/Models/bairdi_", matsex, "_", stock, "_", period, "_", knots, "_abundTMB.rda"))
+  saveRDS(abund, paste0(dir, "Models/bairdi_", matsex, "_", stock, "_", period, "_", knots, "_abundTMB.rda"))
   
   print("Fitting biomass model")
   bio <- sdmTMB(cpue_kg_km ~ 0 + year_fac, #the 0 is there so there is a factor predictor for each time slice
@@ -80,7 +81,7 @@ fit_models <- function(data, matsex, stock, years, period, knots){
                 anisotropy = TRUE,
                 data = data2)
   
-  saveRDS(bio, paste0("./BAIRDI/Models/bairdi_", matsex, "_", stock, "_", period, "_", knots, "_bioTMB.rda"))
+  saveRDS(bio, paste0(dir, "Models/bairdi_", matsex, "_", stock, "_", period, "_", knots, "_bioTMB.rda"))
   
   return(list(abundTMB = abund, bioTMB = bio, mesh = mesh2))
 }
@@ -214,7 +215,7 @@ predict_and_getindex <- function(newdat, abund.mod, bio.mod, matsex, stock, year
 ### PROCESS DATA -----------------------------------------------------------------
 
 # Load and process response data
-tan.cpue <- read.csv("./BAIRDI/Data/bairdi_cpue2.csv") %>%
+tan.cpue <- read.csv(paste0(dir, "Data/bairdi_cpue2.csv")) %>%
   dplyr::select(!X) %>%
   st_as_sf(., coords = c("MID_LONGITUDE", "MID_LATITUDE"), crs = "+proj=longlat +datum=WGS84") %>%
   st_transform(., crs = "+proj=utm +zone=2") %>%
@@ -247,14 +248,14 @@ tan.cpue2 <- tan.cpue %>%
 
 
 # Load observed abundance/biomass
-tan.obs <- right_join(rbind(read.csv("./BAIRDI/Data/E166_CB_OBSERVEDabundbio.csv"),
-                            read.csv("./BAIRDI/Data/W166_CB_OBSERVEDabundbio.csv")) %>%
+tan.obs <- right_join(rbind(read.csv(paste0(dir, "Data/E166_CB_OBSERVEDabundbio.csv")),
+                            read.csv(paste0(dir, "Data/W166_CB_OBSERVEDabundbio.csv"))) %>%
                         rename(Year = AKFIN_SURVEY_YEAR, matsex = MAT_SEX, stock = STOCK, abundance= ABUNDANCE, biomass = BIOMASS) %>%
                         dplyr::select(Year, matsex, abundance, biomass, stock) %>%
                         mutate(abundance = abundance/1e6, biomass = biomass/1000) %>%
                         pivot_longer(., c("abundance", "biomass"), names_to = "type", values_to = "value"),
-                      rbind(read.csv("./BAIRDI/Data/E166_CB_OBSERVEDabundbio.csv"),
-                            read.csv("./BAIRDI/Data/W166_CB_OBSERVEDabundbio.csv")) %>%
+                      rbind(read.csv(paste0(dir, "Data/E166_CB_OBSERVEDabundbio.csv")),
+                            read.csv(paste0(dir, "Data/W166_CB_OBSERVEDabundbio.csv"))) %>%
                         dplyr::select(AKFIN_SURVEY_YEAR,MAT_SEX, ABUNDANCE_CI, BIOMASS_CI, STOCK) %>%
                         rename(Year = AKFIN_SURVEY_YEAR, matsex = MAT_SEX, stock = STOCK, abundance = ABUNDANCE_CI, biomass = BIOMASS_CI) %>%
                         mutate(abundance = abundance/1e6, biomass = biomass/1000) %>%

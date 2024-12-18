@@ -46,6 +46,8 @@ Develop spatiotemporal model-based indices for
 - St. Matthew Island blue king crab
 - Norton Sound red king crab
 
+Develop a transparent process for evaluating and selecting models
+
 <p class="forceBreak"></p>
 
 ```{r baby-crab, out.width = "100%", out.height = "100%", echo = FALSE}
@@ -53,6 +55,15 @@ Develop spatiotemporal model-based indices for
 knitr::include_graphics(paste0(here::here(), "/presentation/photos/DSCN2724_n.jpg"), dpi = 450)
 ```
 
+## Approach
+
+sdmTMB R package
+
+
+## Model-fitting decision points
+
+
+## Model diagnostics
 
 
 ## Thanks!

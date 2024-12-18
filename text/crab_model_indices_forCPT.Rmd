@@ -48,7 +48,23 @@ Spatiotemporal model-based index development is expected to confer distinct adva
 
 # Methods {-}
 
-We fit models using the R package *sdmTMB*. After fitting a model, we used the sanity() command to check whether the model converged, the Hessian matrix was positive definite, and any extreme eigenvalues were detected, among other checks. For models that passed the sanity() checks, we used the R package *DHARMa* (Hartig 2022) for model diagnostics. After calculating the DHARMa residuals using the function DHARMa::dharma_residuals(), we tested for quantile deviations, under/overdispersion, outliers, and zero inflation using the functions DHARMa::testQuantiles(), DHARMa::testDispersion(), DHARMa::testOutliers(), and DHARMa::testZeroInflation(), respectively.
+We fit models using the R package *sdmTMB*. After fitting each model, we used the following steps to evaluate models:
+
+- the sdmTMB::sanity() function. Output of this function for a model that passes all sanity checks looks like this:
+
+✔ Non-linear minimizer suggests successful convergence
+✔ Hessian matrix is positive definite
+✔ No extreme or very small eigenvalues detected
+✔ No gradients with respect to fixed effects are >= 0.001
+✔ No fixed-effect standard errors are NA
+✔ No standard errors look unreasonably large
+✔ No sigma parameters are < 0.01
+✔ No sigma parameters are > 100
+✔ Range parameter doesn't look unreasonably large
+
+- If a model passed all the sanity checks, we used the R package *DHARMa* (Hartig 2022) to calculate the DHARMa residuals using the function DHARMa::dharma_residuals().
+
+- We tested for quantile deviations, under/overdispersion, outliers, and zero inflation using the functions DHARMa::testQuantiles(), DHARMa::testDispersion(), DHARMa::testOutliers(), and DHARMa::testZeroInflation(), respectively.
 
 A number of decision points arise when fitting models using *sdmTMB*, including:
 - the resolution of the spatial mesh used in fitting the model. A higher number of knots, specified when creating the spatial mesh using the make_mesh() function, indicates a higher resolution mesh. Few guidelines exist to aid in selection of an appropriate mesh resolution for a given dataset. 

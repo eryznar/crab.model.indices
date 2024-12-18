@@ -86,7 +86,9 @@ fit_models <- function(data, matsex, stock, years, period, knots){
   return(list(abundTMB = abund, bioTMB = bio, mesh = mesh2))
 }
 
-evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knots, matsex2){
+evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knots, family, method, matsex2){
+  
+  mod <- paste0(type, "-", knots, "-", family)
   
   # Run sanity check
   print("Pre-1982 model")
@@ -95,9 +97,6 @@ evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knot
   sanity_check_post <- sanity(post.model) 
   
   # Calculate Dharma residuals
-  # resid1 <- simulate(pre.model, nsim = 300, type= "mle-mvn")|>
-  #               dharma_residuals(pre.model, return_DHARMa = TRUE)
-  
   resid1 <- simulate(pre.model, nsim = 300, type= "mle-mvn")|>
                 dharma_residuals(pre.model, plot = FALSE)
   
@@ -110,11 +109,7 @@ evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knot
     ggtitle("<1982")+
     theme(axis.text = element_text(size = 12),
           axis.title = element_text(size = 12)) -> r1.plot
-  
-  #ggsave(filename = paste0("./BAIRDI/Figures/DHARMa_pre1988_", type, "_", stock2, "_", matsex2, "_", knots, ".png"), width=7, height=5, units="in")
-
-
-  # 
+    # 
   # png(filename = paste0("./BAIRDI/Figures/DHARMa_pre1988_", type, "_", stock2, "_", matsex2, "_", knots, ".png"), width=7, height=5, units="in", res=600)
   # 
   # plot(resid1, title= paste0("DHARMa residuals (Pre-1988, ", type, ",", stock2, " ", matsex2, ", knots=", knots, ")"))
@@ -137,17 +132,7 @@ evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knot
   rbind(resid1 %>% mutate(period = "<1982"), resid2 %>% mutate(period = "≥1982")) %>%
     mutate(matsex = matsex2) -> all.resids
   
-  #cowplot::plot_grid(r1.plot, r2.plot) -> qqplot
-  
-  #ggsave(qqplot, filename = paste0("./BAIRDI/Figures/DHARMa_", type, "_", stock2, "_", matsex2, "_", knots, ".png"), width=7, height=5, units="in")
-  
  
-  # png(filename = paste0("./BAIRDI/Figures/DHARMa_post1988_", type, "_", stock2, "_", matsex2, "_", knots, ".png"), width=7, height=5, units="in", res=600)
-  # 
-  # plot(resid2, title= paste0("DHARMa residuals (Post-1988, ", type, ",", stock2, " ", matsex2, ", knots=", knots, ")"))
-  # 
-  # dev.off()
-  
   resid1 <- simulate(pre.model, nsim = 300, type= "mle-mvn")|>
     dharma_residuals(pre.model, return_DHARMa = TRUE)
   resid2 <- simulate(post.model, nsim = 300, type= "mle-mvn")|>
@@ -178,9 +163,43 @@ evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knot
     theme(axis.title = element_text(size = 10),
           legend.position = "bottom") -> res_plot
   
-  ggsave(plot = res_plot, paste0("./BAIRDI/Figures/DHARMa", stock2, "_", matsex2, "_", type, knots, "_SPATIAL.png"), height = 9, width = 8.5, units = "in")
+  ggsave(plot = res_plot, paste0("./BAIRDI/Figures/DHARMa", stock2, "_", matsex2, "_", mod, "_SPATIAL.png"), height = 9, width = 8.5, units = "in")
   
-  return(list(sanity_check_pre, sanity_check_post, all.resids))
+  # Calculate log-likelihood
+  clust <- sample(seq_len(10), size = nrow(pre.model$data), replace = TRUE)
+  
+   pre.ll <- sdmTMB_cv(
+      data = pre.model$data, 
+      formula = cpue_km ~ 0 + year_fac, 
+      spatial = "on",
+      time = "year", 
+      mesh = pre.model$spde, 
+      spatiotemporal = "iid",
+      silent = FALSE,
+      anisotropy = TRUE,
+      family = tweedie(link = "log"),
+      fold_ids = clust
+    )
+   
+   clust <- sample(seq_len(10), size = nrow(post.model$data), replace = TRUE)
+   
+   post.ll <- sdmTMB_cv(
+     data = post.model$data, 
+     formula = cpue_km ~ 0 + year_fac, 
+     spatial = "on",
+     time = "year", 
+     mesh = post.model$spde, 
+     spatiotemporal = "iid",
+     silent = FALSE,
+     anisotropy = TRUE,
+     family = tweedie(link = "log"),
+     fold_ids = clust
+   )
+   
+   eval.df <- data.frame(matsex = matsex2, type = type, knots = knots, family = family, method = method, 
+              loglik.premod = pre.ll$sum_loglik, loglik.postmod = post.ll$sum_loglik)
+  
+  return(list(sanity_check_pre, sanity_check_post, all.resids, eval.df))
 }
 
 predict_and_getindex <- function(newdat, abund.mod, bio.mod, matsex, stock, years, period, knots){

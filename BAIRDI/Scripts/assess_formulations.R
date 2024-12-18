@@ -247,10 +247,12 @@ stock <- "All"
                               read.csv(paste0(dir, "Output/Male_abundance_All_post-1982_90_DG_IID_index.csv"))) %>%
                               rename(abundance = est, Year = year) %>%
                               mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
-                              mutate(model = "Delta-gamma, IID, 90kn")
+                              mutate(model = "Delta-gamma, IID, 90kn") %>%
+        dplyr::select(!c(type))
   
   DLN_IID <- rbind(read.csv(paste0(dir, "Output/Male_abundance_All_pre-1982_90_DLN_IID_index.csv")),
-                              read.csv(paste0(dir, "Output/Male_abundance_All_post-1982_90_DLN_IID_index.csv"))) %>%
+                              read.csv(paste0(dir, "Output/Male_abundance_All_post-1982_90_DLN_IID_index.csv")) %>%
+                                        dplyr::select(!type)) %>%
                               rename(abundance = est, Year = year) %>%
                               mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
                               mutate(model = "Delta-lognormal, IID, 90kn")
@@ -285,17 +287,22 @@ stock <- "All"
   
   # Plot indices
   ggplot()+
-    geom_ribbon(All.abund.index2, mapping = aes(x = Year, ymin = lwr, ymax = upr, fill = model), alpha = 0.4)+
-    geom_line(All.abund.index2, mapping = aes(Year, abundance, color = model))+
-    geom_point(tan.obs3 %>% filter(type == "abundance"),
-               mapping = aes(Year, value), color = "grey20", size = 0.75)+
-    geom_errorbar(tan.obs3 %>% filter(type == "abundance"),
+    geom_ribbon(All.abund.index2, mapping = aes(x = Year, ymin = lwr, ymax = upr, fill = model), alpha = 0.3)+
+    geom_line(All.abund.index2, mapping = aes(Year, abundance, color = model), linewidth = 1)+
+    geom_point(tan.obs3 %>% filter(type == "abundance", matsex == "Male"),
+               mapping = aes(Year, value), color = "grey20", size = 1)+
+    geom_errorbar(tan.obs3 %>% filter(type == "abundance", matsex == "Male"),
                   mapping = aes(x = Year, ymin = value - CI, ymax = value+CI), color = "grey20", width = 0)+
     theme_bw()+
     ylab("Abundance (millions)")+
-    ggtitle("EBS Tanner estimated abundance") +
-    scale_color_manual(values = c("salmon", "turquoise", "violet", "lightgreen"), labels = c("50", "90", "120"), name = "Model")+
-    scale_fill_manual(values = c("salmon", "turquoise", "violet", "lightgreen"), labels = c("50", "90", "120"), name = "Model")+
+    ggtitle("EBS Tanner male estimated abundance") +
+    scale_color_manual(values = c("salmon", "turquoise", "violet", "lightgreen"), 
+                       labels = c("Delta-gamma, IID, 90kn", "Delta-lognormal, IID, 90kn","Tweedie, AR1, 90kn", "Tweedie, IID, 90kn"), 
+                       name = "Model")+
+    scale_fill_manual(values = c("salmon", "turquoise", "violet", "lightgreen"), 
+                      labels = c("Delta-gamma, IID, 90kn", "Delta-lognormal, IID, 90kn","Tweedie, AR1, 90kn", "Tweedie, IID, 90kn"),
+                      name = "Model")+
+    guides(color = guide_legend(nrow = 2, byrow = TRUE), fill = guide_legend(nrow = 2, byrow = TRUE))+
     theme(legend.position = "bottom", 
           legend.direction = "horizontal",
           axis.title = element_text(size = 14),
@@ -303,4 +310,6 @@ stock <- "All"
           strip.text = element_text(size = 14),
           legend.text = element_text(size = 14),
           legend.title = element_text(size = 14),
-          title = element_text(size = 16)) -> abund.ind.plot.EBS
+          title = element_text(size = 16)) -> form.plot
+  
+  ggsave(plot = form.plot,  "./BAIRDI/Figures/male_abundance_modelformulations.png", height= 7, width = 8, units = "in")

@@ -333,14 +333,14 @@ pred_grid2 <- pred_grid %>%
     
 
     # Predict and get index
-    abund.mod1 <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_120_abundTMB.rda")
-    bio.mod1 <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_120_bioTMB.rda")
+    abund.mod1 <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_120_abundTMB.rda"))
+    bio.mod1 <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_120_bioTMB.rda"))
     
-    abund.mod2 <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_90_abundTMB.rda")
-    bio.mod2 <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_90_bioTMB.rda")
+    abund.mod2 <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_90_abundTMB.rda"))
+    bio.mod2 <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_90_bioTMB.rda"))
     
-    abund.mod3 <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_50_abundTMB.rda")
-    bio.mod3 <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_50_bioTMB.rda")
+    abund.mod3 <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_50_abundTMB.rda"))
+    bio.mod3 <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_50_bioTMB.rda"))
     
     predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 120) ->  out
     predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90) ->  out

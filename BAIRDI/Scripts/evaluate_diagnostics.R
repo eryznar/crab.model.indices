@@ -150,15 +150,15 @@ pred_grid2 <- pred_grid %>%
   
   # Abundance
   type <- "abundance"
-  pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_50_abundTMB.rda")
-  post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_50_abundTMB.rda")
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_50_abundTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_50_abundTMB.rda"))
   
-  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, matsex2) -> ab.males
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, "TW", "IID", matsex2) -> ab.males
   
   # Biomass
   type <- "biomass"
-  pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_50_bioTMB.rda")
-  post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_50_bioTMB.rda")
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_50_bioTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_50_bioTMB.rda"))
   
   evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, matsex2) -> bio.males
   
@@ -169,15 +169,15 @@ pred_grid2 <- pred_grid %>%
   
   # Abundance
   type <- "abundance"
-  pre.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1982_50_abundTMB.rda")
-  post.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1982_50_abundTMB.rda")
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_50_abundTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_50_abundTMB.rda"))
   
   evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, matsex2) -> ab.imfem
   
   # Biomass
   type <- "biomass"
-  pre.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1982_50_bioTMB.rda")
-  post.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1982_50_bioTMB.rda")
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_50_bioTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_50_bioTMB.rda"))
   
   evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, matsex2) -> bio.imfem
   
@@ -188,15 +188,15 @@ pred_grid2 <- pred_grid %>%
   
   # Abundance
   type <- "abundance"
-  pre.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1982_50_abundTMB.rda")
-  post.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1982_50_abundTMB.rda")
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_50_abundTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_50_abundTMB.rda"))
   
   evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, matsex2) -> ab.matfem
   
   # Biomass
   type <- "biomass"
-  pre.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1982_50_bioTMB.rda")
-  post.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1982_50_bioTMB.rda")
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_50_bioTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_50_bioTMB.rda"))
   
   evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, matsex2) -> bio.matfem
   
@@ -245,15 +245,15 @@ pred_grid2 <- pred_grid %>%
   
   # Abundance
   type <- "abundance"
-  pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_90_abundTMB.rda")
-  post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_90_abundTMB.rda")
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_90_abundTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_90_abundTMB.rda"))
   
   evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, matsex2) -> ab.males
   
   # Biomass
   type <- "biomass"
-  pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_90_bioTMB.rda")
-  post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_90_bioTMB.rda")
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_90_bioTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_90_bioTMB.rda"))
   
   evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, matsex2) -> bio.males
 
@@ -264,15 +264,15 @@ pred_grid2 <- pred_grid %>%
   
   # Abundance
   type <- "abundance"
-  pre.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1982_90_abundTMB.rda")
-  post.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1982_90_abundTMB.rda")
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_90_abundTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_90_abundTMB.rda"))
   
   evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, matsex2) -> ab.imfem
   
   # Biomass
   type <- "biomass"
-  pre.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1982_90_bioTMB.rda")
-  post.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1982_90_bioTMB.rda")
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_90_bioTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_90_bioTMB.rda"))
   
   evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, matsex2) -> bio.imfem
   
@@ -284,15 +284,15 @@ pred_grid2 <- pred_grid %>%
   
   # Abundance
   type <- "abundance"
-  pre.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1982_90_abundTMB.rda")
-  post.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1982_90_abundTMB.rda")
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_90_abundTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_90_abundTMB.rda"))
   
   evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, matsex2) -> ab.matfem
   
   # Biomass
   type <- "biomass"
-  pre.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1982_90_bioTMB.rda")
-  post.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1982_90_bioTMB.rda")
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_90_bioTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_90_bioTMB.rda"))
   
   evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, matsex2) -> bio.matfem
   
@@ -341,15 +341,15 @@ pred_grid2 <- pred_grid %>%
  
  # Abundance
  type <- "abundance"
- pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_120_abundTMB.rda")
- post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_120_abundTMB.rda")
+ pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_120_abundTMB.rda"))
+ post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_120_abundTMB.rda"))
  
  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> ab.males
  
  # Biomass
  type <- "biomass"
- pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_120_bioTMB.rda")
- post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_120_bioTMB.rda")
+ pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_120_bioTMB.rda"))
+ post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_120_bioTMB.rda"))
  
  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> bio.males
  
@@ -360,15 +360,15 @@ pred_grid2 <- pred_grid %>%
  
  # Abundance
  type <- "abundance"
- pre.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1982_120_abundTMB.rda")
- post.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1982_120_abundTMB.rda")
+ pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_120_abundTMB.rda"))
+ post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_120_abundTMB.rda"))
  
  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> ab.imfem
  
  # Biomass
  type <- "biomass"
- pre.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1982_120_bioTMB.rda")
- post.model <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1982_120_bioTMB.rda")
+ pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_120_bioTMB.rda"))
+ post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_120_bioTMB.rda"))
  
  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> bio.imfem
  
@@ -380,15 +380,15 @@ pred_grid2 <- pred_grid %>%
  
  # Abundance
  type <- "abundance"
- pre.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1982_120_abundTMB.rda")
- post.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1982_120_abundTMB.rda")
+ pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_120_abundTMB.rda"))
+ post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_120_abundTMB.rda"))
  
  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> ab.matfem
  
  # Biomass
  type <- "biomass"
- pre.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1982_120_bioTMB.rda")
- post.model <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1982_120_bioTMB.rda")
+ pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_120_bioTMB.rda"))
+ post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_120_bioTMB.rda"))
  
  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> bio.matfem
  
@@ -440,8 +440,8 @@ tan.cpue2 %>%
     # Mesh is the same across matsex and abund/biomass, so just evaluating male models @ diff knots below
  
     # 120
-    pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_120_abundTMB.rda")
-    post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_120_abundTMB.rda")
+    pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_120_abundTMB.rda"))
+    post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_120_abundTMB.rda"))
     
     pre.model$spde$mesh$n # needs to be <136
     post.model$spde$mesh$n # needs to be <342
@@ -466,8 +466,8 @@ tan.cpue2 %>%
     
     
     # 90
-    pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_90_abundTMB.rda")
-    post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_90_abundTMB.rda")
+    pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_90_abundTMB.rda"))
+    post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_90_abundTMB.rda"))
     
     pre.model$spde$mesh$n # needs to be <136
     post.model$spde$mesh$n # needs to be <342
@@ -490,8 +490,8 @@ tan.cpue2 %>%
     ggsave("./BAIRDI/Figures/mesh90.png", height = 8, width = 6, units = "in")
     
     # 50
-    pre.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_pre-1982_50_abundTMB.rda")
-    post.model <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_50_abundTMB.rda")
+    pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_50_abundTMB.rda"))
+    post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_50_abundTMB.rda"))
     
     pre.model$spde$mesh$n # needs to be <136
     post.model$spde$mesh$n # needs to be <342

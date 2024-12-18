@@ -34,6 +34,9 @@ ncrs <- "+proj=aea +lat_0=50 +lon_0=-154 +lat_1=55 +lat_2=65 +x_0=0 +y_0=0 +datu
 
 pred_grid <- readRDS(here::here("BAIRDI/data/EBS_bairdi_grid_5km_No_Land.rds")) 
 
+# Set directory on the Y:: drive to save models, outputs, etc.
+dir <- "Y:/KOD_Research/Ryznar/Model-based indices/BAIRDI/"
+
 ### LOAD FUNCTIONS -------------------------------------------------------------
 fit_models <- function(data, matsex, stock, years, period, knots){
   

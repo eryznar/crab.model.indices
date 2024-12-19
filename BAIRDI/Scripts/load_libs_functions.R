@@ -216,7 +216,7 @@ evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knot
                          period = c("<1982", "≥1982"),
                          loglik = c(pre.ll$sum_loglik, post.ll$sum_loglik),
                          quantiles = c(qq1, qq2),
-                         dispersion = c(dd1, dd1),
+                         dispersion = c(dd1, dd2),
                          outliers = c(oo1, oo2),
                          zeroinf = c(zz1, zz2))
               

@@ -128,7 +128,7 @@ source("./BAIRDI/Scripts/load_libs_functions.R")
   
   evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> out
   
-### EBS-wide ------------
+### EVALUATE MODELS EBS-wide ------------
 years <- c(1975:2019, 2021:2024)
 
 pred_grid2 <- pred_grid %>%
@@ -142,7 +142,7 @@ pred_grid2 <- pred_grid %>%
   rename(lon = X, lat = Y)
 
 
-## 50 knots ----
+## TWEEDIE IID 50 knots ----
   ## Males -----  
   data <- tan.cpue2
   matsex2 <- "Male"
@@ -241,7 +241,7 @@ pred_grid2 <- pred_grid %>%
   ggsave(filename = paste0("./BAIRDI/Figures/DHARMa_biomass_EBS_50_QQplot.png"), width=6, height=7, units="in")
   
   
-## 90 knots ----
+## TWEEDIE IID 90 knots ----
   ## Males -----  
   data <- tan.cpue2
   matsex2 <- "Male"
@@ -341,7 +341,7 @@ pred_grid2 <- pred_grid %>%
  ggsave(filename = paste0("./BAIRDI/Figures/DHARMa_biomass_EBS_90_QQplot.png"), width=6, height=7, units="in")
  
  
-## 120 knots ----
+## TWEEDIE IID 120 knots ----
  ## Males -----  
  data <- tan.cpue2
  matsex2 <- "Male"
@@ -442,6 +442,46 @@ pred_grid2 <- pred_grid %>%
  ggsave(filename = paste0("./BAIRDI/Figures/DHARMa_biomass_EBS_120_QQplot.png"), width=6, height=7, units="in")
  
  
+ 
+ 
+## DELTA GAMMA IID 90 knots ----
+ ## Males -----
+ data <- tan.cpue2
+ matsex2 <- "Male"
+ stock2 <- "All"
+ 
+ # Abundance
+ type <- "abundance"
+ pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_90_abund_DG_IID.rda"))
+ post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_90_abund_DG_IID.rda"))
+ 
+ evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "DG", "IID", matsex2) -> ab.males.DG
+ 
+## DELTA LOGNORMAL IID 90 knots ----
+ ## Males -----
+ data <- tan.cpue2
+ matsex2 <- "Male"
+ stock2 <- "All"
+ 
+ # Abundance
+ type <- "abundance"
+ pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_90_abund_DLN_IID.rda"))
+ post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_90_abund_DLN_IID.rda"))
+ 
+ evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "DLN", "IID", matsex2) -> ab.males.DLN
+ 
+ ## TWEEDIE AR1 90 knots ----
+ ## Males -----
+ data <- tan.cpue2
+ matsex2 <- "Male"
+ stock2 <- "All"
+ 
+ # Abundance
+ type <- "abundance"
+ pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_90_abund_T_AR1.rda"))
+ post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_90_abund_T_AR1.rda"))
+ 
+ evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "TW", "AR1", matsex2) -> ab.males.TAR1
  
  
 ## Bind all evaluation dfs -----

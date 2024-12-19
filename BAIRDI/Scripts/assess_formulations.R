@@ -154,7 +154,7 @@ stock <- "All"
                       anisotropy = TRUE,
                       data = data2)
       
-      saveRDS(abund, paste0(dir, "Models/bairdi_Male_All_post-1982_90_abund_DG_IID.rda"))
+      saveRDS(abund, paste0(dir, "Models/bairdi_Male_All_post-1982_90_abund_DLN_IID.rda"))
       
       # Predict and get index  
       newdat %>%

@@ -160,7 +160,7 @@ pred_grid2 <- pred_grid %>%
   pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_50_bioTMB.rda"))
   post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_50_bioTMB.rda"))
   
-  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, matsex2) -> bio.males
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, "TW", "IID", matsex2) -> bio.males
   
   ## Immature Females -----  
   data <- tan.cpue2
@@ -172,14 +172,14 @@ pred_grid2 <- pred_grid %>%
   pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_50_abundTMB.rda"))
   post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_50_abundTMB.rda"))
   
-  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, matsex2) -> ab.imfem
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, "TW", "IID", matsex2) -> ab.imfem
   
   # Biomass
   type <- "biomass"
   pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_50_bioTMB.rda"))
   post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_50_bioTMB.rda"))
   
-  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, matsex2) -> bio.imfem
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, "TW", "IID", matsex2) -> bio.imfem
   
   ## Mature Females -----  
   data <- tan.cpue2
@@ -191,16 +191,18 @@ pred_grid2 <- pred_grid %>%
   pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_50_abundTMB.rda"))
   post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_50_abundTMB.rda"))
   
-  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, matsex2) -> ab.matfem
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, "TW", "IID", matsex2) -> ab.matfem
   
   # Biomass
   type <- "biomass"
   pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_50_bioTMB.rda"))
   post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_50_bioTMB.rda"))
   
-  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, matsex2) -> bio.matfem
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, "TW", "IID", matsex2) -> bio.matfem
   
-  
+  ## Eval df -----
+  eval.abund50 <- rbind(ab.males, ab.imfem, ab.matfem)
+  eval.bio50 <- rbind(bio.males, bio.imfem, bio.matfem)
   
   ## All abundance QQ plots ----
   rbind(ab.males[[3]], ab.imfem[[3]], ab.matfem[[3]]) %>%
@@ -248,14 +250,14 @@ pred_grid2 <- pred_grid %>%
   pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_90_abundTMB.rda"))
   post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_90_abundTMB.rda"))
   
-  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, matsex2) -> ab.males
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "TW", "IID", matsex2) -> ab.males
   
   # Biomass
   type <- "biomass"
   pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_90_bioTMB.rda"))
   post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_90_bioTMB.rda"))
   
-  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, matsex2) -> bio.males
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "TW", "IID", matsex2) -> bio.males
 
   ## Immature Females -----  
   data <- tan.cpue2
@@ -267,14 +269,14 @@ pred_grid2 <- pred_grid %>%
   pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_90_abundTMB.rda"))
   post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_90_abundTMB.rda"))
   
-  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, matsex2) -> ab.imfem
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "TW", "IID", matsex2) -> ab.imfem
   
   # Biomass
   type <- "biomass"
   pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_90_bioTMB.rda"))
   post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_90_bioTMB.rda"))
   
-  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, matsex2) -> bio.imfem
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "TW", "IID", matsex2) -> bio.imfem
   
   
   ## Mature Females -----  
@@ -287,16 +289,18 @@ pred_grid2 <- pred_grid %>%
   pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_90_abundTMB.rda"))
   post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_90_abundTMB.rda"))
   
-  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, matsex2) -> ab.matfem
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "TW", "IID", matsex2) -> ab.matfem
   
   # Biomass
   type <- "biomass"
   pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_90_bioTMB.rda"))
   post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_90_bioTMB.rda"))
   
-  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, matsex2) -> bio.matfem
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "TW", "IID", matsex2) -> bio.matfem
   
-  
+  ## Eval df -----
+  eval.abund90 <- rbind(ab.males, ab.imfem, ab.matfem)
+  eval.bio90 <- rbind(bio.males, bio.imfem, bio.matfem)
   
   ## All abundance QQ plots -----
  rbind(ab.males[[3]], ab.imfem[[3]], ab.matfem[[3]]) %>%
@@ -344,14 +348,14 @@ pred_grid2 <- pred_grid %>%
  pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_120_abundTMB.rda"))
  post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_120_abundTMB.rda"))
  
- evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> ab.males
+ evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, "TW", "IID", matsex2) -> ab.males
  
  # Biomass
  type <- "biomass"
  pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_120_bioTMB.rda"))
  post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_120_bioTMB.rda"))
  
- evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> bio.males
+ evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, "TW", "IID", matsex2) -> bio.males
  
  ## Immature Females -----  
  data <- tan.cpue2
@@ -363,14 +367,14 @@ pred_grid2 <- pred_grid %>%
  pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_120_abundTMB.rda"))
  post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_120_abundTMB.rda"))
  
- evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> ab.imfem
+ evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, "TW", "IID", matsex2) -> ab.imfem
  
  # Biomass
  type <- "biomass"
  pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_120_bioTMB.rda"))
  post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_120_bioTMB.rda"))
  
- evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> bio.imfem
+ evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, "TW", "IID", matsex2) -> bio.imfem
  
  
  ## Mature Females -----  
@@ -383,14 +387,18 @@ pred_grid2 <- pred_grid %>%
  pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_120_abundTMB.rda"))
  post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_120_abundTMB.rda"))
  
- evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> ab.matfem
+ evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, "TW", "IID", matsex2) -> ab.matfem
  
  # Biomass
  type <- "biomass"
  pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_120_bioTMB.rda"))
  post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_120_bioTMB.rda"))
  
- evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, matsex2) -> bio.matfem
+ evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, "TW", "IID", matsex2) -> bio.matfem
+ 
+ ## Eval df -----
+ eval.abund120 <- rbind(ab.males, ab.imfem, ab.matfem)
+ eval.bio120 <- rbind(bio.males, bio.imfem, bio.matfem)
  
  ## All abundance QQ plots -----
  rbind(ab.males[[3]], ab.imfem[[3]], ab.matfem[[3]]) %>%
@@ -428,6 +436,14 @@ pred_grid2 <- pred_grid %>%
  
  
  
+ 
+## Bind all evaluation dfs -----
+eval.abund <- rbind(eval.abund50, eval.abund90, eval.abund120)
+eval.bio <- rbind(eval.bio50, eval.bio90, eval.bio120)
+
+write.csv(eval.abund, paste0(dir, "Output/loglik.abund.TW.csv"))
+write.csv(eval.bio, paste0(dir, "Output/loglik.bio.TW.csv"))
+
 ### EVALUATE MESH ----------------------------------------------------------------
 tan.cpue2 %>%
    mutate(period = case_when((year <1982) ~ "<1982",

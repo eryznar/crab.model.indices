@@ -132,11 +132,23 @@ evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knot
   rbind(resid1 %>% mutate(period = "<1982"), resid2 %>% mutate(period = "≥1982")) %>%
     mutate(matsex = matsex2) -> all.resids
   
- 
+ # Test residuals
   resid1 <- simulate(pre.model, nsim = 300, type= "mle-mvn")|>
     dharma_residuals(pre.model, return_DHARMa = TRUE)
   resid2 <- simulate(post.model, nsim = 300, type= "mle-mvn")|>
     dharma_residuals(post.model, return_DHARMa = TRUE)
+  
+  round(DHARMa::testQuantiles(resid1, plot = FALSE)$p.value, 2) -> qq1
+  round(DHARMa::testQuantiles(resid2, plot = FALSE)$p.value, 2) -> qq2
+  
+  round(DHARMa::testDispersion(resid1, plot = FALSE)$p.value, 2) -> dd1
+  round(DHARMa::testDispersion(resid2, plot = FALSE)$p.value,2) -> dd2
+  
+  round(DHARMa::testOutliers(resid1, plot = FALSE)$p.value, 2) -> oo1
+  round(DHARMa::testOutliers(resid2, plot = FALSE)$p.value, 2) -> oo2
+  
+  round(DHARMa::testZeroInflation(resid1, plot = FALSE)$p.value, 2) -> zz1
+  round(DHARMa::testZeroInflation(resid2, plot = FALSE)$p.value, 2) -> zz2
   
   
   if(stock2 != "All"){
@@ -196,8 +208,18 @@ evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knot
      fold_ids = clust
    )
    
-   eval.df <- data.frame(matsex = matsex2, type = type, knots = knots, family = family, method = method, 
-              loglik.premod = pre.ll$sum_loglik, loglik.postmod = post.ll$sum_loglik)
+   eval.df <- data.frame(matsex = rep(matsex2,2), 
+                         type = rep(type,2),
+                         knots = rep(knots,2), 
+                         family = rep(family, 2), 
+                         method = rep(method,2), 
+                         period = c("<1982", "≥1982"),
+                         loglik = c(pre.ll$sum_loglik, post.ll$sum_loglik),
+                         quantiles = c(qq1, qq2),
+                         dispersion = c(dd1, dd1),
+                         outliers = c(oo1, oo2),
+                         zeroinf = c(zz1, zz2))
+              
   
   return(list(sanity_check_pre, sanity_check_post, all.resids, eval.df))
 }

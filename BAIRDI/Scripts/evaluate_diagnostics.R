@@ -201,8 +201,10 @@ pred_grid2 <- pred_grid %>%
   evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 50, "TW", "IID", matsex2) -> bio.matfem
   
   ## Eval df -----
-  eval.abund50 <- rbind(ab.males, ab.imfem, ab.matfem)
-  eval.bio50 <- rbind(bio.males, bio.imfem, bio.matfem)
+  eval.abund50 <- rbind(ab.males[[4]], ab.imfem[[4]], ab.matfem[[4]])
+  eval.bio50 <- rbind(bio.males[[4]], bio.imfem[[4]], bio.matfem[[4]])
+  
+  write.csv(rbind(eval.abund50, eval.bio50), paste0(dir, "Output/eval.TW50.csv"))
   
   ## All abundance QQ plots ----
   rbind(ab.males[[3]], ab.imfem[[3]], ab.matfem[[3]]) %>%
@@ -299,8 +301,10 @@ pred_grid2 <- pred_grid %>%
   evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "TW", "IID", matsex2) -> bio.matfem
   
   ## Eval df -----
-  eval.abund90 <- rbind(ab.males, ab.imfem, ab.matfem)
-  eval.bio90 <- rbind(bio.males, bio.imfem, bio.matfem)
+  eval.abund90 <- rbind(ab.males[[4]], ab.imfem[[4]], ab.matfem[[4]])
+  eval.bio90 <- rbind(bio.males[[4]], bio.imfem[[4]], bio.matfem[[4]])
+
+  write.csv(rbind(eval.abund90, eval.bio90), paste0(dir, "Output/eval.TW90.csv"))
   
   ## All abundance QQ plots -----
  rbind(ab.males[[3]], ab.imfem[[3]], ab.matfem[[3]]) %>%
@@ -397,8 +401,11 @@ pred_grid2 <- pred_grid %>%
  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 120, "TW", "IID", matsex2) -> bio.matfem
  
  ## Eval df -----
- eval.abund120 <- rbind(ab.males, ab.imfem, ab.matfem)
- eval.bio120 <- rbind(bio.males, bio.imfem, bio.matfem)
+ eval.abund120 <- rbind(ab.males[[4]], ab.imfem[[4]], ab.matfem[[4]])
+ eval.bio120 <- rbind(bio.males[[4]], bio.imfem[[4]], bio.matfem[[4]])
+ 
+ write.csv(rbind(eval.abund120, eval.bio120), paste0(dir, "Output/eval.TW120.csv"))
+ 
  
  ## All abundance QQ plots -----
  rbind(ab.males[[3]], ab.imfem[[3]], ab.matfem[[3]]) %>%

@@ -354,7 +354,7 @@ pred_grid2 <- pred_grid %>%
  
  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "Delta_lognormal", "IID", matsex2) -> ab.males.DLN
  
- ## TWEEDIE AR1 90 knots ----
+## TWEEDIE AR1 90 knots ----
  ## Males -----
  data <- tan.cpue2
  matsex2 <- "Male"
@@ -369,11 +369,11 @@ pred_grid2 <- pred_grid %>%
  
  
 ## Bind all evaluation dfs -----
-eval.abund <- rbind(eval.abund50, eval.abund90, eval.abund120)
+eval.abund <- rbind(eval.abund50, eval.abund90, eval.abund120, ab.males.DG[[4]], ab.males.DLN[[4]], ab.males.TAR1[[4]])
 eval.bio <- rbind(eval.bio50, eval.bio90, eval.bio120)
 
-write.csv(eval.abund, paste0(dir, "Output/loglik.abund.TW.csv"))
-write.csv(eval.bio, paste0(dir, "Output/loglik.bio.TW.csv"))
+write.csv(eval.abund, paste0(dir, "Output/model_eval_abund.csv"))
+write.csv(eval.bio, paste0(dir, "Output/model_eval_bio.csv"))
 
 ### EVALUATE MESH ----------------------------------------------------------------
 tan.cpue2 %>%

@@ -179,17 +179,19 @@ stock <- "All"
       mutate(year_fac = as.factor(year)) -> data2
     
       # Make mesh
-      mesh2 <- make_mesh(data2, c("lon","lat"), n_knots = 90, type = "kmeans")
+      mesh2 <- make_mesh(data2, c("lon","lat"), n_knots = 50, type = "kmeans")
       
       # Fit models
-      abund <- sdmTMB(cpue_km ~ 0 + as.factor(year), #the 0 is there so there is a factor predictor for each time slice
+      abund <- sdmTMB(cpue_km ~ 0 + year_fac, #the 0 is there so there is a factor predictor for each time slice
                       spatial = "on",
                       spatiotemporal = "ar1",
                       mesh = mesh2,
-                      family = tweedie(link = "log"),
+                      family = delta_lognormal(),
                       time = "year",
                       anisotropy = TRUE,
                       data = data2)
+      
+      ## DOESN'T CONVERGE!!!!
       
       saveRDS(abund, paste0(dir, "Models/bairdi_Male_All_pre-1982_90_abund_T_AR1.rda"))
       

@@ -18,6 +18,7 @@ header-includes:
    - \usepackage{caption}
    - \newcommand{\blandscape}{\begin{landscape}}
    - \newcommand{\elandscape}{\end{landscape}}
+   - \usepackage{pdflscape}
 
 ---
 
@@ -40,7 +41,7 @@ options(xtable.comment = FALSE)
 
 ```{r, load_data, echo = FALSE, include = FALSE}
 
-nsrkc.loglik <- read.csv(paste0(here::here(), "NSRKC/output/nsrkc_compare_loglik.csv"))
+#nsrkc.loglik <- read.csv(paste0(here::here(), "NSRKC/output/nsrkc_compare_loglik.csv"))
 
 ```
 
@@ -70,15 +71,15 @@ For each stock, we present a range of models to show the effects of choices at e
 
 - Run the sdmTMB::sanity() function. Output of this function for a model that passes all sanity checks looks like this:
 
-✔ Non-linear minimizer suggests successful convergence
-✔ Hessian matrix is positive definite
-✔ No extreme or very small eigenvalues detected
-✔ No gradients with respect to fixed effects are >= 0.001
-✔ No fixed-effect standard errors are NA
-✔ No standard errors look unreasonably large
-✔ No sigma parameters are < 0.01
-✔ No sigma parameters are > 100
-✔ Range parameter doesn't look unreasonably large
+  + Non-linear minimizer suggests successful convergence
+  + Hessian matrix is positive definite
+  + No extreme or very small eigenvalues detected
+  + No gradients with respect to fixed effects are >= 0.001
+  + No fixed-effect standard errors are NA
+  + No standard errors look unreasonably large
+  + No sigma parameters are < 0.01
+  + No sigma parameters are > 100
+  + Range parameter doesn't look unreasonably large
 
 - If a model passed all the sanity checks, we used the R package *DHARMa* (Hartig 2022) to calculate the DHARMa residuals using the function DHARMa::dharma_residuals(). Models that did not pass the sanity checks were excluded from further consideration.
 
@@ -90,7 +91,7 @@ For each stock, we present a range of models to show the effects of choices at e
 
 ## Tanner crab {-}
 
-We utilized abundance and biomass data collected from the NMFS summer bottom trawl survey (1975-2024) to fit Tanner crab models in *sdmTMB*. Sex-size/maturity categories included all males combined, immature females, and mature females, and data were filtered to only include crab with a carapace width greater than or equal to 25mm. As the survey gear and methods were standardized in 1982 (Stauffer 2004), we fit separate models to data before 1982 and data in and after 1982 for each sex-size/maturity category. Models were fit to data across entire Eastern Bering Sea survey grid using a 50-knot, 90-knot, and 120-knot mesh (Figures \@ref(fig:bairdi-50-mesh) - \@ref(fig:bairdi-120-mesh)). These models were then predicted on an EBS-wide survey grid (Figure \@ref(fig:bairdi-EBS-grid)), a grid encompassing the EBS area west of 166° (for the Tanner West stock; Figure XX, Appendix), and a grid encompassing the EBS area east of 166° (for the Tanner East stock; Figure XX, Appendix). Each prediction grid was a resolution of 5 km$^2$.
+We utilized abundance and biomass data collected from the NMFS summer bottom trawl survey (1975-2024) to fit Tanner crab models in *sdmTMB*. Sex-size/maturity categories included all males combined, immature females, and mature females, and data were filtered to only include crab with a carapace width greater than or equal to 25mm. As the survey gear and methods were standardized in 1982 (Stauffer 2004), we fit separate models to data before 1982 and data in and after 1982 for each sex-size/maturity category. To evaluate decision points for model formulations, we first fit models to data across entire Eastern Bering Sea survey grid using a 50-knot, 90-knot, and 120-knot mesh (Figures \@ref(fig:bairdi-50-mesh) - \@ref(fig:bairdi-120-mesh)) using a Tweedie distribution to determine the most effective number of knots. We then used a mesh with the same number of knots to fit male abundance models using a Tweedie, Delta-lognormal, and Delta-gamma distribution  and a AR1 versus IID random field. We chose to only evaluate male abundance in order to apply a parsimonious set of model formulations across other sex-maturity categories and biomass. Models were evaluated using diagnostics described above. The best models were then used to predict Tanner crab abundance and biomass on an EBS-wide survey grid (Figure \@ref(fig:bairdi-EBS-grid)), a grid encompassing the EBS area west of 166° (for the Tanner West stock; Figure \@ref(fig:bairdi-west-grid), Appendix), and a grid encompassing the EBS area east of 166° (for the Tanner East stock; Figure \@ref(fig:bairdi-east-grid), Appendix). Each prediction grid was a resolution of 5 km$^2$.
 
 
 ## Norton Sound red king crab {-}
@@ -110,6 +111,7 @@ For model fitting, we used spatial meshes at three resolutions: 120 knots, 90 kn
 ## Tanner crab {-}
 
 ### Model diagnostics {-}
+
 ### Predicted abundance {-}
 ### Predicted index fits to observations {-}
 
@@ -188,13 +190,13 @@ Yalcin, S., S.C. Anderson, P.M. Regular, P.A. English. 2023. Exploring the limit
 \blandscape
 
 ```{r nsrkc-loglik, results = "asis"}
-
-df <- nsrkc.loglik %>%
-  rename("Family" = family, "Estimation method" = estimation, "Knots" = knots, "Log-likelihood" = loglik)
-
-tab <- xtable(df, caption = "Norton Sound red king crab fitted model log-likelihood values, estimated using sdmTMB::sdmTMB_cv() with 3 folds, for models fitted with Tweedie, delta gamma, or delta lognormal model familes; spatial random fields estimated using independent and identically distributed (IID), random walk (RW), or first-order autoregressive (AR1) methods; and spatial resolution of 30, 50, or 100 knots.", label = "tab:nsrkc.loglik", digits = c(0))
-
-print(tab, caption.placement = "top", include.rownames = FALSE, booktabs = T)
+# 
+# df <- nsrkc.loglik %>%
+#   rename("Family" = family, "Estimation method" = estimation, "Knots" = knots, "Log-likelihood" = loglik)
+# 
+# tab <- xtable(df, caption = "Norton Sound red king crab fitted model log-likelihood values, estimated using sdmTMB::sdmTMB_cv() with 3 folds, for models fitted with Tweedie, delta gamma, or delta lognormal model familes; spatial random fields estimated using independent and identically distributed (IID), random walk (RW), or first-order autoregressive (AR1) methods; and spatial resolution of 30, 50, or 100 knots.", label = "tab:nsrkc.loglik", digits = c(0))
+# 
+# print(tab, caption.placement = "top", include.rownames = FALSE, booktabs = T)
 
 ```
 
@@ -203,8 +205,9 @@ print(tab, caption.placement = "top", include.rownames = FALSE, booktabs = T)
 
 
 # Figures {-}
-```{r bairdi-EBS-grid, fig.align = "center", fig.cap = "Prediction grid used for Tanner crab spatial abundance and biomass predictions. Spatial resolution is 5$^2$ and does not include land."}
+```{r bairdi-EBS-grid, fig.align = "center", fig.cap = "Eastern Bering Sea prediction grid used for Tanner crab spatial abundance and biomass predictions. Spatial resolution is 5km$^2$ and does not include land."}
 
+knitr::include_graphics(here::here("BAIRDI/Figures/EBS_predgrid.png"))
 ```
 
 ```{r bairdi-50-mesh, fig.align = "center", fig.cap = "Spatial mesh with 50 knots used for fitting Tanner crab spatial models. Points represent observations and vertices represent knot locations."}
@@ -232,43 +235,43 @@ knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_abundance_EBS_90_QQplo
 knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_biomass_EBS_90_QQplot.png"))
 ```
 
-```{r DHARMa-abund-spat-90-male, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide male abundance models fit using NMFS summer bottom trawl survey data before 1988 and 1988 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure."}
+```{r DHARMa-abund-spat-90-male, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide male abundance models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Male_abundance90_SPATIAL.png"))
 ```
 
-```{r DHARMa-abund-spat-90-imfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide immature female abundance models fit using NMFS summer bottom trawl survey data before 1988 and 1988 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure."}
+```{r DHARMa-abund-spat-90-imfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide immature female abundance models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Immature Female_abundance90_SPATIAL.png"))
 ```
 
-```{r DHARMa-abund-spat-90-matfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide mature female abundance models fit using NMFS summer bottom trawl survey data before 1988 and 1988 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure."}
+```{r DHARMa-abund-spat-90-matfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide mature female abundance models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Mature Female_abundance90_SPATIAL.png"))
 ```
 
-```{r DHARMa-bio-spat-90-male, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide male biomass models fit using NMFS summer bottom trawl survey data before 1988 and 1988 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure."}
+```{r DHARMa-bio-spat-90-male, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide male biomass models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Male_biomass90_SPATIAL.png"))
 ```
 
-```{r DHARMa-bio-spat-90-imfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide immature female biomass models fit using NMFS summer bottom trawl survey data before 1988 and 1988 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure."}
+```{r DHARMa-bio-spat-90-imfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide immature female biomass models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Immature Female_biomass90_SPATIAL.png"))
 ```
 
-```{r DHARMa-bio-spat-90-matfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide mature female biomass models fit using NMFS summer bottom trawl survey data before 1988 and 1988 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure."}
+```{r DHARMa-bio-spat-90-matfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide mature female biomass models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Mature Female_biomass90_SPATIAL.png"))
 ```
 
 
-```{r bairdi-abund-index, fig.align = "center", fig.cap = "Estimated abundance (millions) for Tanner crab. Colored lines represent abundance (±95% CI) estimated by sdmTMB, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey."}
+```{r bairdi-abund-index, fig.align = "center", fig.cap = "Estimated abundance (millions) for Tanner crab. Colored lines represent abundance (±95% CI) estimated by sdmTMB, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.abundance.index.png"))
 ```
 
-```{r bairdi-bio-index, fig.align = "center", fig.cap = "Estimated biomass (tons) for Eastern Bering Sea Tanner crab. Colored lines represent abundance (±95% CI) estimated by sdmTMB, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent biomass (±95% CI) estimated by the NMFS summer bottom trawl survey."}
+```{r bairdi-bio-index, fig.align = "center", fig.cap = "Estimated biomass (tons) for Eastern Bering Sea Tanner crab. Colored lines represent abundance (±95% CI) estimated by sdmTMB, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent biomass (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.biomass.index.png"))
 ```
@@ -296,100 +299,109 @@ knitr::include_graphics(here::here("NSRKC/plots/mesh_100kn_ns.png"))
 
 ```{r nsrkc-qq-30kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the Norton Sound red king crab model with 30 knots.", out.width="100%", out.height="100%"}
 
-knitr::include_graphics(here::here("NSRKC/plots/nsrkc_30kn_qq.png"))
+# knitr::include_graphics(here::here("NSRKC/plots/nsrkc_30kn_qq.png"))
 ```
 
 ```{r nsrkc-qq-50kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the Norton Sound red king crab model with 50 knots.", out.width="100%", out.height="100%"}
 
-knitr::include_graphics(here::here("NSRKC/plots/nsrkc_50kn_qq.png"))
+# knitr::include_graphics(here::here("NSRKC/plots/nsrkc_50kn_qq.png"))
 ```
 
 ```{r nsrkc-qq-100kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for Norton Sound red king crab model with 100 knots.", out.width="100%", out.height="100%"}
 
-knitr::include_graphics(here::here("NSRKC/plots/nsrkc_100kn_qq.png"))
+# knitr::include_graphics(here::here("NSRKC/plots/nsrkc_100kn_qq.png"))
 ```
 
 
 ```{r nsrkc-pred-30kn, fig.align = "center", fig.cap = "Heat map of Norton Sound red king crab predicted abundance generated using the model with 50 knots."}
 
-knitr::include_graphics(here::here("NSRKC/plots/pred_heat_iid_30kn.png"))
+# knitr::include_graphics(here::here("NSRKC/plots/pred_heat_iid_30kn.png"))
 ```
 
 ```{r nsrkc-pred-50kn, fig.align = "center", fig.cap = "Heat map of Norton Sound red blue king crab predicted abundance generated using the model with 90 knots."}
 
-knitr::include_graphics(here::here("NSRKC/plots/pred_heat_iid_50kn.png"))
+# knitr::include_graphics(here::here("NSRKC/plots/pred_heat_iid_50kn.png"))
 ```
 
 ```{r nsrkc-pred-100kn, fig.align = "center", fig.cap = "Heat map of Norton Sound red blue king crab predicted abundance generated using the model with 120 knots."}
 
-knitr::include_graphics(here::here("NSRKC/plots/pred_heat_iid_100kn.png"))
+# knitr::include_graphics(here::here("NSRKC/plots/pred_heat_iid_100kn.png"))
 ```
 
 ```{r nsrkc-survey-abun, fig.align = "center", fig.cap = "Estimated abundance in number of crab for Norton Sound red king crab. Colored points represent abundance (±95% CI) estimated by the trawl surveys."}
 
-knitr::include_graphics(here::here("NSRKC/plots/nsrkc_survey_abundance.png"))
+# knitr::include_graphics(here::here("NSRKC/plots/nsrkc_survey_abundance.png"))
 ```
 
 ```{r nsrkc-index-obs, fig.align = "center", fig.cap = "Estimated abundance in number of crab for Norton Sound red king crab. Colored lines represent abundance (±95% CI) estimated using sdmTMB. Black points represent abundance (±95% CI) estimated by the trawl surveys."}
 
-knitr::include_graphics(here::here("NSRKC/plots/nsrkc_model_fit.png"))
+# knitr::include_graphics(here::here("NSRKC/plots/nsrkc_model_fit.png"))
 ```
 
 ```{r smbkc-mesh-50kn, fig.align = "center", fig.cap = "Spatial mesh with 50 knots used for fitting St. Matthew Island blue king crab spatial models. Points represent observations and vertices represent knot locations."}
 
-knitr::include_graphics(here::here("SMBKC/plots/mesh_50kn.png"))
+# knitr::include_graphics(here::here("SMBKC/plots/mesh_50kn.png"))
 ```
 
 ```{r smbkc-mesh-90kn, fig.align = "center", fig.cap = "Spatial mesh with 90 knots used for fitting St. Matthew Island blue king crab spatial models. Points represent observations and vertices represent knot locations."}
 
-knitr::include_graphics(here::here("SMBKC/plots/mesh_90kn.png"))
+# knitr::include_graphics(here::here("SMBKC/plots/mesh_90kn.png"))
 ```
 
 ```{r smbkc-mesh-120kn, fig.align = "center", fig.cap = "Spatial mesh with 120 knots used for fitting St. Matthew Island blue king crab spatial models. Points represent observations and vertices represent knot locations."}
 
-knitr::include_graphics(here::here("SMBKC/plots/mesh_120kn.png"))
+# knitr::include_graphics(here::here("SMBKC/plots/mesh_120kn.png"))
 ```
 
 ```{r smbkc-pred-grid, fig.align = "center", fig.cap = "Prediction grid used for St. Matthew Island blue king crab spatial abundance predictions. Spatial resolution is 4 km$^2$."}
 
-knitr::include_graphics(here::here("SMBKC/plots/prediction_grid_4km.png"))
+# knitr::include_graphics(here::here("SMBKC/plots/prediction_grid_4km.png"))
 ```
 
 ```{r smbkc-qq-50kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the model with 50 knots.", out.width="100%", out.height="100%"}
 
-knitr::include_graphics(here::here("SMBKC/plots/smbkc_50kn_qq.png"))
+# knitr::include_graphics(here::here("SMBKC/plots/smbkc_50kn_qq.png"))
 ```
 
 ```{r smbkc-qq-90kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the model with 90 knots.", out.width="100%", out.height="100%"}
 
-knitr::include_graphics(here::here("SMBKC/plots/smbkc_90kn_qq.png"))
+# knitr::include_graphics(here::here("SMBKC/plots/smbkc_90kn_qq.png"))
 ```
 
 ```{r smbkc-qq-120kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the model with 120 knots.", out.width="100%", out.height="100%"}
 
-knitr::include_graphics(here::here("SMBKC/plots/smbkc_120kn_qq.png"))
+# knitr::include_graphics(here::here("SMBKC/plots/smbkc_120kn_qq.png"))
 ```
 
 ```{r smbkc-pred-50kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance generated using the model with 50 knots."}
 
-knitr::include_graphics(here::here("SMBKC/plots/pred_heat_iid_50kn.png"))
+# knitr::include_graphics(here::here("SMBKC/plots/pred_heat_iid_50kn.png"))
 ```
 
 ```{r smbkc-pred-90kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance generated using the model with 90 knots."}
 
-knitr::include_graphics(here::here("SMBKC/plots/pred_heat_iid_90kn.png"))
+# knitr::include_graphics(here::here("SMBKC/plots/pred_heat_iid_90kn.png"))
 ```
 
 ```{r smbkc-pred-120kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance generated using the model with 120 knots."}
 
-knitr::include_graphics(here::here("SMBKC/plots/pred_heat_iid_120kn.png"))
+# knitr::include_graphics(here::here("SMBKC/plots/pred_heat_iid_120kn.png"))
 ```
 
 ```{r smbkc-index-obs, fig.align = "center", fig.cap = "Estimated biomass (t) for St. Matthew Island blue king crab. Colored lines represent biomass (±95% CI) estimated using sdmTMB. Black points represent biomass (±95% CI) estimated by the NMFS EBS bottom trawl survey."}
 
-knitr::include_graphics(here::here("SMBKC/plots/smbkc_model_fit.png"))
+# knitr::include_graphics(here::here("SMBKC/plots/smbkc_model_fit.png"))
 ```
 
 \clearpage
 
 # Appendix {-}
+```{r bairdi-west-grid, fig.align = "center", fig.cap = "Prediction grid used to predict spatial abundance and biomass for Tanner crab west of 166°. Spatial resolution is 5km$^2$ and does not include land."}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/west_predgrid.png"))
+```
+
+```{r bairdi-east-grid, fig.align = "center", fig.cap = "Prediction grid used to predict spatial abundance and biomass for Tanner crab west of 166°. Spatial resolution is 5km$^2$ and does not include land."}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/east_predgrid.png"))
+```

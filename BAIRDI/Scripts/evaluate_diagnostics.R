@@ -92,7 +92,7 @@ pred_grid2 <- pred_grid %>%
   
   ## All abundance QQ plots ----
   rbind(ab.males[[3]], ab.imfem[[3]], ab.matfem[[3]]) %>%
-    mutate(period = case_when((period == "<1988") ~ "<1982",
+    mutate(period = case_when((period == "<1982") ~ "<1982",
                               TRUE ~ "≥1982")) -> ab.resid
   
   ggplot()+
@@ -192,7 +192,7 @@ pred_grid2 <- pred_grid %>%
   
   ## All abundance QQ plots -----
  rbind(ab.males[[3]], ab.imfem[[3]], ab.matfem[[3]]) %>%
-   mutate(period = case_when((period == "<1988") ~ "<1982",
+   mutate(period = case_when((period == "<1982") ~ "<1982",
                              TRUE ~ "≥1982")) -> ab.resid
  
  ggplot()+
@@ -293,7 +293,7 @@ pred_grid2 <- pred_grid %>%
  
  ## All abundance QQ plots -----
  rbind(ab.males[[3]], ab.imfem[[3]], ab.matfem[[3]]) %>%
-   mutate(period = case_when((period == "<1988") ~ "<1982",
+   mutate(period = case_when((period == "<1982") ~ "<1982",
                              TRUE ~ "≥1982")) -> ab.resid
  
  ggplot()+
@@ -369,7 +369,7 @@ pred_grid2 <- pred_grid %>%
  
  
 ## Bind all evaluation dfs -----
-eval.abund <- rbind(eval.abund50, eval.abund90, eval.abund120, ab.males.DG[[4]], ab.males.DLN[[4]])
+eval.abund <- rbind(eval.abund50, eval.abund90, eval.abund120, ab.males.DG[[4]], ab.males.DLN[[4]], ab.males.TAR1[[4]])
 eval.bio <- rbind(eval.bio50, eval.bio90, eval.bio120)
 
 write.csv(eval.abund, paste0(dir, "Output/model_eval_abund.csv"))

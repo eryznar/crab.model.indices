@@ -647,40 +647,40 @@ pred_grid2 <- pred_grid %>%
   
   # Indices
     # 50
-    Allmale.index.abund50 <- rbind(read.csv("./BAIRDI/Output/Male_abundance_All_pre-1982_50_index.csv"),
-                                   read.csv("./BAIRDI/Output/Male_abundance_All_post-1982_50_index.csv")) %>%
+    Allmale.index.abund50 <- rbind(read.csv(paste0(dir, "Output/Male_abundance_All_pre-1982_50_index.csv")),
+                                   read.csv(paste0(dir, "Output/Male_abundance_All_post-1982_50_index.csv"))) %>%
                             rename(abundance = est, Year = year) %>%
                             mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
                             mutate(knots = 50, matsex = matsex2)
     
-    Allmale.index.bio50 <- rbind(read.csv("./BAIRDI/Output/Male_biomass_All_pre-1982_50_index.csv"),
-                                 read.csv("./BAIRDI/Output/Male_biomass_All_post-1982_50_index.csv")) %>%
+    Allmale.index.bio50 <- rbind(read.csv(paste0(dir, "Output/Male_biomass_All_pre-1982_50_index.csv")),
+                                 read.csv(paste0(dir, "Output/Male_biomass_All_post-1982_50_index.csv"))) %>%
                             rename(biomass = est, Year = year) %>%
                             mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
                             mutate(knots = 50, matsex = matsex2)
     
     # 80
-    Allmale.index.abund90 <- rbind(read.csv("./BAIRDI/Output/Male_abundance_All_pre-1982_90_index.csv"),
-                                 read.csv("./BAIRDI/Output/Male_abundance_All_post-1982_90_index.csv")) %>%
+    Allmale.index.abund90 <- rbind(read.csv(paste0(dir, "Output/Male_abundance_All_pre-1982_90_index.csv")),
+                                 read.csv(paste0(dir, "Output/Male_abundance_All_post-1982_90_index.csv"))) %>%
                           rename(abundance = est, Year = year) %>%
                           mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
                           mutate(knots = 90, matsex = matsex2)
     
-    Allmale.index.bio90 <- rbind(read.csv("./BAIRDI/Output/Male_biomass_All_pre-1982_90_index.csv"),
-                               read.csv("./BAIRDI/Output/Male_biomass_All_post-1982_90_index.csv")) %>%
+    Allmale.index.bio90 <- rbind(read.csv(paste0(dir, "Output/Male_biomass_All_pre-1982_90_index.csv")),
+                               read.csv(paste0(dir, "Output/Male_biomass_All_post-1982_90_index.csv"))) %>%
                           rename(biomass = est, Year = year) %>%
                           mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
                           mutate(knots = 90, matsex = matsex2)
     
     # 120
-    Allmale.index.abund120 <- rbind(read.csv("./BAIRDI/Output/Male_abundance_All_pre-1982_120_index.csv"),
-                                  read.csv("./BAIRDI/Output/Male_abundance_All_post-1982_120_index.csv")) %>%
+    Allmale.index.abund120 <- rbind(read.csv(paste0(dir, "Output/Male_abundance_All_pre-1982_120_index.csv")),
+                                  read.csv(paste0(dir, "Output/Male_abundance_All_post-1982_120_index.csv"))) %>%
                           rename(abundance = est, Year = year) %>%
                           mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
                           mutate(knots = 120, matsex = matsex2)
     
-    Allmale.index.bio120 <- rbind(read.csv("./BAIRDI/Output/Male_biomass_All_pre-1982_120_index.csv"),
-                                read.csv("./BAIRDI/Output/Male_biomass_All_post-1982_120_index.csv")) %>%
+    Allmale.index.bio120 <- rbind(read.csv(paste0(dir, "Output/Male_biomass_All_pre-1982_120_index.csv")),
+                                read.csv(paste0(dir, "Output/Male_biomass_All_post-1982_120_index.csv"))) %>%
                           rename(biomass = est, Year = year) %>%
                           mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
                           mutate(knots = 120, matsex = matsex2)
@@ -720,40 +720,40 @@ pred_grid2 <- pred_grid %>%
     # 
   # Indices
     # 50
-    Allimfem.index.abund50 <- rbind(read.csv("./BAIRDI/Output/Immature Female_abundance_All_pre-1982_50_index.csv"),
-                                   read.csv("./BAIRDI/Output/Immature Female_abundance_All_post-1982_50_index.csv")) %>%
+    Allimfem.index.abund50 <- rbind(read.csv(paste0(dir, "Output/Immature Female_abundance_All_pre-1982_50_index.csv")),
+                                   read.csv(paste0(dir, "Output/Immature Female_abundance_All_post-1982_50_index.csv"))) %>%
                                   rename(abundance = est, Year = year) %>%
                                   mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
                                   mutate(knots = 50, matsex = matsex2)
     
-    Allimfem.index.bio50 <- rbind(read.csv("./BAIRDI/Output/Immature Female_biomass_All_pre-1982_50_index.csv"),
-                                 read.csv("./BAIRDI/Output/Immature Female_biomass_All_post-1982_50_index.csv")) %>%
+    Allimfem.index.bio50 <- rbind(read.csv(paste0(dir, "Output/Immature Female_biomass_All_pre-1982_50_index.csv")),
+                                 read.csv(paste0(dir, "Output/Immature Female_biomass_All_post-1982_50_index.csv"))) %>%
                                   rename(biomass = est, Year = year) %>%
                                   mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
                                   mutate(knots = 50, matsex = matsex2)
     
     # 90
-    Allimfem.index.abund90 <- rbind(read.csv("./BAIRDI/Output/Immature Female_abundance_All_pre-1982_90_index.csv"),
-                                    read.csv("./BAIRDI/Output/Immature Female_abundance_All_post-1982_90_index.csv")) %>%
+    Allimfem.index.abund90 <- rbind(read.csv(paste0(dir, "Output/Immature Female_abundance_All_pre-1982_90_index.csv")),
+                                    read.csv(paste0(dir, "Output/Immature Female_abundance_All_post-1982_90_index.csv"))) %>%
                                     rename(abundance = est, Year = year) %>%
                                     mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
                                     mutate(knots = 90, matsex = matsex2)
     
-    Allimfem.index.bio90 <- rbind(read.csv("./BAIRDI/Output/Immature Female_biomass_All_pre-1982_90_index.csv"),
-                                  read.csv("./BAIRDI/Output/Immature Female_biomass_All_post-1982_90_index.csv")) %>%
+    Allimfem.index.bio90 <- rbind(read.csv(paste0(dir, "Output/Immature Female_biomass_All_pre-1982_90_index.csv")),
+                                  read.csv(paste0(dir, "Output/Immature Female_biomass_All_post-1982_90_index.csv"))) %>%
                                   rename(biomass = est, Year = year) %>%
                                   mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
                                   mutate(knots = 90, matsex = matsex2)
     
     # 120
-    Allimfem.index.abund120 <- rbind(read.csv("./BAIRDI/Output/Immature Female_abundance_All_pre-1982_120_index.csv"),
-                                    read.csv("./BAIRDI/Output/Immature Female_abundance_All_post-1982_120_index.csv")) %>%
+    Allimfem.index.abund120 <- rbind(read.csv(paste0(dir, "Output/Immature Female_abundance_All_pre-1982_120_index.csv")),
+                                    read.csv(paste0(dir, "Output/Immature Female_abundance_All_post-1982_120_index.csv"))) %>%
                                     rename(abundance = est, Year = year) %>%
                                     mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
                                     mutate(knots = 120, matsex = matsex2)
     
-    Allimfem.index.bio120 <- rbind(read.csv("./BAIRDI/Output/Immature Female_biomass_All_pre-1982_120_index.csv"),
-                                  read.csv("./BAIRDI/Output/Immature Female_biomass_All_post-1982_120_index.csv")) %>%
+    Allimfem.index.bio120 <- rbind(read.csv(paste0(dir, "Output/Immature Female_biomass_All_pre-1982_120_index.csv")),
+                                  read.csv(paste0(dir, "Output/Immature Female_biomass_All_post-1982_120_index.csv"))) %>%
                                   rename(biomass = est, Year = year) %>%
                                   mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
                                   mutate(knots = 120, matsex = matsex2)
@@ -793,40 +793,40 @@ pred_grid2 <- pred_grid %>%
     
   # Indices
     # 50
-    Allmatfem.index.abund50 <- rbind(read.csv("./BAIRDI/Output/Mature Female_abundance_All_pre-1982_50_index.csv"),
-                                    read.csv("./BAIRDI/Output/Mature Female_abundance_All_post-1982_50_index.csv")) %>%
+    Allmatfem.index.abund50 <- rbind(read.csv(paste0(dir, "Output/Mature Female_abundance_All_pre-1982_50_index.csv")),
+                                    read.csv(paste0(dir, "Output/Mature Female_abundance_All_post-1982_50_index.csv"))) %>%
                                     rename(abundance = est, Year = year) %>%
                                     mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
                                     mutate(knots = 50, matsex = matsex2)
     
-    Allmatfem.index.bio50 <- rbind(read.csv("./BAIRDI/Output/Mature Female_biomass_All_pre-1982_50_index.csv"),
-                                  read.csv("./BAIRDI/Output/Mature Female_biomass_All_post-1982_50_index.csv")) %>%
+    Allmatfem.index.bio50 <- rbind(read.csv(paste0(dir, "Output/Mature Female_biomass_All_pre-1982_50_index.csv")),
+                                  read.csv(paste0(dir, "Output/Mature Female_biomass_All_post-1982_50_index.csv"))) %>%
                                     rename(biomass = est, Year = year) %>%
                                     mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
                                     mutate(knots = 50, matsex = matsex2)
     
     # 90
-    Allmatfem.index.abund90 <- rbind(read.csv("./BAIRDI/Output/Mature Female_abundance_All_pre-1982_90_index.csv"),
-                                     read.csv("./BAIRDI/Output/Mature Female_abundance_All_post-1982_90_index.csv")) %>%
+    Allmatfem.index.abund90 <- rbind(read.csv(paste0(dir, "Output/Mature Female_abundance_All_pre-1982_90_index.csv")),
+                                     read.csv(paste0(dir, "Output/Mature Female_abundance_All_post-1982_90_index.csv"))) %>%
                                     rename(abundance = est, Year = year) %>%
                                     mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
                                     mutate(knots = 90, matsex = matsex2)
     
-    Allmatfem.index.bio90 <- rbind(read.csv("./BAIRDI/Output/Mature Female_biomass_All_pre-1982_90_index.csv"),
-                                   read.csv("./BAIRDI/Output/Mature Female_biomass_All_post-1982_90_index.csv")) %>%
+    Allmatfem.index.bio90 <- rbind(read.csv(paste0(dir, "Output/Mature Female_biomass_All_pre-1982_90_index.csv")),
+                                   read.csv(paste0(dir, "Output/Mature Female_biomass_All_post-1982_90_index.csv"))) %>%
                                     rename(biomass = est, Year = year) %>%
                                     mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
                                     mutate(knots = 90, matsex = matsex2)
     
     # 120
-    Allmatfem.index.abund120 <- rbind(read.csv("./BAIRDI/Output/Mature Female_abundance_All_pre-1982_120_index.csv"),
-                                     read.csv("./BAIRDI/Output/Mature Female_abundance_All_post-1982_120_index.csv")) %>%
+    Allmatfem.index.abund120 <- rbind(read.csv(paste0(dir, "Output/Mature Female_abundance_All_pre-1982_120_index.csv")),
+                                     read.csv(paste0(dir, "Output/Mature Female_abundance_All_post-1982_120_index.csv"))) %>%
                                     rename(abundance = est, Year = year) %>%
                                     mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
                                     mutate(knots = 120, matsex = matsex2)
     
-    Allmatfem.index.bio120 <- rbind(read.csv("./BAIRDI/Output/Mature Female_biomass_All_pre-1982_120_index.csv"),
-                                   read.csv("./BAIRDI/Output/Mature Female_biomass_All_post-1982_120_index.csv")) %>%
+    Allmatfem.index.bio120 <- rbind(read.csv(paste0(dir, "Output/Mature Female_biomass_All_pre-1982_120_index.csv")),
+                                   read.csv(paste0(dir, "Output/Mature Female_biomass_All_post-1982_120_index.csv"))) %>%
                                     rename(biomass = est, Year = year) %>%
                                     mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
                                     mutate(knots = 120, matsex = matsex2)
@@ -918,7 +918,7 @@ pred_grid2 <- pred_grid %>%
           legend.title = element_text(size = 14),
           title = element_text(size = 16)) -> abund.ind.plot.EBS
   
-  ggsave(plot = abund.ind.plot.EBS, "./BAIRDI/Figures/TannerEBS.abundance.index.png", height= 11, width = 8.5, units = "in")
+  ggsave(plot = abund.ind.plot.EBS, "./BAIRDI/Figures/TannerEBS.abundance.index.png", height= 9, width = 7.5, units = "in")
   
   ggplot()+
     geom_ribbon(All.bio.index, mapping = aes(x = Year, ymin = lwr, ymax = upr, fill = as.factor(knots)), alpha = 0.4) +
@@ -942,5 +942,5 @@ pred_grid2 <- pred_grid %>%
           legend.title = element_text(size = 14),
           title = element_text(size = 16)) -> bio.ind.plot.EBS
   
-  ggsave(plot = bio.ind.plot.EBS, "./BAIRDI/Figures/TannerEBS.biomass.index.png", height= 11, width = 8.5, units = "in")
+  ggsave(plot = bio.ind.plot.EBS, "./BAIRDI/Figures/TannerEBS.biomass.index.png", height= 9, width = 7.5, units = "in")
   

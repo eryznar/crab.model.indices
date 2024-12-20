@@ -36,7 +36,47 @@ ncrs <- "+proj=aea +lat_0=50 +lon_0=-154 +lat_1=55 +lat_2=65 +x_0=0 +y_0=0 +datu
 dir <- "Y:/KOD_Research/Ryznar/Model-based indices/BAIRDI/"
 
 # Load prediction grid
-pred_grid <- readRDS(here::here(paste0(dir, "Data/EBS_bairdi_grid_5km_No_Land.rds")) )
+pred_grid <- readRDS(here::here(paste0(dir, "Data/EBS_bairdi_grid_5km_No_Land.rds")))
+
+pred_grid %>% dplyr::select(Lon, Lat) %>% distinct() -> pg
+
+# Plot EBS pred grid
+ggplot(pg, aes(Lon, Lat))+
+  geom_point(size = 0.10, color = "darkgrey")+
+  theme_bw()+
+  ggtitle("EBS prediction grid")+
+  ylab("Latitude")+
+  xlab("Longitude") -> EBS.pg
+
+ggsave(plot = EBS.pg, "./BAIRDI/Figures/EBS_predgrid.png", height = 4, width =6, units = "in")
+
+# Filter Tanner W pred grid, save and plot
+pred_grid %>% filter(Lon < -166) -> pg.W
+
+saveRDS(pg.W, paste0(dir, "Data/West_predgrid.rda"))
+
+ggplot(pg.W, aes(Lon, Lat))+
+  geom_point(size = 0.10, color = "darkgrey")+
+  theme_bw()+
+  ggtitle("Tanner crab West prediction grid")+
+  ylab("Latitude")+
+  xlab("Longitude") -> W.pg
+
+ggsave(plot = W.pg, "./BAIRDI/Figures/west_predgrid.png", height = 4, width =6, units = "in")
+
+# Filter Tanner E pred grid, save and plot
+pred_grid %>% filter(Lon > -166) -> pg.E
+
+saveRDS(pg.E, paste0(dir, "Data/East_predgrid.rda"))
+
+ggplot(pg.E, aes(Lon, Lat))+
+  geom_point(size = 0.10, color = "darkgrey")+
+  theme_bw()+
+  ggtitle("Tanner crab East prediction grid")+
+  ylab("Latitude")+
+  xlab("Longitude") -> E.pg
+
+ggsave(plot = E.pg, "./BAIRDI/Figures/east_predgrid.png", height = 4, width =6, units = "in")
 
 ### LOAD FUNCTIONS -------------------------------------------------------------
 fit_models <- function(data, matsex, stock, years, period, knots){
@@ -177,51 +217,54 @@ evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knot
   
   ggsave(plot = res_plot, paste0("./BAIRDI/Figures/DHARMa", stock2, "_", matsex2, "_", mod, "_SPATIAL.png"), height = 9, width = 8.5, units = "in")
   
-  # Calculate log-likelihood
-  clust <- sample(seq_len(10), size = nrow(pre.model$data), replace = TRUE)
-  
-   pre.ll <- sdmTMB_cv(
-      data = pre.model$data, 
-      formula = cpue_km ~ 0 + year_fac, 
-      spatial = "on",
-      time = "year", 
-      mesh = pre.model$spde, 
-      spatiotemporal = "iid",
-      silent = FALSE,
-      anisotropy = TRUE,
-      family = tweedie(link = "log"),
-      fold_ids = clust
-    )
-   
-   clust <- sample(seq_len(10), size = nrow(post.model$data), replace = TRUE)
-   
-   post.ll <- sdmTMB_cv(
-     data = post.model$data, 
-     formula = cpue_km ~ 0 + year_fac, 
-     spatial = "on",
-     time = "year", 
-     mesh = post.model$spde, 
-     spatiotemporal = "iid",
-     silent = FALSE,
-     anisotropy = TRUE,
-     family = tweedie(link = "log"),
-     fold_ids = clust
-   )
-   
-   eval.df <- data.frame(matsex = rep(matsex2,2), 
-                         type = rep(type,2),
-                         knots = rep(knots,2), 
-                         family = rep(family, 2), 
-                         method = rep(method,2), 
-                         period = c("<1982", "≥1982"),
-                         loglik = c(pre.ll$sum_loglik, post.ll$sum_loglik),
-                         quantiles = c(qq1, qq2),
-                         dispersion = c(dd1, dd2),
-                         outliers = c(oo1, oo2),
-                         zeroinf = c(zz1, zz2))
+  # # Calculate log-likelihood
+  # clust <- sample(seq_len(10), size = nrow(pre.model$data), replace = TRUE)
+  # 
+  #  pre.ll <- sdmTMB_cv(
+  #     data = pre.model$data, 
+  #     formula = cpue_km ~ 0 + year_fac, 
+  #     spatial = "on",
+  #     time = "year", 
+  #     mesh = pre.model$spde, 
+  #     spatiotemporal = "iid",
+  #     silent = FALSE,
+  #     anisotropy = TRUE,
+  #     family = tweedie(link = "log"),
+  #     fold_ids = clust
+  #   )
+  #  
+  #  clust <- sample(seq_len(10), size = nrow(post.model$data), replace = TRUE)
+  #  
+  #  post.ll <- sdmTMB_cv(
+  #    data = post.model$data, 
+  #    formula = cpue_km ~ 0 + year_fac, 
+  #    spatial = "on",
+  #    time = "year", 
+  #    mesh = post.model$spde, 
+  #    spatiotemporal = "iid",
+  #    silent = FALSE,
+  #    anisotropy = TRUE,
+  #    family = tweedie(link = "log"),
+  #    fold_ids = clust
+  #  )
+  #  
+  #  eval.df <- data.frame(matsex = rep(matsex2,2), 
+  #                        type = rep(type,2),
+  #                        knots = rep(knots,2), 
+  #                        family = rep(family, 2), 
+  #                        method = rep(method,2), 
+  #                        period = c("<1982", "≥1982"),
+  #                        loglik = c(pre.ll$sum_loglik, post.ll$sum_loglik),
+  #                        quantiles = c(qq1, qq2),
+  #                        dispersion = c(dd1, dd2),
+  #                        outliers = c(oo1, oo2),
+  #                        zeroinf = c(zz1, zz2))
               
+  saveRDS(all.resids, paste0(dir, "Output/DHARMa", stock2, "_", matsex2, "_", mod, ".csv"))
   
-  return(list(sanity_check_pre, sanity_check_post, all.resids, eval.df))
+  return(list(sanity_check_pre, sanity_check_post, all.resids))
+
+  #return(list(sanity_check_pre, sanity_check_post, all.resids, eval.df))
 }
 
 predict_and_getindex <- function(newdat, abund.mod, bio.mod, matsex, stock, years, period, knots){

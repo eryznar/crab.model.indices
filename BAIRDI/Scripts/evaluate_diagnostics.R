@@ -9,8 +9,152 @@
 # 1) Look at residuals
 # 2) Add in scripts to load new survey data (CPUE, BIO/ABUND) and process each year (CPUE script is in TECHMEMONEW)
 
-### LOAD LIBRARIES/FUNCTIONS/DATA --------------------------------------------------------
+### LOAD LIBRARIES/DATA --------------------------------------------------------
 source("./BAIRDI/Scripts/load_libs_functions.R")
+
+### LOAD FUNCTION --------------------------------------------------------------
+
+evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knots, dist, method, matsex2){
+  
+  mod <- paste0(type, "-", knots, "-", family)
+  
+  # Run sanity check
+  print("Pre-1982 model")
+  sanity_check_pre <- sanity(pre.model) 
+  print("Post-1982 model")
+  sanity_check_post <- sanity(post.model) 
+  
+  # Calculate Dharma residuals
+  resid1 <- simulate(pre.model, nsim = 300, type= "mle-mvn")|>
+    dharma_residuals(pre.model, plot = FALSE)
+  
+  ggplot()+
+    theme_bw()+
+    geom_point(resid1, mapping = aes(expected, observed), size = 2, fill = "black")+
+    geom_abline(slope = 1, intercept = 0, color = "red", linewidth = 1)+
+    ylab("Expected")+
+    xlab("Observed")+
+    ggtitle("<1982")+
+    theme(axis.text = element_text(size = 12),
+          axis.title = element_text(size = 12)) -> r1.plot
+  # 
+  # png(filename = paste0("./BAIRDI/Figures/DHARMa_pre1988_", type, "_", stock2, "_", matsex2, "_", knots, ".png"), width=7, height=5, units="in", res=600)
+  # 
+  # plot(resid1, title= paste0("DHARMa residuals (Pre-1988, ", type, ",", stock2, " ", matsex2, ", knots=", knots, ")"))
+  # 
+  # dev.off()
+  
+  resid2 <- simulate(post.model, nsim = 300, type= "mle-mvn")|>
+    dharma_residuals(post.model, plot= FALSE)
+  
+  ggplot()+
+    theme_bw()+
+    geom_point(resid2, mapping = aes(expected, observed), size = 2, fill = "black")+
+    geom_abline(slope = 1, intercept = 0, color = "red", linewidth = 1)+
+    ylab("Expected")+
+    xlab("Observed")+
+    ggtitle("≥1982")+
+    theme(axis.text = element_text(size = 12),
+          axis.title = element_text(size = 12)) -> r2.plot
+  
+  rbind(resid1 %>% mutate(period = "<1982"), resid2 %>% mutate(period = "≥1982")) %>%
+    mutate(matsex = matsex2) -> all.resids
+  
+  # Test residuals
+  resid1 <- simulate(pre.model, nsim = 300, type= "mle-mvn")|>
+    dharma_residuals(pre.model, return_DHARMa = TRUE)
+  resid2 <- simulate(post.model, nsim = 300, type= "mle-mvn")|>
+    dharma_residuals(post.model, return_DHARMa = TRUE)
+  
+  round(DHARMa::testQuantiles(resid1, plot = FALSE)$p.value, 2) -> qq1
+  round(DHARMa::testQuantiles(resid2, plot = FALSE)$p.value, 2) -> qq2
+  
+  round(DHARMa::testDispersion(resid1, plot = FALSE)$p.value, 2) -> dd1
+  round(DHARMa::testDispersion(resid2, plot = FALSE)$p.value,2) -> dd2
+  
+  round(DHARMa::testOutliers(resid1, plot = FALSE)$p.value, 2) -> oo1
+  round(DHARMa::testOutliers(resid2, plot = FALSE)$p.value, 2) -> oo2
+  
+  round(DHARMa::testZeroInflation(resid1, plot = FALSE)$p.value, 2) -> zz1
+  round(DHARMa::testZeroInflation(resid2, plot = FALSE)$p.value, 2) -> zz2
+  
+  
+  if(stock2 != "All"){
+    data %>% 
+      filter(mat.sex == matsex2, stck == stock2) %>%
+      mutate(resids = c(resid1$scaledResiduals, resid2$scaledResiduals)) -> data2
+  } else{
+    data %>% 
+      filter(mat.sex == matsex2) %>%
+      mutate(resids = c(resid1$scaledResiduals, resid2$scaledResiduals)) -> data2
+  }
+  
+  
+  # visualize residuals across the EBS
+  ggplot(data2) + 
+    #geom_sf(data = shoreline) +
+    geom_point(aes(y = lat, x = lon, color = resids), size = 1) +
+    scale_color_gradient2(midpoint = 0) + 
+    labs(y = "Latitude",
+         x = "Longitude") +
+    theme_gray() + 
+    ggtitle(paste0(stock2," ", matsex2," ", type, " residuals (knots=", knots, ")"))+
+    facet_wrap(~year)+
+    theme(axis.title = element_text(size = 10),
+          legend.position = "bottom") -> res_plot
+  
+  ggsave(plot = res_plot, paste0("./BAIRDI/Figures/DHARMa", stock2, "_", matsex2, "_", mod, "_SPATIAL.png"), height = 9, width = 8.5, units = "in")
+  
+  # # Calculate log-likelihood
+  # clust <- sample(seq_len(10), size = nrow(pre.model$data), replace = TRUE)
+  # 
+  #  pre.ll <- sdmTMB_cv(
+  #     data = pre.model$data, 
+  #     formula = cpue_km ~ 0 + year_fac, 
+  #     spatial = "on",
+  #     time = "year", 
+  #     mesh = pre.model$spde, 
+  #     spatiotemporal = "iid",
+  #     silent = FALSE,
+  #     anisotropy = TRUE,
+  #     family = tweedie(link = "log"),
+  #     fold_ids = clust
+  #   )
+  #  
+  #  clust <- sample(seq_len(10), size = nrow(post.model$data), replace = TRUE)
+  #  
+  #  post.ll <- sdmTMB_cv(
+  #    data = post.model$data, 
+  #    formula = cpue_km ~ 0 + year_fac, 
+  #    spatial = "on",
+  #    time = "year", 
+  #    mesh = post.model$spde, 
+  #    spatiotemporal = "iid",
+  #    silent = FALSE,
+  #    anisotropy = TRUE,
+  #    family = tweedie(link = "log"),
+  #    fold_ids = clust
+  #  )
+  #  
+  #  eval.df <- data.frame(matsex = rep(matsex2,2), 
+  #                        type = rep(type,2),
+  #                        knots = rep(knots,2), 
+  #                        family = rep(family, 2), 
+  #                        method = rep(method,2), 
+  #                        period = c("<1982", "≥1982"),
+  #                        loglik = c(pre.ll$sum_loglik, post.ll$sum_loglik),
+  #                        quantiles = c(qq1, qq2),
+  #                        dispersion = c(dd1, dd2),
+  #                        outliers = c(oo1, oo2),
+  #                        zeroinf = c(zz1, zz2))
+  
+  saveRDS(all.resids, paste0(dir, "Output/DHARMa", stock2, "_", matsex2, "_", mod, ".csv"))
+  
+  return(list(sanity_check_pre, sanity_check_post, all.resids))
+  
+  #return(list(sanity_check_pre, sanity_check_post, all.resids, eval.df))
+}
+
 
 ### EVALUATE MODELS EBS-wide ------------
 years <- c(1975:2019, 2021:2024)
@@ -460,3 +604,54 @@ tan.cpue2 %>%
     ggpubr::ggarrange(mesh.1, mesh.2, nrow = 2)
     ggsave("./BAIRDI/Figures/mesh50.png", height = 8, width = 6, units = "in")
    
+## DELTA GAMMA IID 90 knots ----
+  ## Males biomass-----
+  data <- tan.cpue2
+  matsex2 <- "Male"
+  stock2 <- "All"
+  
+  # Biomass
+  type <- "biomass"
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_90_bio_DG_IID.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_90_biobiom_DG_IID.rda"))
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "Delta_gamma", "IID", matsex2) -> bio.males.DG
+    
+  ## Immature Females -----
+  data <- tan.cpue2
+  matsex2 <- "Immature Female"
+  stock2 <- "All"
+    
+    # Abundance
+    type <- "abundance"
+    pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_90_abund_DG_IID.rda"))
+    post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_90_abund_DG_IID.rda"))
+    
+    evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "Delta_gamma", "IID", matsex2) -> ab.imfem.DG
+    
+    # Biomass
+    type <- "biomass"
+    pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_90_bio_DG_IID.rda"))
+    post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_90_bio_DG_IID.rda"))
+    
+    evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "Delta_gamma", "IID", matsex2) -> bio.imfem.DG
+    
+  ## Mature Females -----
+    data <- tan.cpue2
+    matsex2 <- "Mature Female"
+    stock2 <- "All"
+    
+    # Abundance
+    type <- "abundance"
+    pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_90_abund_DG_IID.rda"))
+    post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_90_abund_DG_IID.rda"))
+    
+    evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "Delta_gamma", "IID", matsex2) -> ab.matfem.DG
+    
+    # Abundance
+    type <- "biomass"
+    pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_90_bio_DG_IID.rda"))
+    post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_90_bio_DG_IID.rda"))
+    
+    evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "Delta_gamma", "IID", matsex2) -> bio.matfem.DG
+    

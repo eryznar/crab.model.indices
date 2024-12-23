@@ -10,8 +10,104 @@
 # 2) Troubleshoot immature female abundance
 # 3) Get abund/bio obs back to 1975
 
-### LOAD LIBRARIES/FUNCTIONS/DATA --------------------------------------------------------
+### LOAD LIBRARIES/DATA -----------------------------------------------------------
 source("./BAIRDI/Scripts/load_libs_functions.R")
+
+### LOAD FUNCTION -----------------------------------------------------------------
+fit_models <- function(data, matsex, stock, years, period, dist, knots){
+  
+  # Filter data by params
+  if(stock != "All"){
+    data %>%
+      filter(mat.sex == matsex, stck == stock, year %in% years) %>%
+      mutate(year_fac = as.factor(year)) -> data2
+  }else{
+    data %>%
+      filter(mat.sex == matsex, year %in% years) %>%
+      mutate(year_fac = as.factor(year)) -> data2
+  }
+  
+  # Make mesh
+  mesh2 <- make_mesh(data2, c("lon","lat"), n_knots = knots, type = "kmeans")
+  
+  if(dist == "DG"){
+    # Fit models
+    print("Fitting abundance model")
+    abund <- sdmTMB(cpue_km ~ 0 + year_fac, #the 0 is there so there is a factor predictor for each time slice
+                    spatial = "on",
+                    spatiotemporal = "iid",
+                    mesh = mesh2,
+                    family = delta_gamma(type = "poisson-link"),
+                    time = "year",
+                    anisotropy = TRUE,
+                    data = data2)
+    
+    print("Fitting biomass model")
+    bio <- sdmTMB(cpue_kg_km ~ 0 + year_fac, #the 0 is there so there is a factor predictor for each time slice
+                  spatial = "on",
+                  spatiotemporal = "iid",
+                  mesh = mesh2,
+                  family = delta_gamma(type = "poisson-link"),
+                  time = "year",
+                  anisotropy = TRUE,
+                  data = data2)
+    
+  } else if(dist == "TW"){
+    # Fit models
+    print("Fitting abundance model")
+    abund <- sdmTMB(cpue_km ~ 0 + year_fac, #the 0 is there so there is a factor predictor for each time slice
+                    spatial = "on",
+                    spatiotemporal = "iid",
+                    mesh = mesh2,
+                    family = tweedie(link = "log"),
+                    time = "year",
+                    anisotropy = TRUE,
+                    data = data2)
+    
+    print("Fitting biomass model")
+    bio <- sdmTMB(cpue_kg_km ~ 0 + year_fac, #the 0 is there so there is a factor predictor for each time slice
+                  spatial = "on",
+                  spatiotemporal = "iid",
+                  mesh = mesh2,
+                  family = tweedie(link = "log"),
+                  time = "year",
+                  anisotropy = TRUE,
+                  data = data2)
+  } else{
+    # Fit models
+    print("Fitting abundance model")
+    abund <- sdmTMB(cpue_km ~ 0 + year_fac, #the 0 is there so there is a factor predictor for each time slice
+                    spatial = "on",
+                    spatiotemporal = "iid",
+                    mesh = mesh2,
+                    family = delta_lognormal(),
+                    time = "year",
+                    anisotropy = TRUE,
+                    data = data2)
+    
+    print("Fitting biomass model")
+    bio <- sdmTMB(cpue_kg_km ~ 0 + year_fac, #the 0 is there so there is a factor predictor for each time slice
+                  spatial = "on",
+                  spatiotemporal = "iid",
+                  mesh = mesh2,
+                  family = delta_lognormal(),
+                  time = "year",
+                  anisotropy = TRUE,
+                  data = data2)
+    
+  }
+  
+  
+  
+  
+  saveRDS(abund, paste0(dir, "Models/bairdi_", matsex, "_", stock, "_", period, "_", knots, "_", dist, "_abundTMB.rda"))
+  
+  
+  saveRDS(bio, paste0(dir, "Models/bairdi_", matsex, "_", stock, "_", period, "_", knots, "_", dist, "_bioTMB.rda"))
+  
+  return(list(abundTMB = abund, bioTMB = bio, mesh = mesh2))
+  
+}
 
 ### TANNER W ------------------------------------------------------------------
 years <- c(1975:2019, 2021:2024)
@@ -316,7 +412,7 @@ pred_grid2 <- pred_grid %>%
   mutate(X = X/1000, Y = Y/1000) %>%
   rename(lon = X, lat = Y)
   
-  ## Males -----  
+## Males -----  
   data <- tan.cpue2
   matsex <- "Male"
   stock <- "All"
@@ -327,25 +423,10 @@ pred_grid2 <- pred_grid %>%
   newdat <- pred_grid2
   
     # Fit models
-    fit_models(data, matsex, stock, years, period, knots = 120) -> out
-    fit_models(data, matsex, stock, years, period, knots = 90) -> out
-    fit_models(data, matsex, stock, years, period, knots = 50) -> out
-    
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 120) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 90) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 50) -> out
 
-    # Predict and get index
-    abund.mod1 <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_120_abundTMB.rda"))
-    bio.mod1 <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_120_bioTMB.rda"))
-    
-    abund.mod2 <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_90_abundTMB.rda"))
-    bio.mod2 <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_90_bioTMB.rda"))
-    
-    abund.mod3 <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_50_abundTMB.rda"))
-    bio.mod3 <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_50_bioTMB.rda"))
-    
-    predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 120) ->  out
-    predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90) ->  out
-    predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 50) ->  out
-    
   
   ### Post-1982
   years <- c(1982:2019, 2021:2024)
@@ -353,27 +434,12 @@ pred_grid2 <- pred_grid %>%
   newdat <- pred_grid2
   
     # Fit models
-    fit_models(data, matsex, stock, years, period, knots = 120) -> out
-    fit_models(data, matsex, stock, years, period, knots = 90) -> out
-    fit_models(data, matsex, stock, years, period, knots = 50) -> out
-    
-    
-    # Predict and get index
-    abund.mod1 <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_120_abundTMB.rda")
-    bio.mod1 <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_120_bioTMB.rda")
-    
-    abund.mod2 <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_90_abundTMB.rda")
-    bio.mod2 <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_90_bioTMB.rda")
-    
-    abund.mod3 <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_50_abundTMB.rda")
-    bio.mod3 <- readRDS("./BAIRDI/Models/bairdi_Male_All_post-1982_50_bioTMB.rda")
-    
-    predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 120) ->  out
-    predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90) ->  out
-    predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 50) ->  out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 120) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 90) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 50) -> out
     
   
-  ## Immature Females -----  
+## Immature Females -----  
   data <- tan.cpue2
   matsex <- "Immature Female"
   stock <- "All"
@@ -384,53 +450,22 @@ pred_grid2 <- pred_grid %>%
     newdat <- pred_grid2
     
       # Fit models
-      fit_models(data, matsex, stock, years, period, knots = 120) -> out
-      fit_models(data, matsex, stock, years, period, knots = 90) -> out
-      fit_models(data, matsex, stock, years, period, knots = 50) -> out
+      fit_models(data, matsex, stock, years, period, dist = "DG", knots = 120) -> out
+      fit_models(data, matsex, stock, years, period, dist = "DG", knots = 90) -> out
+      fit_models(data, matsex, stock, years, period, dist = "DG", knots = 50) -> out
       
-      
-      # Predict and get index
-      abund.mod1 <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1982_120_abundTMB.rda")
-      bio.mod1 <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1982_120_bioTMB.rda")
-      
-      abund.mod2 <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1982_90_abundTMB.rda")
-      bio.mod2 <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1982_90_bioTMB.rda")
-      
-      abund.mod3 <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1982_50_abundTMB.rda")
-      bio.mod3 <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_pre-1982_50_bioTMB.rda")
-      
-      predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 120) ->  out
-      predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90) ->  out
-      predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 50) ->  out
-    
-  
+     
   ### Post-1982
   years <- c(1982:2019, 2021:2024)
   period <- "post-1982"
   newdat <- pred_grid2
   
     # Fit models
-    fit_models(data, matsex, stock, years, period, knots = 120) -> out
-    fit_models(data, matsex, stock, years, period, knots = 90) -> out
-    fit_models(data, matsex, stock, years, period, knots = 50) -> out
-    
-    
-    # Predict and get index
-    abund.mod1 <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1982_120_abundTMB.rda")
-    bio.mod1 <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1982_120_bioTMB.rda")
-    
-    abund.mod2 <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1982_90_abundTMB.rda")
-    bio.mod2 <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1982_90_bioTMB.rda")
-    
-    abund.mod3 <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1982_50_abundTMB.rda")
-    bio.mod3 <- readRDS("./BAIRDI/Models/bairdi_Immature Female_All_post-1982_50_bioTMB.rda")
-    
-    predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 120) ->  out
-    predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90) ->  out
-    predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 50) ->  out
-    
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 120) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 90) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 50) -> out
   
-  ## Mature Females -----  
+## Mature Females -----  
   data <- tan.cpue2
   matsex <- "Mature Female"
   stock <- "All"
@@ -441,49 +476,21 @@ pred_grid2 <- pred_grid %>%
   newdat <- pred_grid2
   
     # Fit models
-    fit_models(data, matsex, stock, years, period, knots = 120) -> out
-    fit_models(data, matsex, stock, years, period, knots = 90) -> out
-    fit_models(data, matsex, stock, years, period, knots = 50) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 120) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 90) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 50) -> out
     
-    
-    # Predict and get index
-    abund.mod1 <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1982_120_abundTMB.rda")
-    bio.mod1 <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1982_120_bioTMB.rda")
-    
-    abund.mod2 <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1982_90_abundTMB.rda")
-    bio.mod2 <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1982_90_bioTMB.rda")
-    
-    abund.mod3 <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1982_50_abundTMB.rda")
-    bio.mod3 <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_pre-1982_50_bioTMB.rda")
-    
-    predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 120) ->  out
-    predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90) ->  out
-    predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 50) ->  out
-    
-  
+   
   ### Post-1982
   years <- c(1982:2019, 2021:2024)
   period <- "post-1982"
   newdat <- pred_grid2
   
     # Fit models
-    fit_models(data, matsex, stock, years, period, knots = 120) -> out
-    fit_models(data, matsex, stock, years, period, knots = 90) -> out
-    fit_models(data, matsex, stock, years, period, knots = 50) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 120) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 90) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 50) -> out
     
-    
-    # Predict and get index
-    abund.mod1 <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1982_120_abundTMB.rda")
-    bio.mod1 <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1982_120_bioTMB.rda")
-    
-    abund.mod2 <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1982_90_abundTMB.rda")
-    bio.mod2 <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1982_90_bioTMB.rda")
-    
-    abund.mod3 <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1982_50_abundTMB.rda")
-    bio.mod3 <- readRDS("./BAIRDI/Models/bairdi_Mature Female_All_post-1982_50_bioTMB.rda")
-    
-    predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 120) ->  out
-    predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90) ->  out  
-    predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 50) ->  out  
-    
-  
+   
+# 1) Fit male biomass DG models across all knots, 2) Fit female bio/abund DG models across all knots
+# 3) Eval diagnostics for female bio/abund @50 knots 4) Predict/get index for all DG models at 50 knots

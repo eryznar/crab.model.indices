@@ -168,7 +168,7 @@ stock <- "All"
       
       write.csv(ind.abund, paste0(dir, "Output/Male_abundance_All_post-1982_90_DLN_IID_index.csv"))
     
-# Tweedie() x AR1 ----
+# Tweedie() x AR1 (DOESN'T CONVERGE!!)----
   ### Pre-1982
   years <- c(1975:1981)
   period <- "pre-1982"

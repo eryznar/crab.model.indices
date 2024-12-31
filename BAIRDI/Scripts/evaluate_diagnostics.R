@@ -14,9 +14,9 @@ source("./BAIRDI/Scripts/load_libs_functions.R")
 
 ### LOAD FUNCTION --------------------------------------------------------------
 
-evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knots, dist, method, matsex2){
+evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, kn, family, method, matsex2){
   
-  mod <- paste0(type, "-", knots, "-", family)
+  mod <- paste0(type, "-", kn, "-", family)
   
   # Run sanity check
   print("Pre-1982 model")
@@ -38,9 +38,9 @@ evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knot
     theme(axis.text = element_text(size = 12),
           axis.title = element_text(size = 12)) -> r1.plot
   # 
-  # png(filename = paste0("./BAIRDI/Figures/DHARMa_pre1988_", type, "_", stock2, "_", matsex2, "_", knots, ".png"), width=7, height=5, units="in", res=600)
+  # png(filename = paste0("./BAIRDI/Figures/DHARMa_pre1988_", type, "_", stock2, "_", matsex2, "_", kn, ".png"), width=7, height=5, units="in", res=600)
   # 
-  # plot(resid1, title= paste0("DHARMa residuals (Pre-1988, ", type, ",", stock2, " ", matsex2, ", knots=", knots, ")"))
+  # plot(resid1, title= paste0("DHARMa residuals (Pre-1988, ", type, ",", stock2, " ", matsex2, ", kn=", kn, ")"))
   # 
   # dev.off()
   
@@ -90,70 +90,71 @@ evaluate_diagnostics <- function(data, pre.model, post.model, stock2, type, knot
   }
   
   
-  # visualize residuals across the EBS
-  ggplot(data2) + 
-    #geom_sf(data = shoreline) +
-    geom_point(aes(y = lat, x = lon, color = resids), size = 1) +
-    scale_color_gradient2(midpoint = 0) + 
-    labs(y = "Latitude",
-         x = "Longitude") +
-    theme_gray() + 
-    ggtitle(paste0(stock2," ", matsex2," ", type, " residuals (knots=", knots, ")"))+
-    facet_wrap(~year)+
-    theme(axis.title = element_text(size = 10),
-          legend.position = "bottom") -> res_plot
-  
-  ggsave(plot = res_plot, paste0("./BAIRDI/Figures/DHARMa", stock2, "_", matsex2, "_", mod, "_SPATIAL.png"), height = 9, width = 8.5, units = "in")
-  
-  # # Calculate log-likelihood
-  # clust <- sample(seq_len(10), size = nrow(pre.model$data), replace = TRUE)
+  # # visualize residuals across the EBS
+  # ggplot(data2) + 
+  #   #geom_sf(data = shoreline) +
+  #   geom_point(aes(y = lat, x = lon, color = resids), size = 1) +
+  #   scale_color_gradient2(midpoint = 0) + 
+  #   labs(y = "Latitude",
+  #        x = "Longitude") +
+  #   theme_gray() + 
+  #   ggtitle(paste0(stock2," ", matsex2," ", type, " residuals (kn=", kn, ")"))+
+  #   facet_wrap(~year)+
+  #   theme(axis.title = element_text(size = 10),
+  #         legend.position = "bottom") -> res_plot
   # 
-  #  pre.ll <- sdmTMB_cv(
-  #     data = pre.model$data, 
-  #     formula = cpue_km ~ 0 + year_fac, 
-  #     spatial = "on",
-  #     time = "year", 
-  #     mesh = pre.model$spde, 
-  #     spatiotemporal = "iid",
-  #     silent = FALSE,
-  #     anisotropy = TRUE,
-  #     family = tweedie(link = "log"),
-  #     fold_ids = clust
-  #   )
-  #  
-  #  clust <- sample(seq_len(10), size = nrow(post.model$data), replace = TRUE)
-  #  
-  #  post.ll <- sdmTMB_cv(
-  #    data = post.model$data, 
-  #    formula = cpue_km ~ 0 + year_fac, 
-  #    spatial = "on",
-  #    time = "year", 
-  #    mesh = post.model$spde, 
-  #    spatiotemporal = "iid",
-  #    silent = FALSE,
-  #    anisotropy = TRUE,
-  #    family = tweedie(link = "log"),
-  #    fold_ids = clust
-  #  )
-  #  
-  #  eval.df <- data.frame(matsex = rep(matsex2,2), 
-  #                        type = rep(type,2),
-  #                        knots = rep(knots,2), 
-  #                        family = rep(family, 2), 
-  #                        method = rep(method,2), 
-  #                        period = c("<1982", "≥1982"),
-  #                        loglik = c(pre.ll$sum_loglik, post.ll$sum_loglik),
-  #                        quantiles = c(qq1, qq2),
-  #                        dispersion = c(dd1, dd2),
-  #                        outliers = c(oo1, oo2),
-  #                        zeroinf = c(zz1, zz2))
+  # ggsave(plot = res_plot, paste0("./BAIRDI/Figures/DHARMa", stock2, "_", matsex2, "_", mod, "_SPATIAL.png"), height = 9, width = 8.5, units = "in")
+  
+  # Calculate log-likelihood
+  clust <- sample(seq_len(10), size = nrow(pre.model$data), replace = TRUE)
+  
+  pre.ll <- sdmTMB_cv(
+    data = pre.model$data,
+    formula = cpue_km ~ 0 + year_fac,
+    spatial = "on",
+    time = "year",
+    mesh = pre.model$spde,
+    spatiotemporal = "iid",
+    silent = FALSE,
+    anisotropy = TRUE,
+    family = tweedie(link = "log"),
+    fold_ids = clust
+  )
+  
+  clust <- sample(seq_len(10), size = nrow(post.model$data), replace = TRUE)
+  
+  post.ll <- sdmTMB_cv(
+    data = post.model$data,
+    formula = cpue_km ~ 0 + year_fac,
+    spatial = "on",
+    time = "year",
+    mesh = post.model$spde,
+    spatiotemporal = "iid",
+    silent = FALSE,
+    anisotropy = TRUE,
+    family = tweedie(link = "log"),
+    fold_ids = clust
+  )
+  
+  eval.df <- data.frame(matsex = rep(matsex2,2),
+                        type = rep(type,2),
+                        knots = rep(kn,2),
+                        family = rep(family, 2),
+                        method = rep(method,2),
+                        period = c("<1982", "≥1982"),
+                        loglik = c(pre.ll$sum_loglik, post.ll$sum_loglik),
+                        quantiles = c(qq1, qq2),
+                        dispersion = c(dd1, dd2),
+                        outliers = c(oo1, oo2),
+                        zeroinf = c(zz1, zz2))
   
   saveRDS(all.resids, paste0(dir, "Output/DHARMa", stock2, "_", matsex2, "_", mod, ".csv"))
   
-  return(list(sanity_check_pre, sanity_check_post, all.resids))
+  #return(list(sanity_check_pre, sanity_check_post, all.resids))
   
-  #return(list(sanity_check_pre, sanity_check_post, all.resids, eval.df))
-}
+  return(list(sanity_check_pre, sanity_check_post, all.resids, eval.df))
+}  
+ 
 
 
 ### EVALUATE MODELS EBS-wide ------------
@@ -604,7 +605,7 @@ tan.cpue2 %>%
     ggpubr::ggarrange(mesh.1, mesh.2, nrow = 2)
     ggsave("./BAIRDI/Figures/mesh50.png", height = 8, width = 6, units = "in")
    
-## DELTA GAMMA IID 90 knots ----
+## DELTA GAMMA IID 90 kn ----
   ## Males biomass-----
   data <- tan.cpue2
   matsex2 <- "Male"
@@ -612,46 +613,154 @@ tan.cpue2 %>%
   
   # Biomass
   type <- "biomass"
-  pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_90_bio_DG_IID.rda"))
-  post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_90_biobiom_DG_IID.rda"))
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_90_DG_bioTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_90_DG_bioTMB.rda"))
   
-  evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "Delta_gamma", "IID", matsex2) -> bio.males.DG
-    
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, 90, "Delta_gamma", "IID", matsex2) -> bio.males.DG
+  
   ## Immature Females -----
   data <- tan.cpue2
   matsex2 <- "Immature Female"
   stock2 <- "All"
-    
-    # Abundance
-    type <- "abundance"
-    pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_90_abund_DG_IID.rda"))
-    post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_90_abund_DG_IID.rda"))
-    
-    evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "Delta_gamma", "IID", matsex2) -> ab.imfem.DG
-    
-    # Biomass
-    type <- "biomass"
-    pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_90_bio_DG_IID.rda"))
-    post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_90_bio_DG_IID.rda"))
-    
-    evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "Delta_gamma", "IID", matsex2) -> bio.imfem.DG
-    
+  
+  # Abundance
+  type <- "abundance"
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_90_DG_abundTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_90_DG_abundTMB.rda"))
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, kn = 90, "Delta_gamma", "IID", matsex2) -> ab.imfem.DG
+  
+  # Biomass
+  type <- "biomass"
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_90_DG_bioTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_90_DG_bioTMB.rda"))
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, kn = 90, "Delta_gamma", "IID", matsex2) -> bio.imfem.DG
+  
   ## Mature Females -----
-    data <- tan.cpue2
-    matsex2 <- "Mature Female"
-    stock2 <- "All"
-    
-    # Abundance
-    type <- "abundance"
-    pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_90_abund_DG_IID.rda"))
-    post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_90_abund_DG_IID.rda"))
-    
-    evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "Delta_gamma", "IID", matsex2) -> ab.matfem.DG
-    
-    # Abundance
-    type <- "biomass"
-    pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_90_bio_DG_IID.rda"))
-    post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_90_bio_DG_IID.rda"))
-    
-    evaluate_diagnostics(data, pre.model, post.model, stock2, type, knots = 90, "Delta_gamma", "IID", matsex2) -> bio.matfem.DG
-    
+  data <- tan.cpue2
+  matsex2 <- "Mature Female"
+  stock2 <- "All"
+  
+  # Abundance
+  type <- "abundance"
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_90_DG_abundTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_90_DG_abundTMB.rda"))
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, kn = 90, "Delta_gamma", "IID", matsex2) -> ab.matfem.DG
+  
+  # Abundance
+  type <- "biomass"
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_90_DG_bioTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_90_DG_bioTMB.rda"))
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, kn = 90, "Delta_gamma", "IID", matsex2) -> bio.matfem.DG
+  
+## DELTA GAMMA IID 50 kn ----
+  ## Males -----
+  data <- tan.cpue2
+  matsex2 <- "Male"
+  stock2 <- "All"
+  
+  # Biomass
+  type <- "biomass"
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_50_DG_bioTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_50_DG_bioTMB.rda"))
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, 50, "Delta_gamma", "IID", matsex2) -> bio.males.DG
+  
+  ## Immature Females -----
+  data <- tan.cpue2
+  matsex2 <- "Immature Female"
+  stock2 <- "All"
+  
+  # Abundance
+  type <- "abundance"
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_50_DG_abundTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_50_DG_abundTMB.rda"))
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, kn = 50, "Delta_gamma", "IID", matsex2) -> ab.imfem.DG5
+  
+  # Biomass
+  type <- "biomass"
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_50_DG_bioTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_50_DG_bioTMB.rda"))
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, kn = 50, "Delta_gamma", "IID", matsex2) -> bio.imfem.DG5
+  
+  ## Mature Females -----
+  data <- tan.cpue2
+  matsex2 <- "Mature Female"
+  stock2 <- "All"
+  
+  # Abundance
+  type <- "abundance"
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_50_DG_abundTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_50_DG_abundTMB.rda"))
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, kn = 50, "Delta_gamma", "IID", matsex2) -> ab.matfem.DG5
+  
+  # Biomass
+  type <- "biomass"
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_50_DG_bioTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_50_DG_bioTMB.rda"))
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, kn = 50, "Delta_gamma", "IID", matsex2) -> bio.matfem.DG5
+  
+## DELTA GAMMA IID 120 kn ----
+  ## Males -----
+  data <- tan.cpue2
+  matsex2 <- "Male"
+  stock2 <- "All"
+  
+  # Biomass
+  type <- "biomass"
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_120_DG_bioTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_120_DG_bioTMB.rda"))
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, 120, "Delta_gamma", "IID", matsex2) -> bio.males.DG12
+  
+  ## Immature Females -----
+  data <- tan.cpue2
+  matsex2 <- "Immature Female"
+  stock2 <- "All"
+  
+  # Abundance
+  type <- "abundance"
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_120_DG_abundTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_120_DG_abundTMB.rda"))
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, kn = 120, "Delta_gamma", "IID", matsex2) -> ab.imfem.DG12
+  
+  # Biomass
+  type <- "biomass"
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_pre-1982_120_DG_bioTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Immature Female_All_post-1982_120_DG_bioTMB.rda"))
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, kn = 120, "Delta_gamma", "IID", matsex2) -> bio.imfem.DG12
+  
+  ## Mature Females -----
+  data <- tan.cpue2
+  matsex2 <- "Mature Female"
+  stock2 <- "All"
+  
+  # Abundance
+  type <- "abundance"
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_120_DG_abundTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_120_DG_abundTMB.rda"))
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, kn = 120, "Delta_gamma", "IID", matsex2) -> ab.matfem.DG12
+  
+  # Biomass
+  type <- "biomass"
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_pre-1982_120_DG_bioTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Mature Female_All_post-1982_120_DG_bioTMB.rda"))
+  
+  evaluate_diagnostics(data, pre.model, post.model, stock2, type, kn = 120, "Delta_gamma", "IID", matsex2) -> bio.matfem.DG12
+  
+  rbind(bio.males.DG[[4]], ab.imfem.DG[[4]], bio.imfem.DG[[4]], ab.matfem.DG[[4]], 
+        bio.matfem.DG[[4]], ab.imfem.DG5[[4]], 
+        bio.imfem.DG5[[4]], ab.matfem.DG5[[4]], bio.matfem.DG5[[4]], ab.imfem.DG12[[4]], 
+        bio.imfem.DG12[[4]], ab.matfem.DG12[[4]], bio.matfem.DG12[[4]]) -> dg.eval
+  
+  write.csv(dg.eval, paste0(dir, "Output/delta_gammafem.eval.csv"))

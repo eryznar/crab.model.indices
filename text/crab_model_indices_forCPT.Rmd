@@ -283,39 +283,69 @@ knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_abundance_50-Delta-gam
 knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_biomass_50-Delta-gamma_QQplot.png"))
 ```
 
-```{r DHARMa-abund-spat-50-male, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for male abundance models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+```{r DHARMa-abund-spat-50-male, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for male abundance models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_Male_abundance-50-Delta_gamma_SPATIAL.png"))
 ```
 
 
-```{r DHARMa-abund-spat-50-imfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for immature female abundance models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+```{r DHARMa-abund-spat-50-imfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for immature female abundance models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_Immature Female_abundance-50-Delta_gamma_SPATIAL.png"))
 ```
 
 
-```{r DHARMa-abund-spat-50-matfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for mature female abundance models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+```{r DHARMa-abund-spat-50-matfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for mature female abundance models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_Mature Female_abundance-50-Delta_gamma_SPATIAL.png"))
 ```
 
 
-```{r DHARMa-bio-spat-50-male, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for male biomass models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+```{r DHARMa-bio-spat-50-male, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for male biomass models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_Male_biomass-50-Delta_gamma_SPATIAL.png"))
 ```
 
-```{r DHARMa-bio-spat-50-imfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for immature female biomass models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+```{r DHARMa-bio-spat-50-imfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for immature female biomass models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_Immature Female_biomass-50-Delta_gamma_SPATIAL.png"))
 ```
 
-```{r DHARMa-bio-spat-50-matfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for mature female biomass models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+```{r DHARMa-bio-spat-50-matfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for mature female biomass models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_Mature Female_biomass-50-Delta_gamma_SPATIAL.png"))
 ```
 
+```{r spatpred-abund-50-male, fig.align = "center", fig.cap = "Spatial predictions of male abundance using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/EBS_male_spatabund.png"))
+```
+
+
+```{r spatpred-abund-50-imfem, fig.align = "center", fig.cap = "Spatial predictions of immature female abundance using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/EBS_imfem_spatabund.png"))
+```
+
+```{r spatpred-abund-50-matfem, fig.align = "center", fig.cap = "Spatial predictions of mature female abundance using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/EBS_matfem_spatabund.png"))
+```
+
+```{r spatpred-bio-50-male, fig.align = "center", fig.cap = "Spatial predictions of male biomass using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/EBS_male_spatbio.png"))
+```
+
+```{r spatpred-bio-50-imfem, fig.align = "center", fig.cap = "Spatial predictions of immature female biomass using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/EBS_imfem_spatbio.png"))
+```
+
+```{r spatpred-bio-50-matfem, fig.align = "center", fig.cap = "Spatial predictions of mature male biomass using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/EBS_matfem_spatbio.png"))
+```
 
 ```{r bairdi-abund-index, fig.align = "center", fig.cap = "Estimated abundance (millions) for Tanner crab. Colored lines represent abundance (±95% CI) estimated by sdmTMB, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
 
@@ -447,12 +477,13 @@ knitr::include_graphics(here::here("NSRKC/plots/mesh_100kn_ns.png"))
 \clearpage
 
 # Appendix {-}
-```{r bairdi-west-grid, fig.align = "center", fig.cap = "Prediction grid used to predict spatial abundance and biomass for Tanner crab west of 166°. Spatial resolution is 5km$^2$ and does not include land."}
-
-knitr::include_graphics(here::here("BAIRDI/Figures/west_predgrid.png"))
-```
 
 ```{r bairdi-east-grid, fig.align = "center", fig.cap = "Prediction grid used to predict spatial abundance and biomass for Tanner crab west of 166°. Spatial resolution is 5km$^2$ and does not include land."}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/east_predgrid.png"))
+```
+
+```{r bairdi-west-grid, fig.align = "center", fig.cap = "Prediction grid used to predict spatial abundance and biomass for Tanner crab west of 166°. Spatial resolution is 5km$^2$ and does not include land."}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/west_predgrid.png"))
 ```

@@ -579,91 +579,6 @@ pred_grid2 <- pred_grid %>%
   write.csv(eval.abund, paste0(dir, "Output/model_eval_abund.csv"))
   write.csv(eval.bio, paste0(dir, "Output/model_eval_bio.csv"))
   
-  ### EVALUATE MESH ----------------------------------------------------------------
-  tan.cpue2 %>%
-     mutate(period = case_when((year <1982) ~ "<1982",
-                               TRUE ~ "≥1982")) %>%
-     group_by(year, period, mat.sex) %>%
-     reframe(N = n()) %>%
-     group_by(period, mat.sex) %>%
-     reframe(min.N = min(N)) 
-  
-      # Mesh is the same across matsex and abund/biomass, so just evaluating male models @ diff knots below
-   
-      # 120
-      pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_120_abundTMB.rda"))
-      post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_120_abundTMB.rda"))
-      
-      pre.model$spde$mesh$n # needs to be <136
-      post.model$spde$mesh$n # needs to be <342
-      
-      ggplot(tan.cpue2 %>% filter(year %in% 1975:1981)) + 
-        inlabru::gg(pre.model$spde$mesh) + 
-        geom_point(aes(x = lon, y = lat)) +
-        theme_bw() +
-        ggtitle(paste0("<1982 mesh (knots=", pre.model$spde$mesh$n, ")"))+
-        labs(x = "X", y = "Y") -> mesh.1
-      
-      ggplot(tan.cpue2 %>% filter(year %in% 1982:2024)) + 
-        inlabru::gg(post.model$spde$mesh) + 
-        geom_point(aes(x = lon, y = lat)) +
-        theme_bw() +
-        ggtitle(paste0("≥1982 mesh (knots=", post.model$spde$mesh$n, ")"))+
-      labs(x = "X", y = "Y") -> mesh.2
-      
-      
-      ggpubr::ggarrange(mesh.1, mesh.2, nrow = 2)
-      ggsave("./BAIRDI/Figures/mesh120.png", height = 8, width = 6, units = "in")
-      
-      
-      # 90
-      pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_90_abundTMB.rda"))
-      post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_90_abundTMB.rda"))
-      
-      pre.model$spde$mesh$n # needs to be <136
-      post.model$spde$mesh$n # needs to be <342
-      
-      ggplot(tan.cpue2 %>% filter(year %in% 1975:1981)) + 
-        inlabru::gg(pre.model$spde$mesh) + 
-        geom_point(aes(x = lon, y = lat)) +
-        theme_bw() +
-        ggtitle(paste0("<1982 mesh (knots=", pre.model$spde$mesh$n, ")"))+
-      labs(x = "X", y = "Y") -> mesh.1
-      
-      ggplot(tan.cpue2 %>% filter(year %in% 1982:2024)) + 
-        inlabru::gg(post.model$spde$mesh) + 
-        geom_point(aes(x = lon, y = lat)) +
-        theme_bw() +
-        ggtitle(paste0("≥1982 mesh (knots=", post.model$spde$mesh$n, ")"))+
-      labs(x = "X", y = "Y") -> mesh.2
-      
-      ggpubr::ggarrange(mesh.1, mesh.2, nrow = 2)
-      ggsave("./BAIRDI/Figures/mesh90.png", height = 8, width = 6, units = "in")
-      
-      # 50
-      pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_50_abundTMB.rda"))
-      post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_50_abundTMB.rda"))
-      
-      pre.model$spde$mesh$n # needs to be <136
-      post.model$spde$mesh$n # needs to be <342
-    
-      ggplot(tan.cpue2 %>% filter(year %in% 1975:1981)) + 
-        inlabru::gg(pre.model$spde$mesh) + 
-        geom_point(aes(x = lon, y = lat)) +
-        theme_bw() +
-        ggtitle(paste0("<1982 mesh (knots=", pre.model$spde$mesh$n, ")"))+
-      labs(x = "X", y = "Y") -> mesh.1
-      
-      ggplot(tan.cpue2 %>% filter(year %in% 1982:2024)) + 
-        inlabru::gg(post.model$spde$mesh) + 
-        geom_point(aes(x = lon, y = lat)) +
-        theme_bw() +
-        ggtitle(paste0("≥1982 mesh (knots=", post.model$spde$mesh$n, ")"))+
-      labs(x = "X", y = "Y") -> mesh.2
-      
-      ggpubr::ggarrange(mesh.1, mesh.2, nrow = 2)
-      ggsave("./BAIRDI/Figures/mesh50.png", height = 8, width = 6, units = "in")
-     
   ## DELTA GAMMA IID 50 kn ----
     ## Males -----
     data <- tan.cpue2
@@ -1020,3 +935,122 @@ pred_grid2 <- pred_grid %>%
     
       
       
+  ## All DELTA GAMMA QQ-plots
+   # abundance 50
+    rbind(aa.male50[[1]], aa.imfem50[[1]], aa.matfem50[[1]]) -> dat
+    
+    ggplot()+
+      theme_bw()+
+      geom_abline(slope = 1, intercept = 0, color = "red", linewidth = 1)+
+      geom_point(dat, mapping = aes(expected, observed), size = 1.5)+
+      facet_grid(factor(matsex, levels = c("Male", "Mature Female", "Immature Female")) ~ period)+
+      ylab("Expected")+
+      xlab("Observed")+
+      ggtitle("Tanner abundance DHARMa residual Q-Q plot (50, Delta-gamma)")+
+      theme(axis.text = element_text(size = 12),
+            axis.title = element_text(size = 12))
+    
+    ggsave(filename = paste0("./BAIRDI/Figures/DHARMa_abundance_50-Delta-gamma_QQplot.png"), width=6, height=7, units="in")
+    
+    # biomass 50
+    rbind(bb.male50[[1]], bb.imfem50[[1]], bb.matfem50[[1]]) -> dat
+    
+    ggplot()+
+      theme_bw()+
+      geom_abline(slope = 1, intercept = 0, color = "red", linewidth = 1)+
+      geom_point(dat, mapping = aes(expected, observed), size = 1.5)+
+      facet_grid(factor(matsex, levels = c("Male", "Mature Female", "Immature Female")) ~ period)+
+      ylab("Expected")+
+      xlab("Observed")+
+      ggtitle("Tanner biomass DHARMa residual Q-Q plot (50, Delta-gamma)")+
+      theme(axis.text = element_text(size = 12),
+            axis.title = element_text(size = 12))
+    
+    ggsave(filename = paste0("./BAIRDI/Figures/DHARMa_biomass_50-Delta-gamma_QQplot.png"), width=6, height=7, units="in")
+    
+    
+### EVALUATE MESH ----------------------------------------------------------------
+  tan.cpue2 %>%
+    mutate(period = case_when((year <1982) ~ "<1982",
+                              TRUE ~ "≥1982")) %>%
+    group_by(year, period, mat.sex) %>%
+    reframe(N = n()) %>%
+    group_by(period, mat.sex) %>%
+    reframe(min.N = min(N)) 
+  
+  # Mesh is the same across matsex and abund/biomass, so just evaluating male models @ diff knots below
+  
+  # 120
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_120_abundTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_120_abundTMB.rda"))
+  
+  pre.model$spde$mesh$n # needs to be <136
+  post.model$spde$mesh$n # needs to be <342
+  
+  ggplot(tan.cpue2 %>% filter(year %in% 1975:1981)) + 
+    inlabru::gg(pre.model$spde$mesh) + 
+    geom_point(aes(x = lon, y = lat)) +
+    theme_bw() +
+    ggtitle(paste0("<1982 mesh (knots=", pre.model$spde$mesh$n, ")"))+
+    labs(x = "X", y = "Y") -> mesh.1
+  
+  ggplot(tan.cpue2 %>% filter(year %in% 1982:2024)) + 
+    inlabru::gg(post.model$spde$mesh) + 
+    geom_point(aes(x = lon, y = lat)) +
+    theme_bw() +
+    ggtitle(paste0("≥1982 mesh (knots=", post.model$spde$mesh$n, ")"))+
+    labs(x = "X", y = "Y") -> mesh.2
+  
+  
+  ggpubr::ggarrange(mesh.1, mesh.2, nrow = 2)
+  ggsave("./BAIRDI/Figures/mesh120.png", height = 8, width = 6, units = "in")
+  
+  
+  # 90
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_90_abundTMB.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_90_abundTMB.rda"))
+  
+  pre.model$spde$mesh$n # needs to be <136
+  post.model$spde$mesh$n # needs to be <342
+  
+  ggplot(tan.cpue2 %>% filter(year %in% 1975:1981)) + 
+    inlabru::gg(pre.model$spde$mesh) + 
+    geom_point(aes(x = lon, y = lat)) +
+    theme_bw() +
+    ggtitle(paste0("<1982 mesh (knots=", pre.model$spde$mesh$n, ")"))+
+    labs(x = "X", y = "Y") -> mesh.1
+  
+  ggplot(tan.cpue2 %>% filter(year %in% 1982:2024)) + 
+    inlabru::gg(post.model$spde$mesh) + 
+    geom_point(aes(x = lon, y = lat)) +
+    theme_bw() +
+    ggtitle(paste0("≥1982 mesh (knots=", post.model$spde$mesh$n, ")"))+
+    labs(x = "X", y = "Y") -> mesh.2
+  
+  ggpubr::ggarrange(mesh.1, mesh.2, nrow = 2)
+  ggsave("./BAIRDI/Figures/mesh90.png", height = 8, width = 6, units = "in")
+  
+  # 50
+  pre.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_50_abund_DG_IID.rda"))
+  post.model <- readRDS(paste0(dir, "Models/bairdi_Male_All_post-1982_50_abundTMB.rda"))
+  
+  pre.model$spde$mesh$n # needs to be <136
+  post.model$spde$mesh$n # needs to be <342
+  
+  ggplot(tan.cpue2 %>% filter(year %in% 1975:1981)) + 
+    inlabru::gg(pre.model$spde$mesh) + 
+    geom_point(aes(x = lon, y = lat)) +
+    theme_bw() +
+    ggtitle(paste0("<1982 mesh (knots=", pre.model$spde$mesh$n, ")"))+
+    labs(x = "X", y = "Y") -> mesh.1
+  
+  ggplot(tan.cpue2 %>% filter(year %in% 1982:2024)) + 
+    inlabru::gg(post.model$spde$mesh) + 
+    geom_point(aes(x = lon, y = lat)) +
+    theme_bw() +
+    ggtitle(paste0("≥1982 mesh (knots=", post.model$spde$mesh$n, ")"))+
+    labs(x = "X", y = "Y") -> mesh.2
+  
+  ggpubr::ggarrange(mesh.1, mesh.2, nrow = 2)
+  ggsave("./BAIRDI/Figures/mesh50.png", height = 8, width = 6, units = "in")
+  

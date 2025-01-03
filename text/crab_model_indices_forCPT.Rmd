@@ -91,7 +91,7 @@ For each stock, we present a range of models to show the effects of choices at e
 
 ## Tanner crab {-}
 
-We utilized abundance and biomass data collected from the NMFS summer bottom trawl survey (1975-2024) to fit Tanner crab models in *sdmTMB*. Sex-size/maturity categories included all males combined, immature females, and mature females, and data were filtered to only include crab with a carapace width greater than or equal to 25mm. As the survey gear and methods were standardized in 1982 (Stauffer 2004), we fit separate models to data before 1982 and data in and after 1982 for each sex-size/maturity category. To evaluate decision points for model formulations, we first fit models to data across entire Eastern Bering Sea survey grid using a 50-knot, 90-knot, and 120-knot mesh (Figures \@ref(fig:bairdi-50-mesh) - \@ref(fig:bairdi-120-mesh)) using a Tweedie distribution to determine the most effective number of knots. We then used a mesh with the same number of knots to fit male abundance models using a Tweedie, Delta-lognormal, and Delta-gamma distribution  and a AR1 versus IID random field. We chose to only evaluate male abundance in order to apply a parsimonious set of model formulations across other sex-maturity categories and biomass. Models were evaluated using diagnostics described above. The best models were then used to predict Tanner crab abundance and biomass on an EBS-wide survey grid (Figure \@ref(fig:bairdi-EBS-grid)), a grid encompassing the EBS area west of 166° (for the Tanner West stock; Figure \@ref(fig:bairdi-west-grid), Appendix), and a grid encompassing the EBS area east of 166° (for the Tanner East stock; Figure \@ref(fig:bairdi-east-grid), Appendix). Each prediction grid was a resolution of 5 km$^2$.
+We utilized abundance and biomass data collected from the NMFS summer bottom trawl survey (1975-2024) to fit Tanner crab models in *sdmTMB*. Sex-size/maturity categories included all males combined, immature females, and mature females, and data were filtered to only include crab with a carapace width greater than or equal to 25mm. As the survey gear and methods were standardized in 1982 (Stauffer 2004), we fit separate models to data before 1982 and data in and after 1982 for each sex-size/maturity category. To evaluate decision points for model formulations, we fit models using a 50-knot, 90-knot, and 120-knot mesh (Figures \@ref(fig:bairdi-50-mesh) - \@ref(fig:bairdi-120-mesh)), a Tweedie or delta-gamma model family, and a IID spatiotemporal random field. Models fit using the delta-lognormal family did not pass initial model sanity checks and models using an ar1 or random walk spatiotemporal random field did not converge. Therefore, we do not discuss these frameworks any further. The best model framework was used to predict Tanner crab abundance and biomass on an EBS-wide survey grid (Figure \@ref(fig:bairdi-EBS-grid)), a grid encompassing the EBS area west of 166° (for the Tanner West stock; Figure \@ref(fig:bairdi-west-grid), Appendix), and a grid encompassing the EBS area east of 166° (for the Tanner East stock; Figure \@ref(fig:bairdi-east-grid), Appendix). Each prediction grid was a resolution of 5 km$^2$.
 
 
 ## Norton Sound red king crab {-}
@@ -112,7 +112,16 @@ For model fitting, we used spatial meshes at three resolutions: 120 knots, 90 kn
 
 ### Model diagnostics {-}
 
-### Predicted abundance {-}
+All models passed sanity checks. Model diagnostics using DHARMa residuals varied among the number of knots specified in the mesh (50, 90, 120), model family (Tweedie, delta-gamma), and data period (pre-1982, 1982 onward) for both abundance (Table \@ref(tab:bairdi-abund-modeleval)) and biomass (Table \@ref(tab:bairdi-bio-modeleval)) models. For male abundance, a model using a delta-gamma distribution and 50 knots performed the best for both periods in terms of the greatest log-likelihood, with only the post-1982 model showing evidence of outliers, zero-inflation, and quantile deviations. However, this was true regardless of the model family or number of knots used. This pattern holds true across other sex-maturity categories. For immature female abundance, a delta-gamma model had the largest log-likelihood across periods, with models using 90 and 50 knots performing best pre-1982 and post-1982, respectively. The best model pre-1982 showed evidence of quantile deviation and dispersion, whereas the best model post-1982 showed evidence of outliers, zero-inflation, and quantile deviation. Contrasting the other two sex-maturity categories, the Tweedie family had the largest log-likelihood for mature female abundance, with 90 and 50 knotos performing best pre-1982 and post-1982, respectively. The pre-1982 Tweedie model only showed evidence of zero-inflation, whereas the post-1982 Tweedie model showed evidence of outliers, dispersion, zero-inflation, and quantile deviation. 
+
+As with male abundance, a delta-gamma model using 50 knots had the largest log-likelihood for male biomass pre- and post-1982. Models for both periods showed evidence of quantile deviation, dispersion, and outliers, where just the post-1982 model also showed evidence of zero-inflation as was true for other models in this period. For immature female biomass, a Tweedie model using 90 and 50 knots for pre- and post-1982 had the greatest log-likelihood. While the pre-1982 Tweedie model had the largest log-likelihood, it showed evidence of dispersion and zero-inflation whereas the next-best model, a delta-gamma using 90 knots, did not. For immature female biomass post-1982, a Tweedie and delta-gamma model using 50 knots had the largest and very similar log-likelihoods, with the Tweedie model showing evidence of quantile deviation, dispersion, outliers, and zero-inflation where the delta-gamma model did not show evidence of dispersion. A similar pattern was seen in diagnostics for mature female biomass models, where Tweedie models using 50 knots had the largest but very similar log-likelihood values to delta-gamma models using 50 knots across both periods. The pre-1982 50-knot Tweedie model showed evidence of dispersion, outliers, and zero-inflation, whereas the 50-knot delta-gamma model did not. The post-1982 50-knot Tweedie model exhibited evidence of all diagnostics, whereas the 50-knot delta-gamma model did not show evidence of dispersion.
+
+Accounting for strong model performance across sex-maturity categories, periods, and response (abundance/biomass), we selected the delta-gamma model family and a 50-knot mesh as a parsimonious model framework for prediction. DHARMa residuals for these models across sex-maturity categories and periods did not strongly diverge from the 1-1 line (Figures \@ref(fig:DHARMa-abund-QQ-50) - \@ref(fig:DHARMa-bio-QQ-50)) despite some evidence of quantile dispersion. In addition, DHARMa residuals for these models did not show evidence of spatiotemporal autocorrelation (Figures \@ref(fig:DHARMa-abund-spat-50-male) - \@ref(fig:DHARMa-bio-spat-50-matfem)).
+
+### Predicted abundance and biomass {-}
+
+Heat maps of EBS-wide predicted abundance for Tanner crab males, immature females, and mature females are shown in figures \@ref(fig:spatpred-abund-50-male) - \@ref(fig:spatpred-abund-50-matfem), respectively, using our chosen model framework (delta-gamma, 50 knots). Heat maps of EBS-wide predicted biomass for Tanner crab males, immature females, and mature females are shown in figures \@ref(fig:spatpred-bio-50-male) - \@ref(fig:spatpred-bio-50-matfem). Abundance and biomass heat maps for Tanner crab west and east of 166° are shown in Appendix figures \@ref(fig:spatpred-abund-50-maleW) - \@ref(fig:spatpred-bio-50-matfemW) and figures \@ref(fig:spatpred-abund-50-maleE) - \@ref(fig:spatpred-bio-50-matfemE), respectively. 
+
 ### Predicted index fits to observations {-}
 
 ## Norton Sound red king crab {-}
@@ -316,33 +325,33 @@ knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_Immature Female_biomas
 knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_Mature Female_biomass-50-Delta_gamma_SPATIAL.png"))
 ```
 
-```{r spatpred-abund-50-male, fig.align = "center", fig.cap = "Spatial predictions of male abundance using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+```{r spatpred-abund-50-male, fig.align = "center", fig.cap = "Spatial predictions of male abundance across the Eastern Bering Sea using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/EBS_male_spatabund.png"))
 ```
 
 
-```{r spatpred-abund-50-imfem, fig.align = "center", fig.cap = "Spatial predictions of immature female abundance using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+```{r spatpred-abund-50-imfem, fig.align = "center", fig.cap = "Spatial predictions of immature female abundance across the Eastern Bering Sea using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/EBS_imfem_spatabund.png"))
 ```
 
-```{r spatpred-abund-50-matfem, fig.align = "center", fig.cap = "Spatial predictions of mature female abundance using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+```{r spatpred-abund-50-matfem, fig.align = "center", fig.cap = "Spatial predictions of mature female abundance across the Eastern Bering Sea using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/EBS_matfem_spatabund.png"))
 ```
 
-```{r spatpred-bio-50-male, fig.align = "center", fig.cap = "Spatial predictions of male biomass using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+```{r spatpred-bio-50-male, fig.align = "center", fig.cap = "Spatial predictions of male biomass across the Eastern Bering Sea using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/EBS_male_spatbio.png"))
 ```
 
-```{r spatpred-bio-50-imfem, fig.align = "center", fig.cap = "Spatial predictions of immature female biomass using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+```{r spatpred-bio-50-imfem, fig.align = "center", fig.cap = "Spatial predictions of immature female biomass across the Eastern Bering Sea using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/EBS_imfem_spatbio.png"))
 ```
 
-```{r spatpred-bio-50-matfem, fig.align = "center", fig.cap = "Spatial predictions of mature male biomass using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+```{r spatpred-bio-50-matfem, fig.align = "center", fig.cap = "Spatial predictions of mature female biomass across the Eastern Bering Sea using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/EBS_matfem_spatbio.png"))
 ```
@@ -477,13 +486,72 @@ knitr::include_graphics(here::here("NSRKC/plots/mesh_100kn_ns.png"))
 \clearpage
 
 # Appendix {-}
+```{r bairdi-west-grid, fig.align = "center", fig.cap = "Prediction grid used to predict spatial abundance and biomass for Tanner crab west of 166°. Spatial resolution is 5km$^2$ and does not include land."}
 
-```{r bairdi-east-grid, fig.align = "center", fig.cap = "Prediction grid used to predict spatial abundance and biomass for Tanner crab west of 166°. Spatial resolution is 5km$^2$ and does not include land."}
+knitr::include_graphics(here::here("BAIRDI/Figures/west_predgrid.png"))
+```
+
+```{r bairdi-east-grid, fig.align = "center", fig.cap = "Prediction grid used to predict spatial abundance and biomass for Tanner crab east of 166°. Spatial resolution is 5km$^2$ and does not include land."}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/east_predgrid.png"))
 ```
 
-```{r bairdi-west-grid, fig.align = "center", fig.cap = "Prediction grid used to predict spatial abundance and biomass for Tanner crab west of 166°. Spatial resolution is 5km$^2$ and does not include land."}
+```{r spatpred-abund-50-maleW, fig.align = "center", fig.cap = "Spatial predictions of male abundance west of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
-knitr::include_graphics(here::here("BAIRDI/Figures/west_predgrid.png"))
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerW_male_spatabund.png"))
+```
+
+```{r spatpred-abund-50-imfemW, fig.align = "center", fig.cap = "Spatial predictions of immature female abundance west of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerW_imfem_spatabund.png"))
+```
+
+```{r spatpred-abund-50-matfemW, fig.align = "center", fig.cap = "Spatial predictions of mature female abundance west of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerW_matfem_spatabund.png"))
+```
+
+```{r spatpred-bio-50-maleW, fig.align = "center", fig.cap = "Spatial predictions of male biomass west of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerW_male_spatbio.png"))
+```
+
+```{r spatpred-bio-50-imfemW, fig.align = "center", fig.cap = "Spatial predictions of immature female biomass west of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerW_imfem_spatbio.png"))
+```
+
+```{r spatpred-bio-50-matfemW, fig.align = "center", fig.cap = "Spatial predictions of mature female biomass west of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerW_matfem_spatbio.png"))
+```
+
+```{r spatpred-abund-50-maleE, fig.align = "center", fig.cap = "Spatial predictions of male abundance east of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerE_male_spatabund.png"))
+```
+
+```{r spatpred-abund-50-imfemE, fig.align = "center", fig.cap = "Spatial predictions of immature female abundance east of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerE_imfem_spatabund.png"))
+```
+
+```{r spatpred-abund-50-matfemE, fig.align = "center", fig.cap = "Spatial predictions of mature female abundance east of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerE_matfem_spatabund.png"))
+```
+
+```{r spatpred-bio-50-maleE, fig.align = "center", fig.cap = "Spatial predictions of male biomass east of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerE_male_spatbio.png"))
+```
+
+```{r spatpred-bio-50-imfemE, fig.align = "center", fig.cap = "Spatial predictions of immature female biomass east of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerE_imfem_spatbio.png"))
+```
+
+```{r spatpred-bio-50-matfemE, fig.align = "center", fig.cap = "Spatial predictions of mature female biomass east of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerE_matfem_spatbio.png"))
 ```

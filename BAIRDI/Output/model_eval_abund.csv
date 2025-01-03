@@ -1,0 +1,43 @@
+matsex,type,knots,family,method,period,loglik,quantiles,dispersion,outliers,zeroinf
+Immature Female,abundance,90,Delta_gamma,IID,<1982,-6371.470752,0,0,0.54,0.5
+Immature Female,abundance,90,Tweedie,IID,<1982,-6475.362655,0.01,0,0.01,0.15
+Immature Female,abundance,120,Tweedie,IID,<1982,-6665.98106,0.06,0.04,0.36,0.25
+Immature Female,abundance,50,Delta_gamma,IID,<1982,-6716.270851,0,0.25,0.23,0
+Immature Female,abundance,50,Tweedie,IID,<1982,-6850.928097,0.06,0.01,0.13,0.07
+Immature Female,abundance,120,Delta_gamma,IID,<1982,-6907.781547,0,0,0.13,0.13
+Immature Female,abundance,50,Delta_gamma,IID,>1982,-53281.60561,0,0.07,0,0
+Immature Female,abundance,50,Tweedie,IID,>1982,-53380.13469,0,0,0,0
+Immature Female,abundance,90,Tweedie,IID,>1982,-53543.27686,0,0,0,0
+Immature Female,abundance,90,Delta_gamma,IID,>1982,-53553.83461,0,0.17,0.02,0
+Immature Female,abundance,120,Tweedie,IID,>1982,-53722.65554,0,0,0,0
+Immature Female,abundance,120,Delta_gamma,IID,>1982,-53852.77327,0,0.69,0.04,0
+Male,abundance,50,Delta_gamma,IID,<1982,-9256.247924,0.37,0.53,0.13,0.45
+Male,abundance,50,Delta_lognormal,IID,<1982,-9286.710607,0,0.51,0.05,0.55
+Male,abundance,90,Tweedie,IID,<1982,-9339.852321,0,0,0,0.07
+Male,abundance,90,Delta_gamma,IID,<1982,-9349.705067,0,0.07,0.54,0.26
+Male,abundance,90,Delta_lognormal,IID,<1982,-9349.739889,0,0.67,1,0.11
+Male,abundance,50,Delta_lognormal,IID,<1982,-9381.402001,0,0.77,0.76,0.23
+Male,abundance,120,Tweedie,IID,<1982,-9397.709993,0,0,0,0.01
+Male,abundance,120,Delta_gamma,IID,<1982,-9398.749715,0.07,0.46,0.36,0.06
+Male,abundance,50,Tweedie,IID,<1982,-9540.704057,0,0,0,0.03
+Male,abundance,50,Delta_gamma,IID,>1982,-76006.33495,0,0.11,0,0.02
+Male,abundance,50,Tweedie,IID,>1982,-76072.91525,0,0,0,0
+Male,abundance,50,Delta_lognormal,IID,>1982,-76146.00514,0,0.79,0.28,0.42
+Male,abundance,90,Tweedie,IID,>1982,-76229.40214,0,0,0,0
+Male,abundance,90,Delta_gamma,IID,>1982,-76277.6971,0,0.11,0,0
+Male,abundance,90,Delta_lognormal,IID,>1982,-76283.85169,0,0.8,0.55,0
+Male,abundance,120,Tweedie,IID,>1982,-76318.22159,0,0,0,0
+Male,abundance,50,Delta_lognormal,IID,>1982,-76372.42128,0,0.92,0.69,0.04
+Male,abundance,120,Delta_gamma,IID,>1982,-76509.48618,0,0.06,0,0
+Mature Female,abundance,90,Tweedie,IID,<1982,-6089.762643,0.07,0.36,0.13,0.02
+Mature Female,abundance,90,Delta_gamma,IID,<1982,-6097.25076,0.03,0.82,0.54,0.61
+Mature Female,abundance,50,Delta_gamma,IID,<1982,-6097.422402,0.05,0.43,0,0
+Mature Female,abundance,120,Delta_gamma,IID,<1982,-6108.277177,0.25,0.33,0.13,0.01
+Mature Female,abundance,120,Tweedie,IID,<1982,-6132.665312,0.01,0.03,0.76,0.03
+Mature Female,abundance,50,Tweedie,IID,<1982,-6189.433912,0.09,0.04,0.02,0.02
+Mature Female,abundance,50,Tweedie,IID,>1982,-43560.90084,0,0,0,0
+Mature Female,abundance,50,Delta_gamma,IID,>1982,-43625.42125,0,0.05,0,0
+Mature Female,abundance,90,Delta_gamma,IID,>1982,-43803.82311,0,0.05,0,0
+Mature Female,abundance,120,Delta_gamma,IID,>1982,-43943.314,0,0.04,0,0
+Mature Female,abundance,90,Tweedie,IID,>1983,-43837.03341,0,0.01,0,0
+Mature Female,abundance,120,Tweedie,IID,>1984,-44059.63693,0,0,0,0

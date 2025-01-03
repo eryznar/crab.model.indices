@@ -187,8 +187,54 @@ Yalcin, S., S.C. Anderson, P.M. Regular, P.A. English. 2023. Exploring the limit
 
 \clearpage
 
-\blandscape
 
+
+```{r bairdi-abund-modeleval, results = "asis", out.width= "50%"}
+df <- read.csv(here::here("./BAIRDI/Output/model_eval_abund.csv")) %>%
+  filter(family != "Delta_lognormal") %>%
+  dplyr::select(!c(type, method)) %>%
+  rename("Category" = matsex, "Knots" = knots, "Family" = family, "Period" = period, "Log-likelihood" = loglik, "Quantiles" = quantiles, "Dispersion" = dispersion, "Outliers" = outliers, "Zero-inflation" = zeroinf) %>%
+  dplyr::select(c("Category", "Period", "Family", "Knots", "Log-likelihood", "Quantiles", "Dispersion", "Outliers", "Zero-inflation")) %>%
+  mutate(Family = case_when((Family == "Delta_gamma") ~ "Delta-gamma",
+                            TRUE ~ "Tweedie"),
+         Period = case_when((Period == "<1982") ~ "<1982",
+                            TRUE ~ ">=1982"))
+
+library(kableExtra)
+
+df %>%
+  kable(booktabs = TRUE, caption = "Tanner crab diagnostic values for abundance models fit with Tweedie or delta gamma families and a spatial resolution of 50, 90, or 120 knots across sex-size maturity categories and model-fitting periods (pre-1982, during or after 1982). Log-likelihood values were estimated using the cross-validation function in sdmTMB with 3 folds. Quantile, dispersion, outlier, and zero-inflation diagnostics were estimated from DHARMa residuals, with values below 0.05 indicating significant metrics. Values are ordered within sex-size maturity category and period by decreasing log-likelihood.", digits = c(1)) %>%
+  kable_styling(full_width = FALSE, latex_options = "scale_down",
+                row_label_position='c') %>%
+  kable_paper(full_width = FALSE) 
+
+
+```
+
+
+
+```{r bairdi-bio-modeleval, results = "asis", out.width= "50%"}
+df <- read.csv(here::here("./BAIRDI/Output/model_eval_bio.csv")) %>%
+  dplyr::select(!c(type, method)) %>%
+  rename("Category" = matsex, "Knots" = knots, "Family" = family, "Period" = period, "Log-likelihood" = loglik, "Quantiles" = quantiles, "Dispersion" = dispersion, "Outliers" = outliers, "Zero-inflation" = zeroinf) %>%
+  dplyr::select(c("Category", "Period", "Family", "Knots", "Log-likelihood", "Quantiles", "Dispersion", "Outliers", "Zero-inflation")) %>%
+  mutate(Family = case_when((Family == "Delta_gamma") ~ "Delta-gamma",
+                            TRUE ~ "Tweedie"),
+         Period = case_when((Period == "<1982") ~ "<1982",
+                            TRUE ~ ">=1982"))
+
+library(kableExtra)
+
+df %>%
+  kable(booktabs = TRUE, caption = "Tanner crab diagnostic values for biomass models fit with Tweedie or delta gamma families and a spatial resolution of 50, 90, or 120 knots across sex-size maturity categories and model-fitting periods (pre-1982, during or after 1982). Log-likelihood values were estimated using the cross-validation function in sdmTMB with 3 folds. Quantile, dispersion, outlier, and zero-inflation diagnostics were estimated from DHARMa residuals, with values below 0.05 indicating significant metrics. Values are ordered within sex-size maturity category and period by decreasing log-likelihood.", digits = c(1)) %>%
+  kable_styling(full_width = FALSE, latex_options = "scale_down",
+                row_label_position='c') %>%
+  kable_paper(full_width = FALSE) 
+
+
+```
+
+\blandscape
 ```{r nsrkc-loglik, results = "asis"}
 # 
 # df <- nsrkc.loglik %>%
@@ -200,7 +246,9 @@ Yalcin, S., S.C. Anderson, P.M. Regular, P.A. English. 2023. Exploring the limit
 
 ```
 
+
 \elandscape
+
 
 
 
@@ -225,44 +273,47 @@ knitr::include_graphics(here::here("BAIRDI/Figures/mesh90.png"))
 knitr::include_graphics(here::here("BAIRDI/Figures/mesh120.png"))
 ```
 
-```{r DHARMa-abund-QQ-90, fig.align = "center", fig.cap = "Q-Q plot of DHARMa residuals for EBS-wide abundance models fit with NMFS summer bottom trawl survey data before 1988 (left) and 1988 onward (right) using 90 knots in the model mesh."}
+```{r DHARMa-abund-QQ-50, fig.align = "center", fig.cap = "Q-Q plot of DHARMa residuals for abundance models fit with NMFS summer bottom trawl survey data before 1982 (left) and 1982 onward (right) using a delta-gamma model family and 50 knots in the model mesh."}
 
-knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_abundance_EBS_90_QQplot.png"))
+knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_abundance_50-Delta-gamma_QQplot.png"))
 ```
 
-```{r DHARMa-bio-QQ-90, fig.align = "center", fig.cap = "Q-Q plot of DHARMa residuals for EBS-wide biomass models fit with NMFS summer bottom trawl survey data before 1988 (left) and 1988 onward (right) using 90 knots in the model mesh."}
+```{r DHARMa-bio-QQ-50, fig.align = "center", fig.cap = "Q-Q plot of DHARMa residuals for biomass models fit with NMFS summer bottom trawl survey data before 1982 (left) and 1982 onward (right) using a delta-gamma model family and 50 knots in the model mesh."}
 
-knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_biomass_EBS_90_QQplot.png"))
+knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_biomass_50-Delta-gamma_QQplot.png"))
 ```
 
-```{r DHARMa-abund-spat-90-male, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide male abundance models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+```{r DHARMa-abund-spat-50-male, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for male abundance models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
-knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Male_abundance90_SPATIAL.png"))
+knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_Male_abundance-50-Delta_gamma_SPATIAL.png"))
 ```
 
-```{r DHARMa-abund-spat-90-imfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide immature female abundance models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
-knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Immature Female_abundance90_SPATIAL.png"))
+```{r DHARMa-abund-spat-50-imfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for immature female abundance models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_Immature Female_abundance-50-Delta_gamma_SPATIAL.png"))
 ```
 
-```{r DHARMa-abund-spat-90-matfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide mature female abundance models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
-knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Mature Female_abundance90_SPATIAL.png"))
+```{r DHARMa-abund-spat-50-matfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for mature female abundance models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_Mature Female_abundance-50-Delta_gamma_SPATIAL.png"))
 ```
 
-```{r DHARMa-bio-spat-90-male, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide male biomass models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
-knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Male_biomass90_SPATIAL.png"))
+```{r DHARMa-bio-spat-50-male, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for male biomass models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_Male_biomass-50-Delta_gamma_SPATIAL.png"))
 ```
 
-```{r DHARMa-bio-spat-90-imfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide immature female biomass models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+```{r DHARMa-bio-spat-50-imfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for immature female biomass models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
-knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Immature Female_biomass90_SPATIAL.png"))
+knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_Immature Female_biomass-50-Delta_gamma_SPATIAL.png"))
 ```
 
-```{r DHARMa-bio-spat-90-matfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for EBS-wide mature female biomass models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 90-knot mesh. Predictions from both these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+```{r DHARMa-bio-spat-50-matfem, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for mature female biomass models fit using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
-knitr::include_graphics(here::here("BAIRDI/Figures/DHARMaAll_Mature Female_biomass90_SPATIAL.png"))
+knitr::include_graphics(here::here("BAIRDI/Figures/DHARMa_Mature Female_biomass-50-Delta_gamma_SPATIAL.png"))
 ```
 
 

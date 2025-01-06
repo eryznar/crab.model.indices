@@ -579,6 +579,9 @@ pred_grid2 <- pg.W %>%
   bio <- rbind(pre.male$pred.bio %>% filter(lat<6841), post.male$pred.bio) %>%
     mutate(value =plogis(est1) * exp(est2))
   
+  saveRDS(abund, paste0(dir, "Output/TannerE_male_spatialabund.csv"))
+  saveRDS(bio, paste0(dir, "Output/TannerE_male_spatialbio.csv"))
+  
   
   ggplot(abund) +
     geom_tile(aes(y = lat, x = lon, fill = log(value))) +
@@ -586,7 +589,7 @@ pred_grid2 <- pg.W %>%
     labs(y = "Latitude",
          x = "Longitude") +
     theme_bw() +
-    scale_x_continuous(breaks = c(250, 750, 1250))+
+    scale_x_continuous(breaks = c(800, 1000, 1200))+
     ggtitle("Tanner East predicted male abundance")+
     facet_wrap(~year)+
     theme(axis.title = element_text(size = 10),
@@ -601,7 +604,7 @@ pred_grid2 <- pg.W %>%
     labs(y = "Latitude",
          x = "Longitude") +
     theme_bw() +
-    scale_x_continuous(breaks = c(250, 750, 1250))+
+    scale_x_continuous(breaks = c(800, 1000, 1200))+
     ggtitle("Tanner East predicted male biomass")+
     facet_wrap(~year)+
     theme(axis.title = element_text(size = 10),
@@ -646,6 +649,9 @@ pred_grid2 <- pg.W %>%
   bio <- rbind(pre.imfem$pred.bio %>% filter(lat<6841), post.imfem$pred.bio) %>%
     mutate(value =plogis(est1) * exp(est2))
   
+  saveRDS(abund, paste0(dir, "Output/TannerE_imfem_spatialabund.csv"))
+  saveRDS(bio, paste0(dir, "Output/TannerE_imfem_spatialbio.csv"))
+  
   
   ggplot(abund) +
     geom_tile(aes(y = lat, x = lon, fill = log(value))) +
@@ -653,7 +659,7 @@ pred_grid2 <- pg.W %>%
     labs(y = "Latitude",
          x = "Longitude") +
     theme_bw() +
-    scale_x_continuous(breaks = c(250, 750, 1250))+
+    scale_x_continuous(breaks = c(800, 1000, 1200))+
     ggtitle("Tanner East predicted immature female abundance")+
     facet_wrap(~year)+
     theme(axis.title = element_text(size = 10),
@@ -668,7 +674,7 @@ pred_grid2 <- pg.W %>%
     labs(y = "Latitude",
          x = "Longitude") +
     theme_bw() +
-    scale_x_continuous(breaks = c(250, 750, 1250))+
+    scale_x_continuous(breaks = c(800, 1000, 1200))+
     ggtitle("Tanner East predicted immature female biomass")+
     facet_wrap(~year)+
     theme(axis.title = element_text(size = 10),
@@ -714,6 +720,9 @@ pred_grid2 <- pg.W %>%
   bio <- rbind(pre.matfem$pred.bio %>% filter(lat<6841), post.matfem$pred.bio) %>%
     mutate(value =plogis(est1) * exp(est2))
   
+  saveRDS(abund, paste0(dir, "Output/TannerE_matfem_spatialabund.csv"))
+  saveRDS(bio, paste0(dir, "Output/TannerE_matfem_spatialbio.csv"))
+  
   
   ggplot(abund) +
     #geom_sf(data = shoreline) +
@@ -722,7 +731,7 @@ pred_grid2 <- pg.W %>%
     labs(y = "Latitude",
          x = "Longitude") +
     theme_bw() +
-    scale_x_continuous(breaks = c(250, 750, 1250))+
+    scale_x_continuous(breaks = c(800, 1000, 1200))+
     ggtitle("Tanner East predicted mature female abundance")+
     facet_wrap(~year)+
     theme(axis.title = element_text(size = 10),
@@ -737,7 +746,7 @@ pred_grid2 <- pg.W %>%
     labs(y = "Latitude",
          x = "Longitude") +
     theme_bw() +
-    scale_x_continuous(breaks = c(250, 750, 1250))+
+    scale_x_continuous(breaks = c(800, 1000, 1200))+
     ggtitle("Tanner East predicted mature female biomass")+
     facet_wrap(~year)+
     theme(axis.title = element_text(size = 10),

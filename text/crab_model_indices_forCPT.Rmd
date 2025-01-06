@@ -369,22 +369,22 @@ knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.biomass.index.png")
 
 ```{r nsrkc-pred-grid, fig.align = "center", fig.cap = "Prediction grid used for Norton Sound red king crab spatial abundance predictions. Spatial resolution is 5 km$^2$."}
 
-knitr::include_graphics(here::here("NSRKC/plots/prediction_grid_5km.png"))
+#knitr::include_graphics(here::here("NSRKC/plots/prediction_grid_5km.png"))
 ```
 
 ```{r nsrkc-mesh-30kn, fig.align = "center", fig.cap = "Spatial mesh with 30 knots used for fitting Norton Sound red king crab spatial models. Points represent observations and vertices represent knot locations."}
 
-knitr::include_graphics(here::here("NSRKC/plots/mesh_30kn_ns.png"))
+#knitr::include_graphics(here::here("NSRKC/plots/mesh_30kn_ns.png"))
 ```
 
 ```{r nsrkc-mesh-50kn, fig.align = "center", fig.cap = "Spatial mesh with 50 knots used for fitting Norton Sound red king crab spatial models. Points represent observations and vertices represent knot locations."}
 
-knitr::include_graphics(here::here("NSRKC/plots/mesh_50kn_ns.png"))
+#knitr::include_graphics(here::here("NSRKC/plots/mesh_50kn_ns.png"))
 ```
 
 ```{r nsrkc-mesh-100kn, fig.align = "center", fig.cap = "Spatial mesh with 100 knots used for fitting Norton Sound red king crab spatial models. Points represent observations and vertices represent knot locations."}
 
-knitr::include_graphics(here::here("NSRKC/plots/mesh_100kn_ns.png"))
+#knitr::include_graphics(here::here("NSRKC/plots/mesh_100kn_ns.png"))
 ```
 
 ```{r nsrkc-qq-30kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the Norton Sound red king crab model with 30 knots.", out.width="100%", out.height="100%"}

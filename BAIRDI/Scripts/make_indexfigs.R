@@ -1,0 +1,478 @@
+### PURPOSE ----------------------------------------------------------------------
+# To generate model-based indices of abundance and biomass for EBS Tanner crab for all males, immature females, and 
+# mature females. Minimum size is 25 mm CW and the time range is 1975-present. Try fitting separate models for 1975-1981 and 
+# 1982+. 
+
+# Author: Emily Ryznar
+
+# TO DOs:
+# 1) Look at residuals
+# 2) Add in scripts to load new survey data (CPUE, BIO/ABUND) and process each year (CPUE script is in TECHMEMONEW)
+
+### LOAD LIBRARIES/FUNCTIONS/DATA --------------------------------------------------------
+source("./BAIRDI/Scripts/load_libs_functions.R")
+
+### EBS-wide ------------
+years <- c(1975:2019, 2021:2024)
+      
+pred_grid2 <- pred_grid %>%
+  st_as_sf(., coords = c("Lon", "Lat"), crs = "+proj=longlat +datum=WGS84") %>%
+  st_transform(., crs = "+proj=utm +zone=2") %>%
+  cbind(st_coordinates(.)) %>%
+  as.data.frame(.) %>%
+  dplyr::select(Area_km2, X, Y) %>%
+  replicate_df(., "year", years) %>%
+  mutate(X = X/1000, Y = Y/1000) %>%
+  rename(lon = X, lat = Y)
+  
+  
+  ## Males sdmTMB -----  
+  data <- tan.cpue2
+  matsex2 <- "Male"
+  stock2 <- "All"
+ 
+  
+  # Indices
+    # 50
+    Allmale.index.abund50 <- rbind(read.csv(paste0(dir, "Output/Male_abundance_All_pre-1982_50-Delta_gamma_index.csv")),
+                                   read.csv(paste0(dir, "Output/Male_abundance_All_post-1982_50-Delta_gamma_index.csv"))) %>%
+                            rename(abundance = est, Year = year) %>%
+                            mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
+                            mutate(knots = 50, matsex = matsex2)
+    
+    Allmale.index.bio50 <- rbind(read.csv(paste0(dir, "Output/Male_biomass_All_pre-1982_50-Delta_gamma_index.csv")),
+                                 read.csv(paste0(dir, "Output/Male_biomass_All_post-1982_50-Delta_gamma_index.csv"))) %>%
+                            rename(biomass = est, Year = year) %>%
+                            mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
+                            mutate(knots = 50, matsex = matsex2)
+    
+    # 90
+    Allmale.index.abund90 <- rbind(read.csv(paste0(dir, "Output/Male_abundance_All_pre-1982_90-Delta_gamma_index.csv")),
+                                 read.csv(paste0(dir, "Output/Male_abundance_All_post-1982_90-Delta_gamma_index.csv"))) %>%
+                          rename(abundance = est, Year = year) %>%
+                          mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
+                          mutate(knots = 90, matsex = matsex2)
+    
+    Allmale.index.bio90 <- rbind(read.csv(paste0(dir, "Output/Male_biomass_All_pre-1982_90-Delta_gamma_index.csv")),
+                               read.csv(paste0(dir, "Output/Male_biomass_All_post-1982_90-Delta_gamma_index.csv"))) %>%
+                          rename(biomass = est, Year = year) %>%
+                          mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
+                          mutate(knots = 90, matsex = matsex2)
+    
+    # 120
+    Allmale.index.abund120 <- rbind(read.csv(paste0(dir, "Output/Male_abundance_All_pre-1982_120-Delta_gamma_index.csv")),
+                                  read.csv(paste0(dir, "Output/Male_abundance_All_post-1982_120-Delta_gamma_index.csv"))) %>%
+                          rename(abundance = est, Year = year) %>%
+                          mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
+                          mutate(knots = 120, matsex = matsex2)
+    
+    Allmale.index.bio120 <- rbind(read.csv(paste0(dir, "Output/Male_biomass_All_pre-1982_120-Delta_gamma_index.csv")),
+                                read.csv(paste0(dir, "Output/Male_biomass_All_post-1982_120-Delta_gamma_index.csv"))) %>%
+                          rename(biomass = est, Year = year) %>%
+                          mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
+                          mutate(knots = 120, matsex = matsex2)
+  
+  ## Immature Females sdmTMB -----  
+  data <- tan.cpue2
+  matsex2 <- "Immature Female"
+  stock2 <- "All"
+  
+  # Indices
+  # 50
+  Allimfem.index.abund50 <- rbind(read.csv(paste0(dir, "Output/Immature Female_abundance_All_pre-1982_50-Delta_gamma_index.csv")),
+                                 read.csv(paste0(dir, "Output/Immature Female_abundance_All_post-1982_50-Delta_gamma_index.csv"))) %>%
+    rename(abundance = est, Year = year) %>%
+    mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
+    mutate(knots = 50, matsex = matsex2)
+  
+  Allimfem.index.bio50 <- rbind(read.csv(paste0(dir, "Output/Immature Female_biomass_All_pre-1982_50-Delta_gamma_index.csv")),
+                               read.csv(paste0(dir, "Output/Immature Female_biomass_All_post-1982_50-Delta_gamma_index.csv"))) %>%
+    rename(biomass = est, Year = year) %>%
+    mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
+    mutate(knots = 50, matsex = matsex2)
+  
+  # 90
+  Allimfem.index.abund90 <- rbind(read.csv(paste0(dir, "Output/Immature Female_abundance_All_pre-1982_90-Delta_gamma_index.csv")),
+                                 read.csv(paste0(dir, "Output/Immature Female_abundance_All_post-1982_90-Delta_gamma_index.csv"))) %>%
+    rename(abundance = est, Year = year) %>%
+    mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
+    mutate(knots = 90, matsex = matsex2)
+  
+  Allimfem.index.bio90 <- rbind(read.csv(paste0(dir, "Output/Immature Female_biomass_All_pre-1982_90-Delta_gamma_index.csv")),
+                               read.csv(paste0(dir, "Output/Immature Female_biomass_All_post-1982_90-Delta_gamma_index.csv"))) %>%
+    rename(biomass = est, Year = year) %>%
+    mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
+    mutate(knots = 90, matsex = matsex2)
+  
+  # 120
+  Allimfem.index.abund120 <- rbind(read.csv(paste0(dir, "Output/Immature Female_abundance_All_pre-1982_120-Delta_gamma_index.csv")),
+                                  read.csv(paste0(dir, "Output/Immature Female_abundance_All_post-1982_120-Delta_gamma_index.csv"))) %>%
+    rename(abundance = est, Year = year) %>%
+    mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
+    mutate(knots = 120, matsex = matsex2)
+  
+  Allimfem.index.bio120 <- rbind(read.csv(paste0(dir, "Output/Immature Female_biomass_All_pre-1982_120-Delta_gamma_index.csv")),
+                                read.csv(paste0(dir, "Output/Immature Female_biomass_All_post-1982_120-Delta_gamma_index.csv"))) %>%
+    rename(biomass = est, Year = year) %>%
+    mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
+    mutate(knots = 120, matsex = matsex2)
+  
+  ## Mature Females sdmTMB -----  
+  data <- tan.cpue2
+  matsex2 <- "Mature Female"
+  stock2 <- "All"
+  
+  # Indices
+  # 50
+  Allmatfem.index.abund50 <- rbind(read.csv(paste0(dir, "Output/Mature Female_abundance_All_pre-1982_50-Delta_gamma_index.csv")),
+                                  read.csv(paste0(dir, "Output/Mature Female_abundance_All_post-1982_50-Delta_gamma_index.csv"))) %>%
+    rename(abundance = est, Year = year) %>%
+    mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
+    mutate(knots = 50, matsex = matsex2)
+  
+  Allmatfem.index.bio50 <- rbind(read.csv(paste0(dir, "Output/Mature Female_biomass_All_pre-1982_50-Delta_gamma_index.csv")),
+                                read.csv(paste0(dir, "Output/Mature Female_biomass_All_post-1982_50-Delta_gamma_index.csv"))) %>%
+    rename(biomass = est, Year = year) %>%
+    mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
+    mutate(knots = 50, matsex = matsex2)
+  
+  # 90
+  Allmatfem.index.abund90 <- rbind(read.csv(paste0(dir, "Output/Mature Female_abundance_All_pre-1982_90-Delta_gamma_index.csv")),
+                                  read.csv(paste0(dir, "Output/Mature Female_abundance_All_post-1982_90-Delta_gamma_index.csv"))) %>%
+    rename(abundance = est, Year = year) %>%
+    mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
+    mutate(knots = 90, matsex = matsex2)
+  
+  Allmatfem.index.bio90 <- rbind(read.csv(paste0(dir, "Output/Mature Female_biomass_All_pre-1982_90-Delta_gamma_index.csv")),
+                                read.csv(paste0(dir, "Output/Mature Female_biomass_All_post-1982_90-Delta_gamma_index.csv"))) %>%
+    rename(biomass = est, Year = year) %>%
+    mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
+    mutate(knots = 90, matsex = matsex2)
+  
+  # 120
+  Allmatfem.index.abund120 <- rbind(read.csv(paste0(dir, "Output/Mature Female_abundance_All_pre-1982_120-Delta_gamma_index.csv")),
+                                   read.csv(paste0(dir, "Output/Mature Female_abundance_All_post-1982_120-Delta_gamma_index.csv"))) %>%
+    rename(abundance = est, Year = year) %>%
+    mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
+    mutate(knots = 120, matsex = matsex2)
+  
+  Allmatfem.index.bio120 <- rbind(read.csv(paste0(dir, "Output/Mature Female_biomass_All_pre-1982_120-Delta_gamma_index.csv")),
+                                 read.csv(paste0(dir, "Output/Mature Female_biomass_All_post-1982_120-Delta_gamma_index.csv"))) %>%
+    rename(biomass = est, Year = year) %>%
+    mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
+    mutate(knots = 120, matsex = matsex2)
+  
+ 
+  ## Join all data and plot -----
+  rbind(Allmale.index.abund50, Allmale.index.abund90, Allmale.index.abund120, Allimfem.index.abund50,
+        Allimfem.index.abund90, Allimfem.index.abund120, Allmatfem.index.abund50,
+        Allmatfem.index.abund90, Allmatfem.index.abund120) -> All.abund.index
+    
+  All.abund.index %>% 
+    filter(Year == 2024) %>%
+    mutate(Year = 2020, abundance = NA, lwr = NA, upr = NA, log_est = NA, se = NA) -> dummy
+  
+  rbind(All.abund.index, dummy) -> All.abund.index
+  
+  rbind(Allmale.index.bio50, Allmale.index.bio90, Allmale.index.bio120, Allimfem.index.bio50, Allimfem.index.bio90,
+        Allimfem.index.bio120, Allmatfem.index.bio50, Allmatfem.index.bio90, Allmatfem.index.bio120) -> All.bio.index
+  
+  All.bio.index %>% 
+    filter(Year == 2024) %>%
+    mutate(Year = 2020, biomass = NA, lwr = NA, upr = NA, log_est = NA, se = NA) -> dummy
+  
+  rbind(All.bio.index, dummy) -> All.bio.index
+  
+  
+  # rbind(Allmale.spat.abund50, Allmale.spat.abund90, Allmale.spat.abund120, Allimfem.spat.abund50, Allimfem.spat.abund90,
+  #       Allimfem.spat.abund120, Allmatfem.spat.abund50, Allmatfem.spat.abund90, Allmatfem.spat.abund120) -> All.abund.spatial
+  # 
+  # rbind(Allmale.spat.bio50, Allmale.spat.bio90, Allmale.spat.bio120, Allimfem.spat.bio50, Allimfem.spat.bio90,
+  #       Allimfem.spat.bio120, Allmatfem.spat.bio50, Allmatfem.spat.bio90, Allmatfem.spat.bio120) -> All.bio.spatial
+  
+  tan.obs %>%
+    group_by(Year, type, matsex) %>%
+    reframe(value = sum(value),
+            CI = sum(CI)) -> tan.obs3
+  
+  # Plot indices
+  ggplot()+
+    geom_ribbon(All.abund.index, mapping = aes(x = Year, ymin = lwr, ymax = upr, fill = as.factor(knots)), alpha = 0.4)+
+    geom_line(All.abund.index, mapping = aes(Year, abundance, color = as.factor(knots)))+
+    geom_point(tan.obs3 %>% filter(type == "abundance"),
+               mapping = aes(Year, value), color = "grey20", size = 0.75)+
+    geom_errorbar(tan.obs3 %>% filter(type == "abundance"),
+                  mapping = aes(x = Year, ymin = value - CI, ymax = value+CI), color = "grey20", width = 0)+
+    facet_wrap(~factor(matsex, levels = c("Male", "Mature Female", "Immature Female")), scales = "free_y", nrow = 3)+
+    theme_bw()+
+    ylab("Abundance (millions)")+
+    ggtitle("EBS Tanner estimated abundance") +
+    scale_color_manual(values = c("salmon", "turquoise", "violet"), labels = c("50", "90", "120"), name = "Knots")+
+    scale_fill_manual(values = c("salmon", "turquoise", "violet"), labels = c("50", "90", "120"), name = "Knots")+
+    theme(legend.position = "bottom", 
+          legend.direction = "horizontal",
+          axis.title = element_text(size = 14),
+          axis.text = element_text(size = 14),
+          strip.text = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          title = element_text(size = 16)) -> abund.ind.plot.EBS
+  
+  ggsave(plot = abund.ind.plot.EBS, "./BAIRDI/Figures/TannerEBS.abundance.index.png", height= 9, width = 7.5, units = "in")
+  
+  ggplot()+
+    geom_ribbon(All.bio.index, mapping = aes(x = Year, ymin = lwr, ymax = upr, fill = as.factor(knots)), alpha = 0.4) +
+    geom_line(All.bio.index, mapping = aes(Year, biomass, color = as.factor(knots)))+
+    geom_point(tan.obs3 %>% filter(type == "biomass"),
+               mapping = aes(Year, value), color = "grey20", size = 0.75)+
+    geom_errorbar(tan.obs3 %>% filter(type == "biomass"),
+                  mapping = aes(x = Year, ymin = value - CI, ymax = value+CI), color = "grey20", width = 0)+
+    facet_wrap(~factor(matsex, levels = c("Male", "Mature Female", "Immature Female")), scales = "free_y", nrow = 3)+
+    theme_bw()+
+    ylab("Biomass (tons)")+
+    ggtitle("EBS Tanner estimated biomass") +
+    scale_color_manual(values = c("salmon", "turquoise", "violet"), labels = c("50", "90", "120"), name = "Knots")+
+    scale_fill_manual(values = c("salmon", "turquoise", "violet"), labels = c("50", "90", "120"), name = "Knots")+
+    theme(legend.position = "bottom", 
+          legend.direction = "horizontal",
+          axis.title = element_text(size = 14),
+          axis.text = element_text(size = 14),
+          strip.text = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          title = element_text(size = 16)) -> bio.ind.plot.EBS
+  
+  ggsave(plot = bio.ind.plot.EBS, "./BAIRDI/Figures/TannerEBS.biomass.index.png", height= 9, width = 7.5, units = "in")
+  
+### Tanner West ------------
+  years <- c(1975:2019, 2021:2024)
+  
+  pred_grid2 <- pg.W %>%
+    st_as_sf(., coords = c("Lon", "Lat"), crs = "+proj=longlat +datum=WGS84") %>%
+    st_transform(., crs = "+proj=utm +zone=2") %>%
+    cbind(st_coordinates(.)) %>%
+    as.data.frame(.) %>%
+    dplyr::select(Area_km2, X, Y) %>%
+    replicate_df(., "year", years) %>%
+    mutate(X = X/1000, Y = Y/1000) %>%
+    rename(lon = X, lat = Y)
+  
+  
+  ## Males -----  
+  data <- tan.cpue2
+  matsex2 <- "Male"
+  stock2 <- "All"
+  
+  
+  # Indices
+  # 50
+  Allmale.index.abund50 <- rbind(read.csv(paste0(dir, "Output/Male_abundance_All_pre-1982_50-Delta_gamma_index.csv")),
+                                 read.csv(paste0(dir, "Output/Male_abundance_All_post-1982_50-Delta_gamma_index.csv"))) %>%
+    rename(abundance = est, Year = year) %>%
+    mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
+    mutate(knots = 50, matsex = matsex2)
+  
+  Allmale.index.bio50 <- rbind(read.csv(paste0(dir, "Output/Male_biomass_All_pre-1982_50-Delta_gamma_index.csv")),
+                               read.csv(paste0(dir, "Output/Male_biomass_All_post-1982_50-Delta_gamma_index.csv"))) %>%
+    rename(biomass = est, Year = year) %>%
+    mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
+    mutate(knots = 50, matsex = matsex2)
+  
+  # 90
+  Allmale.index.abund90 <- rbind(read.csv(paste0(dir, "Output/Male_abundance_All_pre-1982_90-Delta_gamma_index.csv")),
+                                 read.csv(paste0(dir, "Output/Male_abundance_All_post-1982_90-Delta_gamma_index.csv"))) %>%
+    rename(abundance = est, Year = year) %>%
+    mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
+    mutate(knots = 90, matsex = matsex2)
+  
+  Allmale.index.bio90 <- rbind(read.csv(paste0(dir, "Output/Male_biomass_All_pre-1982_90-Delta_gamma_index.csv")),
+                               read.csv(paste0(dir, "Output/Male_biomass_All_post-1982_90-Delta_gamma_index.csv"))) %>%
+    rename(biomass = est, Year = year) %>%
+    mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
+    mutate(knots = 90, matsex = matsex2)
+  
+  # 120
+  Allmale.index.abund120 <- rbind(read.csv(paste0(dir, "Output/Male_abundance_All_pre-1982_120-Delta_gamma_index.csv")),
+                                  read.csv(paste0(dir, "Output/Male_abundance_All_post-1982_120-Delta_gamma_index.csv"))) %>%
+    rename(abundance = est, Year = year) %>%
+    mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
+    mutate(knots = 120, matsex = matsex2)
+  
+  Allmale.index.bio120 <- rbind(read.csv(paste0(dir, "Output/Male_biomass_All_pre-1982_120-Delta_gamma_index.csv")),
+                                read.csv(paste0(dir, "Output/Male_biomass_All_post-1982_120-Delta_gamma_index.csv"))) %>%
+    rename(biomass = est, Year = year) %>%
+    mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
+    mutate(knots = 120, matsex = matsex2)
+  
+  ## Immature Females -----  
+  data <- tan.cpue2
+  matsex2 <- "Immature Female"
+  stock2 <- "All"
+  
+  # Indices
+  # 50
+  Allimfem.index.abund50 <- rbind(read.csv(paste0(dir, "Output/Immature Female_abundance_All_pre-1982_50-Delta_gamma_index.csv")),
+                                  read.csv(paste0(dir, "Output/Immature Female_abundance_All_post-1982_50-Delta_gamma_index.csv"))) %>%
+    rename(abundance = est, Year = year) %>%
+    mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
+    mutate(knots = 50, matsex = matsex2)
+  
+  Allimfem.index.bio50 <- rbind(read.csv(paste0(dir, "Output/Immature Female_biomass_All_pre-1982_50-Delta_gamma_index.csv")),
+                                read.csv(paste0(dir, "Output/Immature Female_biomass_All_post-1982_50-Delta_gamma_index.csv"))) %>%
+    rename(biomass = est, Year = year) %>%
+    mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
+    mutate(knots = 50, matsex = matsex2)
+  
+  # 90
+  Allimfem.index.abund90 <- rbind(read.csv(paste0(dir, "Output/Immature Female_abundance_All_pre-1982_90-Delta_gamma_index.csv")),
+                                  read.csv(paste0(dir, "Output/Immature Female_abundance_All_post-1982_90-Delta_gamma_index.csv"))) %>%
+    rename(abundance = est, Year = year) %>%
+    mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
+    mutate(knots = 90, matsex = matsex2)
+  
+  Allimfem.index.bio90 <- rbind(read.csv(paste0(dir, "Output/Immature Female_biomass_All_pre-1982_90-Delta_gamma_index.csv")),
+                                read.csv(paste0(dir, "Output/Immature Female_biomass_All_post-1982_90-Delta_gamma_index.csv"))) %>%
+    rename(biomass = est, Year = year) %>%
+    mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
+    mutate(knots = 90, matsex = matsex2)
+  
+  # 120
+  Allimfem.index.abund120 <- rbind(read.csv(paste0(dir, "Output/Immature Female_abundance_All_pre-1982_120-Delta_gamma_index.csv")),
+                                   read.csv(paste0(dir, "Output/Immature Female_abundance_All_post-1982_120-Delta_gamma_index.csv"))) %>%
+    rename(abundance = est, Year = year) %>%
+    mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
+    mutate(knots = 120, matsex = matsex2)
+  
+  Allimfem.index.bio120 <- rbind(read.csv(paste0(dir, "Output/Immature Female_biomass_All_pre-1982_120-Delta_gamma_index.csv")),
+                                 read.csv(paste0(dir, "Output/Immature Female_biomass_All_post-1982_120-Delta_gamma_index.csv"))) %>%
+    rename(biomass = est, Year = year) %>%
+    mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
+    mutate(knots = 120, matsex = matsex2)
+  
+  ## Mature Females -----  
+  data <- tan.cpue2
+  matsex2 <- "Mature Female"
+  stock2 <- "All"
+  
+  # Indices
+  # 50
+  Allmatfem.index.abund50 <- rbind(read.csv(paste0(dir, "Output/Mature Female_abundance_All_pre-1982_50-Delta_gamma_index.csv")),
+                                   read.csv(paste0(dir, "Output/Mature Female_abundance_All_post-1982_50-Delta_gamma_index.csv"))) %>%
+    rename(abundance = est, Year = year) %>%
+    mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
+    mutate(knots = 50, matsex = matsex2)
+  
+  Allmatfem.index.bio50 <- rbind(read.csv(paste0(dir, "Output/Mature Female_biomass_All_pre-1982_50-Delta_gamma_index.csv")),
+                                 read.csv(paste0(dir, "Output/Mature Female_biomass_All_post-1982_50-Delta_gamma_index.csv"))) %>%
+    rename(biomass = est, Year = year) %>%
+    mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
+    mutate(knots = 50, matsex = matsex2)
+  
+  # 90
+  Allmatfem.index.abund90 <- rbind(read.csv(paste0(dir, "Output/Mature Female_abundance_All_pre-1982_90-Delta_gamma_index.csv")),
+                                   read.csv(paste0(dir, "Output/Mature Female_abundance_All_post-1982_90-Delta_gamma_index.csv"))) %>%
+    rename(abundance = est, Year = year) %>%
+    mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
+    mutate(knots = 90, matsex = matsex2)
+  
+  Allmatfem.index.bio90 <- rbind(read.csv(paste0(dir, "Output/Mature Female_biomass_All_pre-1982_90-Delta_gamma_index.csv")),
+                                 read.csv(paste0(dir, "Output/Mature Female_biomass_All_post-1982_90-Delta_gamma_index.csv"))) %>%
+    rename(biomass = est, Year = year) %>%
+    mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
+    mutate(knots = 90, matsex = matsex2)
+  
+  # 120
+  Allmatfem.index.abund120 <- rbind(read.csv(paste0(dir, "Output/Mature Female_abundance_All_pre-1982_120-Delta_gamma_index.csv")),
+                                    read.csv(paste0(dir, "Output/Mature Female_abundance_All_post-1982_120-Delta_gamma_index.csv"))) %>%
+    rename(abundance = est, Year = year) %>%
+    mutate(abundance = abundance/1e6, lwr = lwr/1e6, upr = upr/1e6)%>% 
+    mutate(knots = 120, matsex = matsex2)
+  
+  Allmatfem.index.bio120 <- rbind(read.csv(paste0(dir, "Output/Mature Female_biomass_All_pre-1982_120-Delta_gamma_index.csv")),
+                                  read.csv(paste0(dir, "Output/Mature Female_biomass_All_post-1982_120-Delta_gamma_index.csv"))) %>%
+    rename(biomass = est, Year = year) %>%
+    mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
+    mutate(knots = 120, matsex = matsex2)
+  
+  
+  ## Join all data and plot -----
+  rbind(Allmale.index.abund50, Allmale.index.abund90, Allmale.index.abund120, Allimfem.index.abund50,
+        Allimfem.index.abund90, Allimfem.index.abund120, Allmatfem.index.abund50,
+        Allmatfem.index.abund90, Allmatfem.index.abund120) -> All.abund.index
+  
+  All.abund.index %>% 
+    filter(Year == 2024) %>%
+    mutate(Year = 2020, abundance = NA, lwr = NA, upr = NA, log_est = NA, se = NA) -> dummy
+  
+  rbind(All.abund.index, dummy) -> All.abund.index
+  
+  rbind(Allmale.index.bio50, Allmale.index.bio90, Allmale.index.bio120, Allimfem.index.bio50, Allimfem.index.bio90,
+        Allimfem.index.bio120, Allmatfem.index.bio50, Allmatfem.index.bio90, Allmatfem.index.bio120) -> All.bio.index
+  
+  All.bio.index %>% 
+    filter(Year == 2024) %>%
+    mutate(Year = 2020, biomass = NA, lwr = NA, upr = NA, log_est = NA, se = NA) -> dummy
+  
+  rbind(All.bio.index, dummy) -> All.bio.index
+  
+  
+  # rbind(Allmale.spat.abund50, Allmale.spat.abund90, Allmale.spat.abund120, Allimfem.spat.abund50, Allimfem.spat.abund90,
+  #       Allimfem.spat.abund120, Allmatfem.spat.abund50, Allmatfem.spat.abund90, Allmatfem.spat.abund120) -> All.abund.spatial
+  # 
+  # rbind(Allmale.spat.bio50, Allmale.spat.bio90, Allmale.spat.bio120, Allimfem.spat.bio50, Allimfem.spat.bio90,
+  #       Allimfem.spat.bio120, Allmatfem.spat.bio50, Allmatfem.spat.bio90, Allmatfem.spat.bio120) -> All.bio.spatial
+  
+  tan.obs %>%
+    group_by(Year, type, matsex) %>%
+    reframe(value = sum(value),
+            CI = sum(CI)) -> tan.obs3
+  
+  # Plot indices
+  ggplot()+
+    geom_ribbon(All.abund.index, mapping = aes(x = Year, ymin = lwr, ymax = upr, fill = as.factor(knots)), alpha = 0.4)+
+    geom_line(All.abund.index, mapping = aes(Year, abundance, color = as.factor(knots)))+
+    geom_point(tan.obs3 %>% filter(type == "abundance"),
+               mapping = aes(Year, value), color = "grey20", size = 0.75)+
+    geom_errorbar(tan.obs3 %>% filter(type == "abundance"),
+                  mapping = aes(x = Year, ymin = value - CI, ymax = value+CI), color = "grey20", width = 0)+
+    facet_wrap(~factor(matsex, levels = c("Male", "Mature Female", "Immature Female")), scales = "free_y", nrow = 3)+
+    theme_bw()+
+    ylab("Abundance (millions)")+
+    ggtitle("EBS Tanner estimated abundance") +
+    scale_color_manual(values = c("salmon", "turquoise", "violet"), labels = c("50", "90", "120"), name = "Knots")+
+    scale_fill_manual(values = c("salmon", "turquoise", "violet"), labels = c("50", "90", "120"), name = "Knots")+
+    theme(legend.position = "bottom", 
+          legend.direction = "horizontal",
+          axis.title = element_text(size = 14),
+          axis.text = element_text(size = 14),
+          strip.text = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          title = element_text(size = 16)) -> abund.ind.plot.EBS
+  
+  ggsave(plot = abund.ind.plot.EBS, "./BAIRDI/Figures/TannerEBS.abundance.index.png", height= 9, width = 7.5, units = "in")
+  
+  ggplot()+
+    geom_ribbon(All.bio.index, mapping = aes(x = Year, ymin = lwr, ymax = upr, fill = as.factor(knots)), alpha = 0.4) +
+    geom_line(All.bio.index, mapping = aes(Year, biomass, color = as.factor(knots)))+
+    geom_point(tan.obs3 %>% filter(type == "biomass"),
+               mapping = aes(Year, value), color = "grey20", size = 0.75)+
+    geom_errorbar(tan.obs3 %>% filter(type == "biomass"),
+                  mapping = aes(x = Year, ymin = value - CI, ymax = value+CI), color = "grey20", width = 0)+
+    facet_wrap(~factor(matsex, levels = c("Male", "Mature Female", "Immature Female")), scales = "free_y", nrow = 3)+
+    theme_bw()+
+    ylab("Biomass (tons)")+
+    ggtitle("EBS Tanner estimated biomass") +
+    scale_color_manual(values = c("salmon", "turquoise", "violet"), labels = c("50", "90", "120"), name = "Knots")+
+    scale_fill_manual(values = c("salmon", "turquoise", "violet"), labels = c("50", "90", "120"), name = "Knots")+
+    theme(legend.position = "bottom", 
+          legend.direction = "horizontal",
+          axis.title = element_text(size = 14),
+          axis.text = element_text(size = 14),
+          strip.text = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          title = element_text(size = 16)) -> bio.ind.plot.EBS
+  
+  ggsave(plot = bio.ind.plot.EBS, "./BAIRDI/Figures/TannerEBS.biomass.index.png", height= 9, width = 7.5, units = "in")
+  

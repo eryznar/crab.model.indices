@@ -260,7 +260,6 @@ df %>%
 
 
 
-
 # Figures {-}
 ```{r bairdi-EBS-grid, fig.align = "center", fig.cap = "Eastern Bering Sea prediction grid used for Tanner crab spatial abundance and biomass predictions. Spatial resolution is 5km$^2$ and does not include land."}
 

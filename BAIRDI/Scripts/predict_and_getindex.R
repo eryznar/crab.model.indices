@@ -340,10 +340,16 @@ pred_grid2 <- pg.W %>%
   newdat <- pred_grid2
   
   # Predict and get index
-  abund.mod3 <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_50_abund_DG_IID.rda"))
-  bio.mod3 <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_50_DG_bioTMB.rda"))
+  # abund.mod1 <- readRDS(paste0(dir,"Models/bairdi_Male_All_pre-1982_50_abund_DG_IID.rda"))
+  # bio.mod1 <- readRDS(paste0(dir,"Models/bairdi_Male_All_pre-1982_50_DG_bioTMB.rda"))
+  abund.mod2 <- readRDS(paste0(dir,"Models/bairdi_Male_All_pre-1982_90_abund_DG_IID.rda"))
+  bio.mod2 <- readRDS(paste0(dir,"Models/bairdi_Male_All_pre-1982_90_DG_bioTMB.rda"))
+  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Male_All_pre-1982_120_abund_DG_IID.rda"))
+  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Male_All_pre-1982_120_DG_bioTMB.rda"))
   
-  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  pre.male
+  #predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  post.male
+  predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90, "Delta_gamma") ->  pre.male
+  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 120, "Delta_gamma") ->  pre.male
   
   
   ### Post-1982
@@ -353,47 +359,53 @@ pred_grid2 <- pg.W %>%
   
   
   # # Predict and get index
-  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Male_All_post-1982_50_abund_DG_IID.rda"))
-  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Male_All_post-1982_50_DG_bioTMB.rda"))
+  # abund.mod1 <- readRDS(paste0(dir,"Models/bairdi_Male_All_post-1982_50_abund_DG_IID.rda"))
+  # bio.mod1 <- readRDS(paste0(dir,"Models/bairdi_Male_All_post-1982_50_DG_bioTMB.rda"))
+  abund.mod2 <- readRDS(paste0(dir,"Models/bairdi_Male_All_post-1982_90_abund_DG_IID.rda"))
+  bio.mod2 <- readRDS(paste0(dir,"Models/bairdi_Male_All_post-1982_90_DG_bioTMB.rda"))
+  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Male_All_post-1982_120_abund_DG_IID.rda"))
+  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Male_All_post-1982_120_DG_bioTMB.rda"))
 
-  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  post.male
+  #predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  post.male
+  predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90, "Delta_gamma") ->  post.male
+  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 120, "Delta_gamma") ->  post.male
   
-  ### Plot spatial predictions 
-  abund <- rbind(pre.male$pred.abund %>% filter(lat<6841), post.male$pred.abund) %>% # filtering lat so predictions do not extend beyond mesh extend for <1982 models
-    mutate(value = plogis(est1) * exp(est2))
-  bio <- rbind(pre.male$pred.bio %>% filter(lat<6841), post.male$pred.bio) %>%
-    mutate(value =plogis(est1) * exp(est2))
-  
-  
-  ggplot(abund) +
-    geom_tile(aes(y = lat, x = lon, fill = log(value))) +
-    scale_fill_viridis_c(name = expression(paste("log(num ", km^-2, ")")))+
-    labs(y = "Latitude",
-         x = "Longitude") +
-    theme_bw() +
-    scale_x_continuous(breaks = c(250, 750, 1250))+
-    ggtitle("Tanner West predicted male abundance")+
-    facet_wrap(~year)+
-    theme(axis.title = element_text(size = 10),
-          legend.position = "bottom",
-          legend.direction = "horizontal")
-  
-  ggsave("./BAIRDI/Figures/TannerW_male_spatabund.png", width = 8.5, height = 9.5)
-  
-  ggplot(bio) +
-    geom_tile(aes(y = lat, x = lon, fill = log(value))) +
-    scale_fill_viridis_c(name = expression(paste("log(kg ", km^-2, ")")))+
-    labs(y = "Latitude",
-         x = "Longitude") +
-    theme_bw() +
-    scale_x_continuous(breaks = c(250, 750, 1250))+
-    ggtitle("Tanner West predicted male biomass")+
-    facet_wrap(~year)+
-    theme(axis.title = element_text(size = 10),
-          legend.position = "bottom",
-          legend.direction = "horizontal")
-  
-  ggsave("./BAIRDI/Figures/TannerW_male_spatbio.png", width = 8.5, height = 9.5)
+  # ### Plot spatial predictions 
+  # abund <- rbind(pre.male$pred.abund %>% filter(lat<6841), post.male$pred.abund) %>% # filtering lat so predictions do not extend beyond mesh extend for <1982 models
+  #   mutate(value = plogis(est1) * exp(est2))
+  # bio <- rbind(pre.male$pred.bio %>% filter(lat<6841), post.male$pred.bio) %>%
+  #   mutate(value =plogis(est1) * exp(est2))
+  # 
+  # 
+  # ggplot(abund) +
+  #   geom_tile(aes(y = lat, x = lon, fill = log(value))) +
+  #   scale_fill_viridis_c(name = expression(paste("log(num ", km^-2, ")")))+
+  #   labs(y = "Latitude",
+  #        x = "Longitude") +
+  #   theme_bw() +
+  #   scale_x_continuous(breaks = c(250, 750, 1250))+
+  #   ggtitle("Tanner West predicted male abundance")+
+  #   facet_wrap(~year)+
+  #   theme(axis.title = element_text(size = 10),
+  #         legend.position = "bottom",
+  #         legend.direction = "horizontal")
+  # 
+  # ggsave("./BAIRDI/Figures/TannerW_male_spatabund.png", width = 8.5, height = 9.5)
+  # 
+  # ggplot(bio) +
+  #   geom_tile(aes(y = lat, x = lon, fill = log(value))) +
+  #   scale_fill_viridis_c(name = expression(paste("log(kg ", km^-2, ")")))+
+  #   labs(y = "Latitude",
+  #        x = "Longitude") +
+  #   theme_bw() +
+  #   scale_x_continuous(breaks = c(250, 750, 1250))+
+  #   ggtitle("Tanner West predicted male biomass")+
+  #   facet_wrap(~year)+
+  #   theme(axis.title = element_text(size = 10),
+  #         legend.position = "bottom",
+  #         legend.direction = "horizontal")
+  # 
+  # ggsave("./BAIRDI/Figures/TannerW_male_spatbio.png", width = 8.5, height = 9.5)
   
   ## Immature Females -----  
   data <- tan.cpue2
@@ -407,10 +419,16 @@ pred_grid2 <- pg.W %>%
   
   
   # Predict and get index
-  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_50_DG_abundTMB.rda"))
-  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_50_DG_bioTMB.rda"))
+  # abund.mod1 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_50_abund_DG_IID.rda"))
+  # bio.mod1 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_50_DG_bioTMB.rda"))
+  abund.mod2 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_90_DG_abundTMB.rda"))
+  bio.mod2 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_90_DG_bioTMB.rda"))
+  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_120_DG_abundTMB.rda"))
+  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_120_DG_bioTMB.rda"))
   
-  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  pre.imfem
+  #predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  post.male
+  predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90, "Delta_gamma") ->  pre.imfem
+  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 120, "Delta_gamma") ->  pre.imfem
   
   
   ### Post-1982
@@ -420,49 +438,55 @@ pred_grid2 <- pg.W %>%
   
   
   # # Predict and get index
-  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_post-1982_50_DG_abundTMB.rda"))
-  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_post-1982_50_DG_bioTMB.rda"))
+  # abund.mod1 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_post-1982_50_abund_DG_IID.rda"))
+  # bio.mod1 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_post-1982_50_DG_bioTMB.rda"))
+  abund.mod2 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_post-1982_90_DG_abundTMB.rda"))
+  bio.mod2 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_post-1982_90_DG_bioTMB.rda"))
+  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_post-1982_120_DG_abundTMB.rda"))
+  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_post-1982_120_DG_bioTMB.rda"))
   
-  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  post.imfem
+  #predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  post.male
+  predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90, "Delta_gamma") ->  post.imfem
+  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 120, "Delta_gamma") ->  post.imfem
   
-  ### Plot spatial predictions 
-  abund <- rbind(pre.imfem$pred.abund %>% filter(lat<6841), post.imfem$pred.abund) %>% # filtering lat so predictions do not extend beyond mesh extend for <1982 models
-    mutate(value = plogis(est1) * exp(est2))
-  bio <- rbind(pre.imfem$pred.bio %>% filter(lat<6841), post.imfem$pred.bio) %>%
-    mutate(value =plogis(est1) * exp(est2))
-  
-  
-  ggplot(abund) +
-    geom_tile(aes(y = lat, x = lon, fill = log(value))) +
-    scale_fill_viridis_c(name = expression(paste("log(num ", km^-2, ")")))+
-    labs(y = "Latitude",
-         x = "Longitude") +
-    theme_bw() +
-    scale_x_continuous(breaks = c(250, 750, 1250))+
-    ggtitle("Tanner West predicted immature female abundance")+
-    facet_wrap(~year)+
-    theme(axis.title = element_text(size = 10),
-          legend.position = "bottom",
-          legend.direction = "horizontal")
-  
-  ggsave("./BAIRDI/Figures/TannerW_imfem_spatabund.png", width = 8.5, height = 9.5)
-  
-  ggplot(bio) +
-    geom_tile(aes(y = lat, x = lon, fill = log(value))) +
-    scale_fill_viridis_c(name = expression(paste("log(kg ", km^-2, ")")))+
-    labs(y = "Latitude",
-         x = "Longitude") +
-    theme_bw() +
-    scale_x_continuous(breaks = c(250, 750, 1250))+
-    ggtitle("Tanner West predicted immature female biomass")+
-    facet_wrap(~year)+
-    theme(axis.title = element_text(size = 10),
-          legend.position = "bottom",
-          legend.direction = "horizontal")
-  
-  ggsave("./BAIRDI/Figures/TannerW_imfem_spatbio.png", width = 8.5, height = 9.5)  
-  
-  
+  # ### Plot spatial predictions 
+  # abund <- rbind(pre.imfem$pred.abund %>% filter(lat<6841), post.imfem$pred.abund) %>% # filtering lat so predictions do not extend beyond mesh extend for <1982 models
+  #   mutate(value = plogis(est1) * exp(est2))
+  # bio <- rbind(pre.imfem$pred.bio %>% filter(lat<6841), post.imfem$pred.bio) %>%
+  #   mutate(value =plogis(est1) * exp(est2))
+  # 
+  # 
+  # ggplot(abund) +
+  #   geom_tile(aes(y = lat, x = lon, fill = log(value))) +
+  #   scale_fill_viridis_c(name = expression(paste("log(num ", km^-2, ")")))+
+  #   labs(y = "Latitude",
+  #        x = "Longitude") +
+  #   theme_bw() +
+  #   scale_x_continuous(breaks = c(250, 750, 1250))+
+  #   ggtitle("Tanner West predicted immature female abundance")+
+  #   facet_wrap(~year)+
+  #   theme(axis.title = element_text(size = 10),
+  #         legend.position = "bottom",
+  #         legend.direction = "horizontal")
+  # 
+  # ggsave("./BAIRDI/Figures/TannerW_imfem_spatabund.png", width = 8.5, height = 9.5)
+  # 
+  # ggplot(bio) +
+  #   geom_tile(aes(y = lat, x = lon, fill = log(value))) +
+  #   scale_fill_viridis_c(name = expression(paste("log(kg ", km^-2, ")")))+
+  #   labs(y = "Latitude",
+  #        x = "Longitude") +
+  #   theme_bw() +
+  #   scale_x_continuous(breaks = c(250, 750, 1250))+
+  #   ggtitle("Tanner West predicted immature female biomass")+
+  #   facet_wrap(~year)+
+  #   theme(axis.title = element_text(size = 10),
+  #         legend.position = "bottom",
+  #         legend.direction = "horizontal")
+  # 
+  # ggsave("./BAIRDI/Figures/TannerW_imfem_spatbio.png", width = 8.5, height = 9.5)  
+  # 
+  # 
   ## Mature Females -----  
   data <- tan.cpue2
   matsex <- "Mature Female"
@@ -475,10 +499,16 @@ pred_grid2 <- pg.W %>%
   
   
   # Predict and get index
-  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_pre-1982_50_DG_abundTMB.rda"))
-  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_pre-1982_50_DG_bioTMB.rda"))
+  # abund.mod1 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_pre-1982_50_abund_DG_IID.rda"))
+  # bio.mod1 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_pre-1982_50_DG_bioTMB.rda"))
+  abund.mod2 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_pre-1982_90_DG_abundTMB.rda"))
+  bio.mod2 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_pre-1982_90_DG_bioTMB.rda"))
+  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_pre-1982_120_DG_abundTMB.rda"))
+  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_pre-1982_120_DG_bioTMB.rda"))
   
-  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  pre.matfem
+  #predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  pre.matfem
+  predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90, "Delta_gamma") ->  pre.matfem
+  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 120, "Delta_gamma") ->  pre.matfem
   
   
   ### Post-1982
@@ -488,48 +518,54 @@ pred_grid2 <- pg.W %>%
   
   
   # # Predict and get index
-  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_50_DG_abundTMB.rda"))
-  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_50_DG_bioTMB.rda"))
+  # abund.mod1 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_50_abund_DG_IID.rda"))
+  # bio.mod1 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_50_DG_bioTMB.rda"))
+  abund.mod2 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_90_DG_abundTMB.rda"))
+  bio.mod2 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_90_DG_bioTMB.rda"))
+  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_120_DG_abundTMB.rda"))
+  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_120_DG_bioTMB.rda"))
   
-  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  post.matfem
+  #predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  post.matfem
+  predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90, "Delta_gamma") ->  post.matfem
+  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 120, "Delta_gamma") ->  post.matfem
   
-  ### Plot spatial predictions 
-  abund <- rbind(pre.matfem$pred.abund %>% filter(lat<6841), post.matfem$pred.abund) %>% # filtering lat so predictions do not extend beyond mesh extend for <1982 models
-    mutate(value = plogis(est1) * exp(est2))
-  bio <- rbind(pre.matfem$pred.bio %>% filter(lat<6841), post.matfem$pred.bio) %>%
-    mutate(value =plogis(est1) * exp(est2))
-  
-  
-  ggplot(abund) +
-    #geom_sf(data = shoreline) +
-    geom_tile(aes(y = lat, x = lon, fill = log(value))) +
-    scale_fill_viridis_c(name = expression(paste("log(num ", km^-2, ")")))+
-    labs(y = "Latitude",
-         x = "Longitude") +
-    theme_bw() +
-    scale_x_continuous(breaks = c(250, 750, 1250))+
-    ggtitle("Tanner West predicted mature female abundance")+
-    facet_wrap(~year)+
-    theme(axis.title = element_text(size = 10),
-          legend.position = "bottom",
-          legend.direction = "horizontal")
-  
-  ggsave("./BAIRDI/Figures/TannerW_matfem_spatabund.png", width = 8.5, height = 9.5)
-  
-  ggplot(bio) +
-    geom_tile(aes(y = lat, x = lon, fill = log(value))) +
-    scale_fill_viridis_c(name = expression(paste("log(kg ", km^-2, ")")))+
-    labs(y = "Latitude",
-         x = "Longitude") +
-    theme_bw() +
-    scale_x_continuous(breaks = c(250, 750, 1250))+
-    ggtitle("Tanner West predicted mature female biomass")+
-    facet_wrap(~year)+
-    theme(axis.title = element_text(size = 10),
-          legend.position = "bottom",
-          legend.direction = "horizontal")
-  
-  ggsave("./BAIRDI/Figures/TannerW_matfem_spatbio.png", width = 8.5, height = 9.5)  
+  # ### Plot spatial predictions 
+  # abund <- rbind(pre.matfem$pred.abund %>% filter(lat<6841), post.matfem$pred.abund) %>% # filtering lat so predictions do not extend beyond mesh extend for <1982 models
+  #   mutate(value = plogis(est1) * exp(est2))
+  # bio <- rbind(pre.matfem$pred.bio %>% filter(lat<6841), post.matfem$pred.bio) %>%
+  #   mutate(value =plogis(est1) * exp(est2))
+  # 
+  # 
+  # ggplot(abund) +
+  #   #geom_sf(data = shoreline) +
+  #   geom_tile(aes(y = lat, x = lon, fill = log(value))) +
+  #   scale_fill_viridis_c(name = expression(paste("log(num ", km^-2, ")")))+
+  #   labs(y = "Latitude",
+  #        x = "Longitude") +
+  #   theme_bw() +
+  #   scale_x_continuous(breaks = c(250, 750, 1250))+
+  #   ggtitle("Tanner West predicted mature female abundance")+
+  #   facet_wrap(~year)+
+  #   theme(axis.title = element_text(size = 10),
+  #         legend.position = "bottom",
+  #         legend.direction = "horizontal")
+  # 
+  # ggsave("./BAIRDI/Figures/TannerW_matfem_spatabund.png", width = 8.5, height = 9.5)
+  # 
+  # ggplot(bio) +
+  #   geom_tile(aes(y = lat, x = lon, fill = log(value))) +
+  #   scale_fill_viridis_c(name = expression(paste("log(kg ", km^-2, ")")))+
+  #   labs(y = "Latitude",
+  #        x = "Longitude") +
+  #   theme_bw() +
+  #   scale_x_continuous(breaks = c(250, 750, 1250))+
+  #   ggtitle("Tanner West predicted mature female biomass")+
+  #   facet_wrap(~year)+
+  #   theme(axis.title = element_text(size = 10),
+  #         legend.position = "bottom",
+  #         legend.direction = "horizontal")
+  # 
+  # ggsave("./BAIRDI/Figures/TannerW_matfem_spatbio.png", width = 8.5, height = 9.5)  
 
 ### Tanner E --------------------------------------------------------------------
   years <- c(1975:2019, 2021:2024)
@@ -555,11 +591,16 @@ pred_grid2 <- pg.W %>%
   newdat <- pred_grid2
   
   # Predict and get index
-  abund.mod3 <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_50_abund_DG_IID.rda"))
-  bio.mod3 <- readRDS(paste0(dir, "Models/bairdi_Male_All_pre-1982_50_DG_bioTMB.rda"))
+  # abund.mod1 <- readRDS(paste0(dir,"Models/bairdi_Male_All_pre-1982_50_abund_DG_IID.rda"))
+  # bio.mod1 <- readRDS(paste0(dir,"Models/bairdi_Male_All_pre-1982_50_DG_bioTMB.rda"))
+  abund.mod2 <- readRDS(paste0(dir,"Models/bairdi_Male_All_pre-1982_90_abund_DG_IID.rda"))
+  bio.mod2 <- readRDS(paste0(dir,"Models/bairdi_Male_All_pre-1982_90_DG_bioTMB.rda"))
+  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Male_All_pre-1982_120_abund_DG_IID.rda"))
+  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Male_All_pre-1982_120_DG_bioTMB.rda"))
   
-  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  pre.male
-  
+  #predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  pre.male
+  predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90, "Delta_gamma") ->  pre.male
+  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 120, "Delta_gamma") ->  pre.male
   
   ### Post-1982
   years <- c(1982:2019, 2021:2024)
@@ -568,50 +609,56 @@ pred_grid2 <- pg.W %>%
   
   
   # # Predict and get index
-  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Male_All_post-1982_50_abund_DG_IID.rda"))
-  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Male_All_post-1982_50_DG_bioTMB.rda"))
+  # abund.mod1 <- readRDS(paste0(dir,"Models/bairdi_Male_All_post-1982_50_abund_DG_IID.rda"))
+  # bio.mod1 <- readRDS(paste0(dir,"Models/bairdi_Male_All_post-1982_50_DG_bioTMB.rda"))
+  abund.mod2 <- readRDS(paste0(dir,"Models/bairdi_Male_All_post-1982_90_abund_DG_IID.rda"))
+  bio.mod2 <- readRDS(paste0(dir,"Models/bairdi_Male_All_post-1982_90_DG_bioTMB.rda"))
+  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Male_All_post-1982_120_abund_DG_IID.rda"))
+  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Male_All_post-1982_120_DG_bioTMB.rda"))
   
-  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  post.male
+  #predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  post.male
+  predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90, "Delta_gamma") ->  post.male
+  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 120, "Delta_gamma") ->  post.male
   
-  ### Plot spatial predictions 
-  abund <- rbind(pre.male$pred.abund %>% filter(lat<6841), post.male$pred.abund) %>% # filtering lat so predictions do not extend beyond mesh extend for <1982 models
-    mutate(value = plogis(est1) * exp(est2))
-  bio <- rbind(pre.male$pred.bio %>% filter(lat<6841), post.male$pred.bio) %>%
-    mutate(value =plogis(est1) * exp(est2))
-  
-  saveRDS(abund, paste0(dir, "Output/TannerE_male_spatialabund.csv"))
-  saveRDS(bio, paste0(dir, "Output/TannerE_male_spatialbio.csv"))
-  
-  
-  ggplot(abund) +
-    geom_tile(aes(y = lat, x = lon, fill = log(value))) +
-    scale_fill_viridis_c(name = expression(paste("log(num ", km^-2, ")")))+
-    labs(y = "Latitude",
-         x = "Longitude") +
-    theme_bw() +
-    scale_x_continuous(breaks = c(800, 1000, 1200))+
-    ggtitle("Tanner East predicted male abundance")+
-    facet_wrap(~year)+
-    theme(axis.title = element_text(size = 10),
-          legend.position = "bottom",
-          legend.direction = "horizontal")
-  
-  ggsave("./BAIRDI/Figures/TannerE_male_spatabund.png", width = 8.5, height = 9.5)
-  
-  ggplot(bio) +
-    geom_tile(aes(y = lat, x = lon, fill = log(value))) +
-    scale_fill_viridis_c(name = expression(paste("log(kg ", km^-2, ")")))+
-    labs(y = "Latitude",
-         x = "Longitude") +
-    theme_bw() +
-    scale_x_continuous(breaks = c(800, 1000, 1200))+
-    ggtitle("Tanner East predicted male biomass")+
-    facet_wrap(~year)+
-    theme(axis.title = element_text(size = 10),
-          legend.position = "bottom",
-          legend.direction = "horizontal")
-  
-  ggsave("./BAIRDI/Figures/TannerE_male_spatbio.png", width = 8.5, height = 9.5)
+  # ### Plot spatial predictions 
+  # abund <- rbind(pre.male$pred.abund %>% filter(lat<6841), post.male$pred.abund) %>% # filtering lat so predictions do not extend beyond mesh extend for <1982 models
+  #   mutate(value = plogis(est1) * exp(est2))
+  # bio <- rbind(pre.male$pred.bio %>% filter(lat<6841), post.male$pred.bio) %>%
+  #   mutate(value =plogis(est1) * exp(est2))
+  # 
+  # saveRDS(abund, paste0(dir, "Output/TannerE_male_spatialabund.csv"))
+  # saveRDS(bio, paste0(dir, "Output/TannerE_male_spatialbio.csv"))
+  # 
+  # 
+  # ggplot(abund) +
+  #   geom_tile(aes(y = lat, x = lon, fill = log(value))) +
+  #   scale_fill_viridis_c(name = expression(paste("log(num ", km^-2, ")")))+
+  #   labs(y = "Latitude",
+  #        x = "Longitude") +
+  #   theme_bw() +
+  #   scale_x_continuous(breaks = c(800, 1000, 1200))+
+  #   ggtitle("Tanner East predicted male abundance")+
+  #   facet_wrap(~year)+
+  #   theme(axis.title = element_text(size = 10),
+  #         legend.position = "bottom",
+  #         legend.direction = "horizontal")
+  # 
+  # ggsave("./BAIRDI/Figures/TannerE_male_spatabund.png", width = 8.5, height = 9.5)
+  # 
+  # ggplot(bio) +
+  #   geom_tile(aes(y = lat, x = lon, fill = log(value))) +
+  #   scale_fill_viridis_c(name = expression(paste("log(kg ", km^-2, ")")))+
+  #   labs(y = "Latitude",
+  #        x = "Longitude") +
+  #   theme_bw() +
+  #   scale_x_continuous(breaks = c(800, 1000, 1200))+
+  #   ggtitle("Tanner East predicted male biomass")+
+  #   facet_wrap(~year)+
+  #   theme(axis.title = element_text(size = 10),
+  #         legend.position = "bottom",
+  #         legend.direction = "horizontal")
+  # 
+  # ggsave("./BAIRDI/Figures/TannerE_male_spatbio.png", width = 8.5, height = 9.5)
   
   ## Immature Females -----  
   data <- tan.cpue2
@@ -625,10 +672,16 @@ pred_grid2 <- pg.W %>%
   
   
   # Predict and get index
-  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_50_DG_abundTMB.rda"))
-  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_50_DG_bioTMB.rda"))
+  # abund.mod1 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_50_abund_DG_IID.rda"))
+  # bio.mod1 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_50_DG_bioTMB.rda"))
+  abund.mod2 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_90_DG_abundTMB.rda"))
+  bio.mod2 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_90_DG_bioTMB.rda"))
+  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_120_DG_bioTMB.rda"))
+  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_120_DG_bioTMB.rda"))
   
-  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  pre.imfem
+  #predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  post.male
+  predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90, "Delta_gamma") ->  pre.imfem
+  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 120, "Delta_gamma") ->  pre.imfem
   
   
   ### Post-1982
@@ -638,51 +691,57 @@ pred_grid2 <- pg.W %>%
   
   
   # # Predict and get index
-  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_post-1982_50_DG_abundTMB.rda"))
-  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_post-1982_50_DG_bioTMB.rda"))
+  # abund.mod1 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_post-1982_50_abund_DG_IID.rda"))
+  # bio.mod1 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_post-1982_50_DG_bioTMB.rda"))
+  abund.mod2 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_post-1982_90_DG_abundTMB.rda"))
+  bio.mod2 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_post-1982_90_DG_bioTMB.rda"))
+  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_post-1982_120_DG_abundTMB.rda"))
+  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_post-1982_120_DG_bioTMB.rda"))
   
-  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  post.imfem
+  #predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  post.male
+  predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90, "Delta_gamma") ->  post.imfem
+  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 120, "Delta_gamma") ->  post.imfem
   
-  ### Plot spatial predictions 
-  abund <- rbind(pre.imfem$pred.abund %>% filter(lat<6841), post.imfem$pred.abund) %>% # filtering lat so predictions do not extend beyond mesh extend for <1982 models
-    mutate(value = plogis(est1) * exp(est2))
-  bio <- rbind(pre.imfem$pred.bio %>% filter(lat<6841), post.imfem$pred.bio) %>%
-    mutate(value =plogis(est1) * exp(est2))
-  
-  saveRDS(abund, paste0(dir, "Output/TannerE_imfem_spatialabund.csv"))
-  saveRDS(bio, paste0(dir, "Output/TannerE_imfem_spatialbio.csv"))
-  
-  
-  ggplot(abund) +
-    geom_tile(aes(y = lat, x = lon, fill = log(value))) +
-    scale_fill_viridis_c(name = expression(paste("log(num ", km^-2, ")")))+
-    labs(y = "Latitude",
-         x = "Longitude") +
-    theme_bw() +
-    scale_x_continuous(breaks = c(800, 1000, 1200))+
-    ggtitle("Tanner East predicted immature female abundance")+
-    facet_wrap(~year)+
-    theme(axis.title = element_text(size = 10),
-          legend.position = "bottom",
-          legend.direction = "horizontal")
-  
-  ggsave("./BAIRDI/Figures/TannerE_imfem_spatabund.png", width = 8.5, height = 9.5)
-  
-  ggplot(bio) +
-    geom_tile(aes(y = lat, x = lon, fill = log(value))) +
-    scale_fill_viridis_c(name = expression(paste("log(kg ", km^-2, ")")))+
-    labs(y = "Latitude",
-         x = "Longitude") +
-    theme_bw() +
-    scale_x_continuous(breaks = c(800, 1000, 1200))+
-    ggtitle("Tanner East predicted immature female biomass")+
-    facet_wrap(~year)+
-    theme(axis.title = element_text(size = 10),
-          legend.position = "bottom",
-          legend.direction = "horizontal")
-  
-  ggsave("./BAIRDI/Figures/TannerE_imfem_spatbio.png", width = 8.5, height = 9.5)  
-  
+  # ### Plot spatial predictions 
+  # abund <- rbind(pre.imfem$pred.abund %>% filter(lat<6841), post.imfem$pred.abund) %>% # filtering lat so predictions do not extend beyond mesh extend for <1982 models
+  #   mutate(value = plogis(est1) * exp(est2))
+  # bio <- rbind(pre.imfem$pred.bio %>% filter(lat<6841), post.imfem$pred.bio) %>%
+  #   mutate(value =plogis(est1) * exp(est2))
+  # 
+  # saveRDS(abund, paste0(dir, "Output/TannerE_imfem_spatialabund.csv"))
+  # saveRDS(bio, paste0(dir, "Output/TannerE_imfem_spatialbio.csv"))
+  # 
+  # 
+  # ggplot(abund) +
+  #   geom_tile(aes(y = lat, x = lon, fill = log(value))) +
+  #   scale_fill_viridis_c(name = expression(paste("log(num ", km^-2, ")")))+
+  #   labs(y = "Latitude",
+  #        x = "Longitude") +
+  #   theme_bw() +
+  #   scale_x_continuous(breaks = c(800, 1000, 1200))+
+  #   ggtitle("Tanner East predicted immature female abundance")+
+  #   facet_wrap(~year)+
+  #   theme(axis.title = element_text(size = 10),
+  #         legend.position = "bottom",
+  #         legend.direction = "horizontal")
+  # 
+  # ggsave("./BAIRDI/Figures/TannerE_imfem_spatabund.png", width = 8.5, height = 9.5)
+  # 
+  # ggplot(bio) +
+  #   geom_tile(aes(y = lat, x = lon, fill = log(value))) +
+  #   scale_fill_viridis_c(name = expression(paste("log(kg ", km^-2, ")")))+
+  #   labs(y = "Latitude",
+  #        x = "Longitude") +
+  #   theme_bw() +
+  #   scale_x_continuous(breaks = c(800, 1000, 1200))+
+  #   ggtitle("Tanner East predicted immature female biomass")+
+  #   facet_wrap(~year)+
+  #   theme(axis.title = element_text(size = 10),
+  #         legend.position = "bottom",
+  #         legend.direction = "horizontal")
+  # 
+  # ggsave("./BAIRDI/Figures/TannerE_imfem_spatbio.png", width = 8.5, height = 9.5)  
+  # 
   
   ## Mature Females -----  
   data <- tan.cpue2
@@ -696,11 +755,16 @@ pred_grid2 <- pg.W %>%
   
   
   # Predict and get index
-  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_pre-1982_50_DG_abundTMB.rda"))
-  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_pre-1982_50_DG_bioTMB.rda"))
+  # abund.mod1 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_pre-1982_50_abund_DG_IID.rda"))
+  # bio.mod1 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_pre-1982_50_DG_bioTMB.rda"))
+  abund.mod2 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_pre-1982_90_DG_abundTMB.rda"))
+  bio.mod2 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_pre-1982_90_DG_bioTMB.rda"))
+  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_pre-1982_120_DG_abundTMB.rda"))
+  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_pre-1982_120_DG_bioTMB.rda"))
   
-  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  pre.matfem
-  
+  #predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  pre.matfem
+  predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90, "Delta_gamma") ->  pre.matfem
+  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 120, "Delta_gamma") ->  pre.matfem
   
   ### Post-1982
   years <- c(1982:2019, 2021:2024)
@@ -709,49 +773,55 @@ pred_grid2 <- pg.W %>%
   
   
   # # Predict and get index
-  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_50_DG_abundTMB.rda"))
-  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_50_DG_bioTMB.rda"))
+  # abund.mod1 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_50_abund_DG_IID.rda"))
+  # bio.mod1 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_50_DG_bioTMB.rda"))
+  abund.mod2 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_90_DG_abundTMB.rda"))
+  bio.mod2 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_90_DG_bioTMB.rda"))
+  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_120_DG_abundTMB.rda"))
+  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_120_DG_bioTMB.rda"))
   
-  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  post.matfem
+  #predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  post.matfem
+  predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90, "Delta_gamma") ->  post.matfem
+  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 120, "Delta_gamma") ->  post.matfem
   
-  ### Plot spatial predictions 
-  abund <- rbind(pre.matfem$pred.abund %>% filter(lat<6841), post.matfem$pred.abund) %>% # filtering lat so predictions do not extend beyond mesh extend for <1982 models
-    mutate(value = plogis(est1) * exp(est2))
-  bio <- rbind(pre.matfem$pred.bio %>% filter(lat<6841), post.matfem$pred.bio) %>%
-    mutate(value =plogis(est1) * exp(est2))
-  
-  saveRDS(abund, paste0(dir, "Output/TannerE_matfem_spatialabund.csv"))
-  saveRDS(bio, paste0(dir, "Output/TannerE_matfem_spatialbio.csv"))
-  
-  
-  ggplot(abund) +
-    #geom_sf(data = shoreline) +
-    geom_tile(aes(y = lat, x = lon, fill = log(value))) +
-    scale_fill_viridis_c(name = expression(paste("log(num ", km^-2, ")")))+
-    labs(y = "Latitude",
-         x = "Longitude") +
-    theme_bw() +
-    scale_x_continuous(breaks = c(800, 1000, 1200))+
-    ggtitle("Tanner East predicted mature female abundance")+
-    facet_wrap(~year)+
-    theme(axis.title = element_text(size = 10),
-          legend.position = "bottom",
-          legend.direction = "horizontal")
-  
-  ggsave("./BAIRDI/Figures/TannerE_matfem_spatabund.png", width = 8.5, height = 9.5)
-  
-  ggplot(bio) +
-    geom_tile(aes(y = lat, x = lon, fill = log(value))) +
-    scale_fill_viridis_c(name = expression(paste("log(kg ", km^-2, ")")))+
-    labs(y = "Latitude",
-         x = "Longitude") +
-    theme_bw() +
-    scale_x_continuous(breaks = c(800, 1000, 1200))+
-    ggtitle("Tanner East predicted mature female biomass")+
-    facet_wrap(~year)+
-    theme(axis.title = element_text(size = 10),
-          legend.position = "bottom",
-          legend.direction = "horizontal")
-  
-  ggsave("./BAIRDI/Figures/TannerE_matfem_spatbio.png", width = 8.5, height = 9.5)  
-  
+  # ### Plot spatial predictions 
+  # abund <- rbind(pre.matfem$pred.abund %>% filter(lat<6841), post.matfem$pred.abund) %>% # filtering lat so predictions do not extend beyond mesh extend for <1982 models
+  #   mutate(value = plogis(est1) * exp(est2))
+  # bio <- rbind(pre.matfem$pred.bio %>% filter(lat<6841), post.matfem$pred.bio) %>%
+  #   mutate(value =plogis(est1) * exp(est2))
+  # 
+  # saveRDS(abund, paste0(dir, "Output/TannerE_matfem_spatialabund.csv"))
+  # saveRDS(bio, paste0(dir, "Output/TannerE_matfem_spatialbio.csv"))
+  # 
+  # 
+  # ggplot(abund) +
+  #   #geom_sf(data = shoreline) +
+  #   geom_tile(aes(y = lat, x = lon, fill = log(value))) +
+  #   scale_fill_viridis_c(name = expression(paste("log(num ", km^-2, ")")))+
+  #   labs(y = "Latitude",
+  #        x = "Longitude") +
+  #   theme_bw() +
+  #   scale_x_continuous(breaks = c(800, 1000, 1200))+
+  #   ggtitle("Tanner East predicted mature female abundance")+
+  #   facet_wrap(~year)+
+  #   theme(axis.title = element_text(size = 10),
+  #         legend.position = "bottom",
+  #         legend.direction = "horizontal")
+  # 
+  # ggsave("./BAIRDI/Figures/TannerE_matfem_spatabund.png", width = 8.5, height = 9.5)
+  # 
+  # ggplot(bio) +
+  #   geom_tile(aes(y = lat, x = lon, fill = log(value))) +
+  #   scale_fill_viridis_c(name = expression(paste("log(kg ", km^-2, ")")))+
+  #   labs(y = "Latitude",
+  #        x = "Longitude") +
+  #   theme_bw() +
+  #   scale_x_continuous(breaks = c(800, 1000, 1200))+
+  #   ggtitle("Tanner East predicted mature female biomass")+
+  #   facet_wrap(~year)+
+  #   theme(axis.title = element_text(size = 10),
+  #         legend.position = "bottom",
+  #         legend.direction = "horizontal")
+  # 
+  # ggsave("./BAIRDI/Figures/TannerE_matfem_spatbio.png", width = 8.5, height = 9.5)  
+  # 

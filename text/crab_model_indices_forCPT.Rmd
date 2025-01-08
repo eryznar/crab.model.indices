@@ -123,7 +123,9 @@ Accounting for strong model performance across sex-maturity categories, periods,
 Heat maps of EBS-wide predicted abundance for Tanner crab males, immature females, and mature females are shown in figures \@ref(fig:spatpred-abund-50-male) - \@ref(fig:spatpred-abund-50-matfem), respectively, using our chosen model framework (delta-gamma, 50 knots). Heat maps of EBS-wide predicted biomass for Tanner crab males, immature females, and mature females are shown in figures \@ref(fig:spatpred-bio-50-male) - \@ref(fig:spatpred-bio-50-matfem). Abundance and biomass heat maps for Tanner crab west and east of 166° are shown in Appendix figures \@ref(fig:spatpred-abund-50-maleW) - \@ref(fig:spatpred-bio-50-matfemW) and figures \@ref(fig:spatpred-abund-50-maleE) - \@ref(fig:spatpred-bio-50-matfemE), respectively. 
 
 ### Predicted index fits to observations {-}
-The EBS-wide model-predicted indices varied in their fits to survey abundance (Figure \@ref(fig:bairdi-abund-index)) and biomass observations (Figure \@ref(fig:bairdi-bio-index)) across sex-maturity categories and between model fitting periods. Across sex-maturity categories, model fits with different knots were most variable before 1982 which could be due to high variability in the spatial footprint of the survey in this period. In this period, uncertainty was generally greater in indices predicted using 50 knots, with the majority of survey observations points and associated uncertainty overlapping with model predicted values and uncertainty. From 1982 onward, indices predicted at different knots are less variable compared with each other, with models using 50 knots generally exhibiting greater uncertainty than 90 and 120 knots. As before, the majority of survey observations points and associated uncertainty overlap with model predicted values and uncertainty across knot specifications.
+The EBS-wide model-predicted indices varied in their fits to survey abundance (Figure \@ref(fig:bairdi-abund-index)) and biomass observations (Figure \@ref(fig:bairdi-bio-index)) across sex-maturity categories and between model fitting periods. Across sex-maturity categories, model fits with different knots were most variable before 1982 which could be due to high variability in the spatial footprint of the survey in this period. In this period, uncertainty was generally greater in indices predicted using 50 knots, with the majority of survey observations points and associated uncertainty overlapping with model predicted values and uncertainty. From 1982 onward, indices predicted at different knots are less variable compared with each other, with models using 50 knots generally exhibiting greater uncertainty than 90 and 120 knots. As before, the majority of survey observations points and associated uncertainty overlap with model predicted values and uncertainty across knot specifications. Similar patterns across knots and sex-maturity categories were seen for predicted abundance and biomass indices for Tanners west and east of 166° ()
+
+### sdmTMB vs. VAST comparision {-}
 
 ## Norton Sound red king crab {-}
 
@@ -151,8 +153,8 @@ Heat maps of predicted SMBKC abundance for the three models are show in figures 
 The model-predicted indices varied in their fits to the survey biomass observations, with the model fit using a mesh with an intermediate number of knots seeming to fit the survey observations more closely than the models fit to meshes with either higher or lower numbers of knots (Figure \@ref(fig:smbkc-index-obs)).
 
 
-# Conclusions {-}
-
+# Recommended models {-}
+For Tanner crab, we recommend a delta-gamma model using a 50-knot mesh as these were consistently top-performing models across sex-maturity categories and periods. However, different best models could be explored by sex-maturity category and fitting period. 
 
 # Acknowledgements {-}
 
@@ -356,12 +358,12 @@ knitr::include_graphics(here::here("BAIRDI/Figures/EBS_imfem_spatbio.png"))
 knitr::include_graphics(here::here("BAIRDI/Figures/EBS_matfem_spatbio.png"))
 ```
 
-```{r bairdi-abund-index, fig.align = "center", fig.cap = "Estimated abundance (millions) for Tanner crab. Colored lines represent abundance (±95% CI) estimated by sdmTMB, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
+```{r bairdi-abund-index, fig.align = "center", fig.cap = "Estimated abundance (millions) for Tanner crab across the Eastern Bering Sea. Colored lines represent abundance (±95% CI) estimated by sdmTMB, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.abundance.index.png"))
 ```
 
-```{r bairdi-bio-index, fig.align = "center", fig.cap = "Estimated biomass (tons) for Eastern Bering Sea Tanner crab. Colored lines represent abundance (±95% CI) estimated by sdmTMB, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent biomass (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
+```{r bairdi-bio-index, fig.align = "center", fig.cap = "Estimated biomass (tons) for Eastern Bering Sea Tanner crab across the Eastern Bering Sea. Colored lines represent abundance (±95% CI) estimated by sdmTMB, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent biomass (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.biomass.index.png"))
 ```
@@ -554,4 +556,24 @@ knitr::include_graphics(here::here("BAIRDI/Figures/TannerE_imfem_spatbio.png"))
 ```{r spatpred-bio-50-matfemE, fig.align = "center", fig.cap = "Spatial predictions of mature female biomass east of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/TannerE_matfem_spatbio.png"))
+```
+
+```{r Westbairdi-abund-index, fig.align = "center", fig.cap = "Estimated abundance (millions) for Tanner crab west of 166°. Colored lines represent abundance (±95% CI) estimated by sdmTMB, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerWest.abundance.index.png"))
+```
+
+```{r Westbairdi-bio-index, fig.align = "center", fig.cap = "Estimated biomass (tons) for Eastern Bering Sea Tanner crab west of 166°. Colored lines represent abundance (±95% CI) estimated by sdmTMB, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent biomass (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerWest.biomass.index.png"))
+```
+
+```{r Eastbairdi-abund-index, fig.align = "center", fig.cap = "Estimated abundance (millions) for Tanner crab east of 166°. Colored lines represent abundance (±95% CI) estimated by sdmTMB, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerEast.abundance.index.png"))
+```
+
+```{r Eastbairdi-bio-index, fig.align = "center", fig.cap = "Estimated biomass (tons) for Eastern Bering Sea Tanner crab east of 166°. Colored lines represent abundance (±95% CI) estimated by sdmTMB, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent biomass (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerEast.biomass.index.png"))
 ```

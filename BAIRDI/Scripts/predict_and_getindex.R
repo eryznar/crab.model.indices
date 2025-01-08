@@ -773,7 +773,7 @@ pred_grid2 <- pg.W %>%
   
   
   # # Predict and get index
-  abund.mod1 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_50_abund_DG_IID.rda"))
+  abund.mod1 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_50_DG_abundTMB.rda"))
   bio.mod1 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_50_DG_bioTMB.rda"))
   # abund.mod2 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_90_DG_abundTMB.rda"))
   # bio.mod2 <- readRDS(paste0(dir,"Models/bairdi_Mature Female_All_post-1982_90_DG_bioTMB.rda"))

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2025.1.3)  8 JAN 2025 10:50
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2025.1.3)  8 JAN 2025 15:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -718,105 +718,115 @@ LaTeX Warning: Reference `fig:smbkc-index-obs' on page 5 undefined on input line
 [8]
 
 [9]
-<../BAIRDI/Figures/EBS_predgrid.png, id=125, 433.62pt x 289.08pt>
+<../BAIRDI/Figures/EBS_predgrid.png, id=129, 433.62pt x 289.08pt>
 File: ../BAIRDI/Figures/EBS_predgrid.png Graphic file (type png)
 <use ../BAIRDI/Figures/EBS_predgrid.png>
-Package pdftex.def Info: ../BAIRDI/Figures/EBS_predgrid.png  used on input line 422.
+Package pdftex.def Info: ../BAIRDI/Figures/EBS_predgrid.png  used on input line 424.
 (pdftex.def)             Requested size: 433.63878pt x 289.09251pt.
-<../BAIRDI/Figures/mesh50.png, id=126, 433.62pt x 578.16pt>
+<../BAIRDI/Figures/mesh50.png, id=130, 433.62pt x 578.16pt>
 File: ../BAIRDI/Figures/mesh50.png Graphic file (type png)
 <use ../BAIRDI/Figures/mesh50.png>
-Package pdftex.def Info: ../BAIRDI/Figures/mesh50.png  used on input line 431.
+Package pdftex.def Info: ../BAIRDI/Figures/mesh50.png  used on input line 433.
 (pdftex.def)             Requested size: 433.63878pt x 578.18504pt.
-<../BAIRDI/Figures/mesh90.png, id=128, 433.62pt x 578.16pt>
+<../BAIRDI/Figures/mesh90.png, id=132, 433.62pt x 578.16pt>
 File: ../BAIRDI/Figures/mesh90.png Graphic file (type png)
 <use ../BAIRDI/Figures/mesh90.png>
-Package pdftex.def Info: ../BAIRDI/Figures/mesh90.png  used on input line 440.
+Package pdftex.def Info: ../BAIRDI/Figures/mesh90.png  used on input line 442.
 (pdftex.def)             Requested size: 433.63878pt x 578.18504pt.
-<../BAIRDI/Figures/mesh120.png, id=129, 433.62pt x 578.16pt>
+<../BAIRDI/Figures/mesh120.png, id=133, 433.62pt x 578.16pt>
 File: ../BAIRDI/Figures/mesh120.png Graphic file (type png)
 <use ../BAIRDI/Figures/mesh120.png>
-Package pdftex.def Info: ../BAIRDI/Figures/mesh120.png  used on input line 449.
+Package pdftex.def Info: ../BAIRDI/Figures/mesh120.png  used on input line 451.
 (pdftex.def)             Requested size: 433.63878pt x 578.18504pt.
-<../BAIRDI/Figures/DHARMa_abundance_50-Delta-gamma_QQplot.png, id=130, 433.62pt x 505.89pt>
+<../BAIRDI/Figures/DHARMa_abundance_50-Delta-gamma_QQplot.png, id=134, 433.62pt x 505.89pt>
 File: ../BAIRDI/Figures/DHARMa_abundance_50-Delta-gamma_QQplot.png Graphic file (type png)
 <use ../BAIRDI/Figures/DHARMa_abundance_50-Delta-gamma_QQplot.png>
-Package pdftex.def Info: ../BAIRDI/Figures/DHARMa_abundance_50-Delta-gamma_QQplot.png  used on input line 458.
+Package pdftex.def Info: ../BAIRDI/Figures/DHARMa_abundance_50-Delta-gamma_QQplot.png  used on input line 460.
 (pdftex.def)             Requested size: 433.62555pt x 505.89645pt.
-<../BAIRDI/Figures/DHARMa_biomass_50-Delta-gamma_QQplot.png, id=131, 433.62pt x 505.89pt>
+<../BAIRDI/Figures/DHARMa_biomass_50-Delta-gamma_QQplot.png, id=135, 433.62pt x 505.89pt>
 File: ../BAIRDI/Figures/DHARMa_biomass_50-Delta-gamma_QQplot.png Graphic file (type png)
 <use ../BAIRDI/Figures/DHARMa_biomass_50-Delta-gamma_QQplot.png>
-Package pdftex.def Info: ../BAIRDI/Figures/DHARMa_biomass_50-Delta-gamma_QQplot.png  used on input line 467.
+Package pdftex.def Info: ../BAIRDI/Figures/DHARMa_biomass_50-Delta-gamma_QQplot.png  used on input line 469.
 (pdftex.def)             Requested size: 433.62555pt x 505.89645pt.
-<../BAIRDI/Figures/DHARMa_Male_abundance-50-Delta_gamma_SPATIAL.png, id=132, 722.7pt x 794.97pt>
+<../BAIRDI/Figures/DHARMa_Male_abundance-50-Delta_gamma_SPATIAL.png, id=136, 722.7pt x 794.97pt>
 File: ../BAIRDI/Figures/DHARMa_Male_abundance-50-Delta_gamma_SPATIAL.png Graphic file (type png)
 <use ../BAIRDI/Figures/DHARMa_Male_abundance-50-Delta_gamma_SPATIAL.png>
-Package pdftex.def Info: ../BAIRDI/Figures/DHARMa_Male_abundance-50-Delta_gamma_SPATIAL.png  used on input line 476.
+Package pdftex.def Info: ../BAIRDI/Figures/DHARMa_Male_abundance-50-Delta_gamma_SPATIAL.png  used on input line 478.
 (pdftex.def)             Requested size: 469.76045pt x 516.73651pt.
-<../BAIRDI/Figures/DHARMa_Immature Female_abundance-50-Delta_gamma_SPATIAL.png, id=133, 722.7pt x 794.97pt>
+<../BAIRDI/Figures/DHARMa_Immature Female_abundance-50-Delta_gamma_SPATIAL.png, id=137, 722.7pt x 794.97pt>
 File: ../BAIRDI/Figures/DHARMa_Immature Female_abundance-50-Delta_gamma_SPATIAL.png Graphic file (type png)
 <use ../BAIRDI/Figures/DHARMa_Immature Female_abundance-50-Delta_gamma_SPATIAL.png>
-Package pdftex.def Info: ../BAIRDI/Figures/DHARMa_Immature Female_abundance-50-Delta_gamma_SPATIAL.png  used on input line 485.
+Package pdftex.def Info: ../BAIRDI/Figures/DHARMa_Immature Female_abundance-50-Delta_gamma_SPATIAL.png  used on input line 487.
 (pdftex.def)             Requested size: 469.76045pt x 516.73651pt.
-<../BAIRDI/Figures/DHARMa_Mature Female_abundance-50-Delta_gamma_SPATIAL.png, id=134, 722.7pt x 794.97pt>
+<../BAIRDI/Figures/DHARMa_Mature Female_abundance-50-Delta_gamma_SPATIAL.png, id=138, 722.7pt x 794.97pt>
 File: ../BAIRDI/Figures/DHARMa_Mature Female_abundance-50-Delta_gamma_SPATIAL.png Graphic file (type png)
 <use ../BAIRDI/Figures/DHARMa_Mature Female_abundance-50-Delta_gamma_SPATIAL.png>
-Package pdftex.def Info: ../BAIRDI/Figures/DHARMa_Mature Female_abundance-50-Delta_gamma_SPATIAL.png  used on input line 494.
+Package pdftex.def Info: ../BAIRDI/Figures/DHARMa_Mature Female_abundance-50-Delta_gamma_SPATIAL.png  used on input line 496.
 (pdftex.def)             Requested size: 469.76045pt x 516.73651pt.
-<../BAIRDI/Figures/DHARMa_Male_biomass-50-Delta_gamma_SPATIAL.png, id=135, 722.7pt x 794.97pt>
+<../BAIRDI/Figures/DHARMa_Male_biomass-50-Delta_gamma_SPATIAL.png, id=139, 722.7pt x 794.97pt>
 File: ../BAIRDI/Figures/DHARMa_Male_biomass-50-Delta_gamma_SPATIAL.png Graphic file (type png)
 <use ../BAIRDI/Figures/DHARMa_Male_biomass-50-Delta_gamma_SPATIAL.png>
-Package pdftex.def Info: ../BAIRDI/Figures/DHARMa_Male_biomass-50-Delta_gamma_SPATIAL.png  used on input line 503.
+Package pdftex.def Info: ../BAIRDI/Figures/DHARMa_Male_biomass-50-Delta_gamma_SPATIAL.png  used on input line 505.
 (pdftex.def)             Requested size: 469.76045pt x 516.73651pt.
-<../BAIRDI/Figures/DHARMa_Immature Female_biomass-50-Delta_gamma_SPATIAL.png, id=136, 722.7pt x 794.97pt>
+<../BAIRDI/Figures/DHARMa_Immature Female_biomass-50-Delta_gamma_SPATIAL.png, id=140, 722.7pt x 794.97pt>
 File: ../BAIRDI/Figures/DHARMa_Immature Female_biomass-50-Delta_gamma_SPATIAL.png Graphic file (type png)
 <use ../BAIRDI/Figures/DHARMa_Immature Female_biomass-50-Delta_gamma_SPATIAL.png>
-Package pdftex.def Info: ../BAIRDI/Figures/DHARMa_Immature Female_biomass-50-Delta_gamma_SPATIAL.png  used on input line 512.
+Package pdftex.def Info: ../BAIRDI/Figures/DHARMa_Immature Female_biomass-50-Delta_gamma_SPATIAL.png  used on input line 514.
 (pdftex.def)             Requested size: 469.76045pt x 516.73651pt.
-<../BAIRDI/Figures/DHARMa_Mature Female_biomass-50-Delta_gamma_SPATIAL.png, id=137, 722.7pt x 794.97pt>
+<../BAIRDI/Figures/DHARMa_Mature Female_biomass-50-Delta_gamma_SPATIAL.png, id=141, 722.7pt x 794.97pt>
 File: ../BAIRDI/Figures/DHARMa_Mature Female_biomass-50-Delta_gamma_SPATIAL.png Graphic file (type png)
 <use ../BAIRDI/Figures/DHARMa_Mature Female_biomass-50-Delta_gamma_SPATIAL.png>
-Package pdftex.def Info: ../BAIRDI/Figures/DHARMa_Mature Female_biomass-50-Delta_gamma_SPATIAL.png  used on input line 521.
+Package pdftex.def Info: ../BAIRDI/Figures/DHARMa_Mature Female_biomass-50-Delta_gamma_SPATIAL.png  used on input line 523.
 (pdftex.def)             Requested size: 469.76045pt x 516.73651pt.
-<../BAIRDI/Figures/EBS_male_spatabund.png, id=138, 614.295pt x 686.565pt>
+<../BAIRDI/Figures/EBS_male_spatabund.png, id=142, 614.295pt x 686.565pt>
 File: ../BAIRDI/Figures/EBS_male_spatabund.png Graphic file (type png)
 <use ../BAIRDI/Figures/EBS_male_spatabund.png>
-Package pdftex.def Info: ../BAIRDI/Figures/EBS_male_spatabund.png  used on input line 530.
+Package pdftex.def Info: ../BAIRDI/Figures/EBS_male_spatabund.png  used on input line 532.
 (pdftex.def)             Requested size: 469.75604pt x 525.02147pt.
-<../BAIRDI/Figures/EBS_imfem_spatabund.png, id=139, 614.295pt x 686.565pt>
+<../BAIRDI/Figures/EBS_imfem_spatabund.png, id=143, 614.295pt x 686.565pt>
 File: ../BAIRDI/Figures/EBS_imfem_spatabund.png Graphic file (type png)
 <use ../BAIRDI/Figures/EBS_imfem_spatabund.png>
-Package pdftex.def Info: ../BAIRDI/Figures/EBS_imfem_spatabund.png  used on input line 539.
+Package pdftex.def Info: ../BAIRDI/Figures/EBS_imfem_spatabund.png  used on input line 541.
 (pdftex.def)             Requested size: 469.75604pt x 525.02147pt.
-<../BAIRDI/Figures/EBS_matfem_spatabund.png, id=140, 614.295pt x 686.565pt>
+<../BAIRDI/Figures/EBS_matfem_spatabund.png, id=144, 614.295pt x 686.565pt>
 File: ../BAIRDI/Figures/EBS_matfem_spatabund.png Graphic file (type png)
 <use ../BAIRDI/Figures/EBS_matfem_spatabund.png>
-Package pdftex.def Info: ../BAIRDI/Figures/EBS_matfem_spatabund.png  used on input line 548.
+Package pdftex.def Info: ../BAIRDI/Figures/EBS_matfem_spatabund.png  used on input line 550.
 (pdftex.def)             Requested size: 469.75604pt x 525.02147pt.
-<../BAIRDI/Figures/EBS_male_spatbio.png, id=141, 614.295pt x 686.565pt>
+<../BAIRDI/Figures/EBS_male_spatbio.png, id=145, 614.295pt x 686.565pt>
 File: ../BAIRDI/Figures/EBS_male_spatbio.png Graphic file (type png)
 <use ../BAIRDI/Figures/EBS_male_spatbio.png>
-Package pdftex.def Info: ../BAIRDI/Figures/EBS_male_spatbio.png  used on input line 557.
+Package pdftex.def Info: ../BAIRDI/Figures/EBS_male_spatbio.png  used on input line 559.
 (pdftex.def)             Requested size: 469.75604pt x 525.02147pt.
-<../BAIRDI/Figures/EBS_imfem_spatbio.png, id=142, 614.295pt x 686.565pt>
+<../BAIRDI/Figures/EBS_imfem_spatbio.png, id=146, 614.295pt x 686.565pt>
 File: ../BAIRDI/Figures/EBS_imfem_spatbio.png Graphic file (type png)
 <use ../BAIRDI/Figures/EBS_imfem_spatbio.png>
-Package pdftex.def Info: ../BAIRDI/Figures/EBS_imfem_spatbio.png  used on input line 566.
+Package pdftex.def Info: ../BAIRDI/Figures/EBS_imfem_spatbio.png  used on input line 568.
 (pdftex.def)             Requested size: 469.75604pt x 525.02147pt.
-<../BAIRDI/Figures/EBS_matfem_spatbio.png, id=143, 614.295pt x 686.565pt>
+<../BAIRDI/Figures/EBS_matfem_spatbio.png, id=147, 614.295pt x 686.565pt>
 File: ../BAIRDI/Figures/EBS_matfem_spatbio.png Graphic file (type png)
 <use ../BAIRDI/Figures/EBS_matfem_spatbio.png>
-Package pdftex.def Info: ../BAIRDI/Figures/EBS_matfem_spatbio.png  used on input line 575.
+Package pdftex.def Info: ../BAIRDI/Figures/EBS_matfem_spatbio.png  used on input line 577.
 (pdftex.def)             Requested size: 469.75604pt x 525.02147pt.
-<../BAIRDI/Figures/TannerEBS.abundance.index.png, id=144, 542.025pt x 650.43pt>
+<../BAIRDI/Figures/TannerEBS.abundance.index.png, id=148, 542.025pt x 650.43pt>
 File: ../BAIRDI/Figures/TannerEBS.abundance.index.png Graphic file (type png)
 <use ../BAIRDI/Figures/TannerEBS.abundance.index.png>
-Package pdftex.def Info: ../BAIRDI/Figures/TannerEBS.abundance.index.png  used on input line 584.
+Package pdftex.def Info: ../BAIRDI/Figures/TannerEBS.abundance.index.png  used on input line 586.
 (pdftex.def)             Requested size: 469.77148pt x 563.72578pt.
-<../BAIRDI/Figures/TannerEBS.biomass.index.png, id=145, 542.025pt x 650.43pt>
+<../BAIRDI/Figures/TannerEBS.biomass.index.png, id=149, 542.025pt x 650.43pt>
 File: ../BAIRDI/Figures/TannerEBS.biomass.index.png Graphic file (type png)
 <use ../BAIRDI/Figures/TannerEBS.biomass.index.png>
-Package pdftex.def Info: ../BAIRDI/Figures/TannerEBS.biomass.index.png  used on input line 593.
+Package pdftex.def Info: ../BAIRDI/Figures/TannerEBS.biomass.index.png  used on input line 595.
+(pdftex.def)             Requested size: 469.77148pt x 563.72578pt.
+<../BAIRDI/Figures/TannerEBS.abundance.sdmTMBVASTindex.png, id=150, 542.025pt x 650.43pt>
+File: ../BAIRDI/Figures/TannerEBS.abundance.sdmTMBVASTindex.png Graphic file (type png)
+<use ../BAIRDI/Figures/TannerEBS.abundance.sdmTMBVASTindex.png>
+Package pdftex.def Info: ../BAIRDI/Figures/TannerEBS.abundance.sdmTMBVASTindex.png  used on input line 604.
+(pdftex.def)             Requested size: 469.77148pt x 563.72578pt.
+<../BAIRDI/Figures/TannerEBS.biomass.sdmTMBVASTindex.png, id=151, 542.025pt x 650.43pt>
+File: ../BAIRDI/Figures/TannerEBS.biomass.sdmTMBVASTindex.png Graphic file (type png)
+<use ../BAIRDI/Figures/TannerEBS.biomass.sdmTMBVASTindex.png>
+Package pdftex.def Info: ../BAIRDI/Figures/TannerEBS.biomass.sdmTMBVASTindex.png  used on input line 613.
 (pdftex.def)             Requested size: 469.77148pt x 563.72578pt.
 
 
@@ -863,135 +873,167 @@ Package pdftex.def Info: ../BAIRDI/Figures/TannerEBS.biomass.index.png  used on 
 [28 <../BAIRDI/Figures/TannerEBS.abundance.index.png>]
 
 [29 <../BAIRDI/Figures/TannerEBS.biomass.index.png>]
-<../BAIRDI/Figures/west_predgrid.png, id=241, 433.62pt x 289.08pt>
+
+[30 <../BAIRDI/Figures/TannerEBS.abundance.sdmTMBVASTindex.png>]
+
+[31 <../BAIRDI/Figures/TannerEBS.biomass.sdmTMBVASTindex.png>]
+<../BAIRDI/Figures/west_predgrid.png, id=258, 433.62pt x 289.08pt>
 File: ../BAIRDI/Figures/west_predgrid.png Graphic file (type png)
 <use ../BAIRDI/Figures/west_predgrid.png>
-Package pdftex.def Info: ../BAIRDI/Figures/west_predgrid.png  used on input line 607.
+Package pdftex.def Info: ../BAIRDI/Figures/west_predgrid.png  used on input line 627.
 (pdftex.def)             Requested size: 433.63878pt x 289.09251pt.
-<../BAIRDI/Figures/east_predgrid.png, id=242, 433.62pt x 289.08pt>
+<../BAIRDI/Figures/east_predgrid.png, id=259, 433.62pt x 289.08pt>
 File: ../BAIRDI/Figures/east_predgrid.png Graphic file (type png)
 <use ../BAIRDI/Figures/east_predgrid.png>
-Package pdftex.def Info: ../BAIRDI/Figures/east_predgrid.png  used on input line 616.
+Package pdftex.def Info: ../BAIRDI/Figures/east_predgrid.png  used on input line 636.
 (pdftex.def)             Requested size: 433.63878pt x 289.09251pt.
-<../BAIRDI/Figures/TannerW_male_spatabund.png, id=243, 614.295pt x 686.565pt>
+<../BAIRDI/Figures/TannerW_male_spatabund.png, id=260, 614.295pt x 686.565pt>
 File: ../BAIRDI/Figures/TannerW_male_spatabund.png Graphic file (type png)
 <use ../BAIRDI/Figures/TannerW_male_spatabund.png>
-Package pdftex.def Info: ../BAIRDI/Figures/TannerW_male_spatabund.png  used on input line 625.
+Package pdftex.def Info: ../BAIRDI/Figures/TannerW_male_spatabund.png  used on input line 645.
 (pdftex.def)             Requested size: 469.75604pt x 525.02147pt.
-<../BAIRDI/Figures/TannerW_imfem_spatabund.png, id=244, 614.295pt x 686.565pt>
+<../BAIRDI/Figures/TannerW_imfem_spatabund.png, id=261, 614.295pt x 686.565pt>
 File: ../BAIRDI/Figures/TannerW_imfem_spatabund.png Graphic file (type png)
 <use ../BAIRDI/Figures/TannerW_imfem_spatabund.png>
-Package pdftex.def Info: ../BAIRDI/Figures/TannerW_imfem_spatabund.png  used on input line 634.
+Package pdftex.def Info: ../BAIRDI/Figures/TannerW_imfem_spatabund.png  used on input line 654.
 (pdftex.def)             Requested size: 469.75604pt x 525.02147pt.
-<../BAIRDI/Figures/TannerW_matfem_spatabund.png, id=245, 614.295pt x 686.565pt>
+<../BAIRDI/Figures/TannerW_matfem_spatabund.png, id=262, 614.295pt x 686.565pt>
 File: ../BAIRDI/Figures/TannerW_matfem_spatabund.png Graphic file (type png)
 <use ../BAIRDI/Figures/TannerW_matfem_spatabund.png>
-Package pdftex.def Info: ../BAIRDI/Figures/TannerW_matfem_spatabund.png  used on input line 643.
+Package pdftex.def Info: ../BAIRDI/Figures/TannerW_matfem_spatabund.png  used on input line 663.
 (pdftex.def)             Requested size: 469.75604pt x 525.02147pt.
-<../BAIRDI/Figures/TannerW_male_spatbio.png, id=246, 614.295pt x 686.565pt>
+<../BAIRDI/Figures/TannerW_male_spatbio.png, id=263, 614.295pt x 686.565pt>
 File: ../BAIRDI/Figures/TannerW_male_spatbio.png Graphic file (type png)
 <use ../BAIRDI/Figures/TannerW_male_spatbio.png>
-Package pdftex.def Info: ../BAIRDI/Figures/TannerW_male_spatbio.png  used on input line 652.
+Package pdftex.def Info: ../BAIRDI/Figures/TannerW_male_spatbio.png  used on input line 672.
 (pdftex.def)             Requested size: 469.75604pt x 525.02147pt.
-<../BAIRDI/Figures/TannerW_imfem_spatbio.png, id=247, 614.295pt x 686.565pt>
+<../BAIRDI/Figures/TannerW_imfem_spatbio.png, id=264, 614.295pt x 686.565pt>
 File: ../BAIRDI/Figures/TannerW_imfem_spatbio.png Graphic file (type png)
 <use ../BAIRDI/Figures/TannerW_imfem_spatbio.png>
-Package pdftex.def Info: ../BAIRDI/Figures/TannerW_imfem_spatbio.png  used on input line 661.
+Package pdftex.def Info: ../BAIRDI/Figures/TannerW_imfem_spatbio.png  used on input line 681.
 (pdftex.def)             Requested size: 469.75604pt x 525.02147pt.
-<../BAIRDI/Figures/TannerW_matfem_spatbio.png, id=248, 614.295pt x 686.565pt>
+<../BAIRDI/Figures/TannerW_matfem_spatbio.png, id=265, 614.295pt x 686.565pt>
 File: ../BAIRDI/Figures/TannerW_matfem_spatbio.png Graphic file (type png)
 <use ../BAIRDI/Figures/TannerW_matfem_spatbio.png>
-Package pdftex.def Info: ../BAIRDI/Figures/TannerW_matfem_spatbio.png  used on input line 670.
+Package pdftex.def Info: ../BAIRDI/Figures/TannerW_matfem_spatbio.png  used on input line 690.
 (pdftex.def)             Requested size: 469.75604pt x 525.02147pt.
-<../BAIRDI/Figures/TannerE_male_spatabund.png, id=249, 614.295pt x 686.565pt>
+<../BAIRDI/Figures/TannerE_male_spatabund.png, id=266, 614.295pt x 686.565pt>
 File: ../BAIRDI/Figures/TannerE_male_spatabund.png Graphic file (type png)
 <use ../BAIRDI/Figures/TannerE_male_spatabund.png>
-Package pdftex.def Info: ../BAIRDI/Figures/TannerE_male_spatabund.png  used on input line 679.
+Package pdftex.def Info: ../BAIRDI/Figures/TannerE_male_spatabund.png  used on input line 699.
 (pdftex.def)             Requested size: 469.75604pt x 525.02147pt.
-<../BAIRDI/Figures/TannerE_imfem_spatabund.png, id=250, 614.295pt x 686.565pt>
+<../BAIRDI/Figures/TannerE_imfem_spatabund.png, id=267, 614.295pt x 686.565pt>
 File: ../BAIRDI/Figures/TannerE_imfem_spatabund.png Graphic file (type png)
 <use ../BAIRDI/Figures/TannerE_imfem_spatabund.png>
-Package pdftex.def Info: ../BAIRDI/Figures/TannerE_imfem_spatabund.png  used on input line 688.
+Package pdftex.def Info: ../BAIRDI/Figures/TannerE_imfem_spatabund.png  used on input line 708.
 (pdftex.def)             Requested size: 469.75604pt x 525.02147pt.
-<../BAIRDI/Figures/TannerE_matfem_spatabund.png, id=251, 614.295pt x 686.565pt>
+<../BAIRDI/Figures/TannerE_matfem_spatabund.png, id=268, 614.295pt x 686.565pt>
 File: ../BAIRDI/Figures/TannerE_matfem_spatabund.png Graphic file (type png)
 <use ../BAIRDI/Figures/TannerE_matfem_spatabund.png>
-Package pdftex.def Info: ../BAIRDI/Figures/TannerE_matfem_spatabund.png  used on input line 697.
+Package pdftex.def Info: ../BAIRDI/Figures/TannerE_matfem_spatabund.png  used on input line 717.
 (pdftex.def)             Requested size: 469.75604pt x 525.02147pt.
-<../BAIRDI/Figures/TannerE_male_spatbio.png, id=252, 614.295pt x 686.565pt>
+<../BAIRDI/Figures/TannerE_male_spatbio.png, id=269, 614.295pt x 686.565pt>
 File: ../BAIRDI/Figures/TannerE_male_spatbio.png Graphic file (type png)
 <use ../BAIRDI/Figures/TannerE_male_spatbio.png>
-Package pdftex.def Info: ../BAIRDI/Figures/TannerE_male_spatbio.png  used on input line 706.
+Package pdftex.def Info: ../BAIRDI/Figures/TannerE_male_spatbio.png  used on input line 726.
 (pdftex.def)             Requested size: 469.75604pt x 525.02147pt.
-<../BAIRDI/Figures/TannerE_imfem_spatbio.png, id=253, 614.295pt x 686.565pt>
+<../BAIRDI/Figures/TannerE_imfem_spatbio.png, id=270, 614.295pt x 686.565pt>
 File: ../BAIRDI/Figures/TannerE_imfem_spatbio.png Graphic file (type png)
 <use ../BAIRDI/Figures/TannerE_imfem_spatbio.png>
-Package pdftex.def Info: ../BAIRDI/Figures/TannerE_imfem_spatbio.png  used on input line 715.
+Package pdftex.def Info: ../BAIRDI/Figures/TannerE_imfem_spatbio.png  used on input line 735.
 (pdftex.def)             Requested size: 469.75604pt x 525.02147pt.
-<../BAIRDI/Figures/TannerE_matfem_spatbio.png, id=254, 614.295pt x 686.565pt>
+<../BAIRDI/Figures/TannerE_matfem_spatbio.png, id=271, 614.295pt x 686.565pt>
 File: ../BAIRDI/Figures/TannerE_matfem_spatbio.png Graphic file (type png)
 <use ../BAIRDI/Figures/TannerE_matfem_spatbio.png>
-Package pdftex.def Info: ../BAIRDI/Figures/TannerE_matfem_spatbio.png  used on input line 724.
+Package pdftex.def Info: ../BAIRDI/Figures/TannerE_matfem_spatbio.png  used on input line 744.
 (pdftex.def)             Requested size: 469.75604pt x 525.02147pt.
-<../BAIRDI/Figures/TannerWest.abundance.index.png, id=255, 542.025pt x 650.43pt>
+<../BAIRDI/Figures/TannerWest.abundance.index.png, id=272, 542.025pt x 650.43pt>
 File: ../BAIRDI/Figures/TannerWest.abundance.index.png Graphic file (type png)
 <use ../BAIRDI/Figures/TannerWest.abundance.index.png>
-Package pdftex.def Info: ../BAIRDI/Figures/TannerWest.abundance.index.png  used on input line 733.
+Package pdftex.def Info: ../BAIRDI/Figures/TannerWest.abundance.index.png  used on input line 753.
 (pdftex.def)             Requested size: 469.77148pt x 563.72578pt.
-<../BAIRDI/Figures/TannerWest.biomass.index.png, id=256, 542.025pt x 650.43pt>
+<../BAIRDI/Figures/TannerWest.biomass.index.png, id=273, 542.025pt x 650.43pt>
 File: ../BAIRDI/Figures/TannerWest.biomass.index.png Graphic file (type png)
 <use ../BAIRDI/Figures/TannerWest.biomass.index.png>
-Package pdftex.def Info: ../BAIRDI/Figures/TannerWest.biomass.index.png  used on input line 742.
+Package pdftex.def Info: ../BAIRDI/Figures/TannerWest.biomass.index.png  used on input line 762.
 (pdftex.def)             Requested size: 469.77148pt x 563.72578pt.
-<../BAIRDI/Figures/TannerEast.abundance.index.png, id=257, 542.025pt x 650.43pt>
+<../BAIRDI/Figures/TannerEast.abundance.index.png, id=274, 542.025pt x 650.43pt>
 File: ../BAIRDI/Figures/TannerEast.abundance.index.png Graphic file (type png)
 <use ../BAIRDI/Figures/TannerEast.abundance.index.png>
-Package pdftex.def Info: ../BAIRDI/Figures/TannerEast.abundance.index.png  used on input line 751.
+Package pdftex.def Info: ../BAIRDI/Figures/TannerEast.abundance.index.png  used on input line 771.
 (pdftex.def)             Requested size: 469.77148pt x 563.72578pt.
-<../BAIRDI/Figures/TannerEast.biomass.index.png, id=258, 542.025pt x 650.43pt>
+<../BAIRDI/Figures/TannerEast.biomass.index.png, id=275, 542.025pt x 650.43pt>
 File: ../BAIRDI/Figures/TannerEast.biomass.index.png Graphic file (type png)
 <use ../BAIRDI/Figures/TannerEast.biomass.index.png>
-Package pdftex.def Info: ../BAIRDI/Figures/TannerEast.biomass.index.png  used on input line 760.
+Package pdftex.def Info: ../BAIRDI/Figures/TannerEast.biomass.index.png  used on input line 780.
+(pdftex.def)             Requested size: 469.77148pt x 563.72578pt.
+<../BAIRDI/Figures/TannerW.abundance.sdmTMBVASTindex.png, id=276, 542.025pt x 650.43pt>
+File: ../BAIRDI/Figures/TannerW.abundance.sdmTMBVASTindex.png Graphic file (type png)
+<use ../BAIRDI/Figures/TannerW.abundance.sdmTMBVASTindex.png>
+Package pdftex.def Info: ../BAIRDI/Figures/TannerW.abundance.sdmTMBVASTindex.png  used on input line 789.
+(pdftex.def)             Requested size: 469.77148pt x 563.72578pt.
+<../BAIRDI/Figures/TannerW.biomass.sdmTMBVASTindex.png, id=277, 542.025pt x 650.43pt>
+File: ../BAIRDI/Figures/TannerW.biomass.sdmTMBVASTindex.png Graphic file (type png)
+<use ../BAIRDI/Figures/TannerW.biomass.sdmTMBVASTindex.png>
+Package pdftex.def Info: ../BAIRDI/Figures/TannerW.biomass.sdmTMBVASTindex.png  used on input line 798.
+(pdftex.def)             Requested size: 469.77148pt x 563.72578pt.
+<../BAIRDI/Figures/TannerE.abundance.sdmTMBVASTindex.png, id=278, 542.025pt x 650.43pt>
+File: ../BAIRDI/Figures/TannerE.abundance.sdmTMBVASTindex.png Graphic file (type png)
+<use ../BAIRDI/Figures/TannerE.abundance.sdmTMBVASTindex.png>
+Package pdftex.def Info: ../BAIRDI/Figures/TannerE.abundance.sdmTMBVASTindex.png  used on input line 807.
+(pdftex.def)             Requested size: 469.77148pt x 563.72578pt.
+<../BAIRDI/Figures/TannerE.biomass.sdmTMBVASTindex.png, id=279, 542.025pt x 650.43pt>
+File: ../BAIRDI/Figures/TannerE.biomass.sdmTMBVASTindex.png Graphic file (type png)
+<use ../BAIRDI/Figures/TannerE.biomass.sdmTMBVASTindex.png>
+Package pdftex.def Info: ../BAIRDI/Figures/TannerE.biomass.sdmTMBVASTindex.png  used on input line 816.
 (pdftex.def)             Requested size: 469.77148pt x 563.72578pt.
 
 
-[30
+[32
 
  <../BAIRDI/Figures/west_predgrid.png>]
 
-[31 <../BAIRDI/Figures/east_predgrid.png>]
+[33 <../BAIRDI/Figures/east_predgrid.png>]
 
-[32 <../BAIRDI/Figures/TannerW_male_spatabund.png>]
+[34 <../BAIRDI/Figures/TannerW_male_spatabund.png>]
 
-[33 <../BAIRDI/Figures/TannerW_imfem_spatabund.png>]
+[35 <../BAIRDI/Figures/TannerW_imfem_spatabund.png>]
 
-[34 <../BAIRDI/Figures/TannerW_matfem_spatabund.png>]
+[36 <../BAIRDI/Figures/TannerW_matfem_spatabund.png>]
 
-[35 <../BAIRDI/Figures/TannerW_male_spatbio.png>]
+[37 <../BAIRDI/Figures/TannerW_male_spatbio.png>]
 
-[36 <../BAIRDI/Figures/TannerW_imfem_spatbio.png>]
+[38 <../BAIRDI/Figures/TannerW_imfem_spatbio.png>]
 
-[37 <../BAIRDI/Figures/TannerW_matfem_spatbio.png>]
+[39 <../BAIRDI/Figures/TannerW_matfem_spatbio.png>]
 
-[38 <../BAIRDI/Figures/TannerE_male_spatabund.png>]
+[40 <../BAIRDI/Figures/TannerE_male_spatabund.png>]
 
-[39 <../BAIRDI/Figures/TannerE_imfem_spatabund.png>]
+[41 <../BAIRDI/Figures/TannerE_imfem_spatabund.png>]
 
-[40 <../BAIRDI/Figures/TannerE_matfem_spatabund.png>]
+[42 <../BAIRDI/Figures/TannerE_matfem_spatabund.png>]
 
-[41 <../BAIRDI/Figures/TannerE_male_spatbio.png>]
+[43 <../BAIRDI/Figures/TannerE_male_spatbio.png>]
 
-[42 <../BAIRDI/Figures/TannerE_imfem_spatbio.png>]
+[44 <../BAIRDI/Figures/TannerE_imfem_spatbio.png>]
 
-[43 <../BAIRDI/Figures/TannerE_matfem_spatbio.png>]
+[45 <../BAIRDI/Figures/TannerE_matfem_spatbio.png>]
 
-[44 <../BAIRDI/Figures/TannerWest.abundance.index.png>]
+[46 <../BAIRDI/Figures/TannerWest.abundance.index.png>]
 
-[45 <../BAIRDI/Figures/TannerWest.biomass.index.png>]
+[47 <../BAIRDI/Figures/TannerWest.biomass.index.png>]
 
-[46 <../BAIRDI/Figures/TannerEast.abundance.index.png>]
+[48 <../BAIRDI/Figures/TannerEast.abundance.index.png>]
 
-[47 <../BAIRDI/Figures/TannerEast.biomass.index.png>] (./crab_model_indices_forCPT.aux)
+[49 <../BAIRDI/Figures/TannerEast.biomass.index.png>]
+
+[50 <../BAIRDI/Figures/TannerW.abundance.sdmTMBVASTindex.png>]
+
+[51 <../BAIRDI/Figures/TannerW.biomass.sdmTMBVASTindex.png>]
+
+[52 <../BAIRDI/Figures/TannerE.abundance.sdmTMBVASTindex.png>]
+
+[53 <../BAIRDI/Figures/TannerE.biomass.sdmTMBVASTindex.png>] (./crab_model_indices_forCPT.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 1
 L3 programming layer <2024-12-09>
@@ -1001,18 +1043,18 @@ LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 17005 strings out of 475152
- 293481 string characters out of 5762529
- 750609 words of memory out of 5000000
- 39439 multiletter control sequences out of 15000+600000
- 615268 words of font info for 155 fonts, out of 8000000 for 9000
+ 17101 strings out of 475152
+ 297936 string characters out of 5762529
+ 752464 words of memory out of 5000000
+ 39511 multiletter control sequences out of 15000+600000
+ 615694 words of font info for 161 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
  83i,10n,93p,1548b,459s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/Users/emily.ryznar/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/Users/emily.ryznar/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/emily.ryznar/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi8.pfb><c:/Users/emily.ryznar/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/emily.ryznar/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/emily.ryznar/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb><c:/Users/emily.ryznar/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb><c:/Users/emily.ryznar/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/Users/emily.ryznar/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb>
-Output written on crab_model_indices_forCPT.pdf (47 pages, 37125377 bytes).
+Output written on crab_model_indices_forCPT.pdf (53 pages, 39582395 bytes).
 PDF statistics:
- 494 PDF objects out of 1000 (max. 8388607)
- 381 compressed objects within 4 object streams
- 112 named destinations out of 1000 (max. 500000)
- 31103 words of extra memory for PDF output out of 35830 (max. 10000000)
+ 536 PDF objects out of 1000 (max. 8388607)
+ 410 compressed objects within 5 object streams
+ 124 named destinations out of 1000 (max. 500000)
+ 31133 words of extra memory for PDF output out of 35830 (max. 10000000)
 

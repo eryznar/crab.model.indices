@@ -44,6 +44,7 @@ options(xtable.comment = FALSE)
 smbkc.loglik <- read.csv(paste0(here::here(), "/SMBKC/output/smbkc_compare_loglik.csv"))
 smbkc.resid <- read.csv(paste0(here::here(), "/SMBKC/output/smbkc_compare_resid.csv"))
 nsrkc.loglik <- read.csv(paste0(here::here(), "/NSRKC/output/nsrkc_compare_loglik.csv"))
+nsrkc.resid <- read.csv(paste0(here::here(), "/NSRKC/output/nsrkc_compare_resid.csv"))
 
 ```
 
@@ -106,12 +107,12 @@ We utilized abundance and biomass data collected from the NMFS summer bottom tra
 
 ## Norton Sound red king crab {-}
 
-The Norton Sound red king crab stock assessment includes data from the NMFS trawl survey (1976-1991), ADF&G trawl survey (1996-2024), and NMFS NBS trawl survey (2010-2023). Here, we used abundance data from the NMFS NBS trawl survey to fit models in *sdmTMB*. Future work will address producing model-based indices for the remaining data sets. We filtered the NMFS NBS trawl survey data set to ensure that it included only observations with coordinates falling within the Norton Sound Section of Statistical Area Q. For model fitting, we used spatial meshes at three resolutions: 100 knots, 50 knots, and 30 knots (Figures \@ref(fig:nsrkc-mesh-100kn) - \@ref(fig:nsrkc-mesh-30kn)). We used a prediction grid with resolution of 5 km$^2$ (Figure \@ref(fig:nsrkc-pred-grid)). For model cross validation, we used 3 folds.
+The Norton Sound red king crab stock assessment includes data from the NMFS trawl survey (1976-1991), ADF&G trawl survey (1996-2024), and NMFS NBS trawl survey (2010-2023). Here, we used abundance data from the NMFS NBS trawl survey to fit models in *sdmTMB*. Future work will address producing model-based indices for the remaining data sets. We filtered the NMFS NBS trawl survey data set to ensure that it included only observations with coordinates falling within the Norton Sound Section of Statistical Area Q. Matching the assessment model, we included abundance information on males with carapace length $\ge$ 64 mm. For model fitting, we used spatial meshes at three resolutions: 100 knots, 50 knots, and 30 knots (Figures \@ref(fig:nsrkc-mesh-100kn) - \@ref(fig:nsrkc-mesh-30kn)). We used a prediction grid with resolution of 5 km$^2$ (Figure \@ref(fig:nsrkc-pred-grid)). For model cross validation, we used 3 folds.
 
 
 ## St. Matthew Island blue king crab {-}
 
-The St. Matthew Island blue king crab stock assessment includes two survey time series: the NMFS summer bottom trawl survey and the ADF&G pot survey. Here, we used biomass data collected during the NMFS summer bottom trawl survey (1978-2024) to fit models in *sdmTMB*; further investigation of how to specify area surveyed for the pot survey is needed before that data set can be analyzed using this approach. Matching the assessment model, we included only information on males with carapace length $\ge$ 90 mm. For model fitting, we used spatial meshes at three resolutions: 120 knots, 90 knots, and 50 knots (Figures \@ref(fig:smbkc-mesh-120kn) - \@ref(fig:smbkc-mesh-50kn)). We used a prediction grid with a resolution of 4 km$^2$ (Figure \@ref(fig:smbkc-pred-grid)). For model cross validation, we used 3 folds; models did not always converge with 5 or 10 folds. 
+The St. Matthew Island blue king crab stock assessment includes two survey time series: the NMFS summer bottom trawl survey and the ADF&G pot survey. Here, we used biomass data collected during the NMFS summer bottom trawl survey (1978-2024) to fit models in *sdmTMB*; further investigation of how to specify area surveyed for the pot survey is needed before that data set can be analyzed using this approach. Matching the assessment model, we included biomass information on males with carapace length $\ge$ 90 mm. For model fitting, we used spatial meshes at three resolutions: 120 knots, 90 knots, and 50 knots (Figures \@ref(fig:smbkc-mesh-120kn) - \@ref(fig:smbkc-mesh-50kn)). We used a prediction grid with a resolution of 4 km$^2$ (Figure \@ref(fig:smbkc-pred-grid)). For model cross validation, we used 3 folds; models did not always converge with 5 or 10 folds. 
 
 
 
@@ -140,17 +141,13 @@ The EBS-wide model-predicted indices varied in their fits to survey abundance (F
 
 ## St. Matthew Island blue king crab {-}
 
-### Model configurations {-}
+### Model diagnostics {-}
 
 For SMBKC, only models using the Tweedie family passed the sanity checks. Models using the delta gamma and delta lognormal families did not. Models using IID, random walk, and AR1 spatial estimation methods with spatial resolutions of 50, 90, and 120 knots passed the sanity checks.
-
-### Model diagnostics {-}
 
 Results of the tests performed on the DHARMa residuals for each model are displayed in figures \@ref(fig:smbkc-qq-iid-tw-120kn) - \@ref(fig:smbkc-qq-ar1-tw-50kn) and table \@ref(tab:smbkc-loglik). DHARMa residuals for the IID Tweedie model with 50 knots could not be generated and so residual analysis results for that model are not displayed. All models showed evidence of underdispersion, with observed data less dispersed than expected under the fitted models. None of the models showed evidence of outliers. All models showed evidence of quantile deviations. The IID and RW models with 120 knots showed evidence of zero inflation, with the observed data containing more zeros than would be expected under the fitted model.  
 
 The spatial distribution of DHARMa residuals for each model is plotted in figures \@ref(fig:smbkc-spatresid-iid-tw-120kn) - \@ref(fig:smbkc-spatresid-ar1-tw-50kn). Spatial residual patterns are satisfactory for all models. 
-
-### Model predictive skill {-}
 
 Predictive density (log-likelihood) values for the SMBKC models that passed the sanity checks are shown in table \@ref(tab:smbkc-loglik). Predictive density values closer to zero indicate better out-of-sample predictive skill. Models with missing predictive density values are models that did not pass all sanity checks. The three models with the best out-of-sample predictive skill all used the random walk spatial estimation method. The model with 90 knots had the best out-of-sample predictive skill, followed by the models with 50 and 120 knots.   
 
@@ -162,33 +159,32 @@ The spatial distribution of model-predicted SMBKC biomass for each model is show
 
 For all three spatial random fields estimation methods (IID, RW, and AR1), the model fitted using a mesh with finer spatial resolution (120 knots) estimated lower blue king crab biomass than the models fitted using coarser spatial resolutions (50 or 90 knots) (Figures \@ref(fig:smbkc-index-iid-tw), \@ref(fig:smbkc-index-rw-tw), and \@ref(fig:smbkc-index-ar1-tw)). The models with 120 knots showed poorer visual fits to the survey observations, particularly in recent years, in accordance with their relatively lower predictive skill scores. For the IID, RW, and AR1 models, the model with 90 knots estimated higher biomass than did the model with 50 knots. The model with 50 knots had the best predictive skill of the IID and AR1 models, but the model with 90 knots had the best predictive skill of the RW models. 
 
+### Comparison of sdmTMB with VAST {-}
+
+A matched comparison between sdmTMB and VAST for the sdmTMB models with best predictive skill was not possible because output from random walk, Tweedie VAST models was not available. It was not clear how to implement a random walk in VAST. However, output from IID, Tweedie and IID, delta-gamma VAST models was available and is shown with the indices for the two sdmTMB models with best predictive skill in Figures \@ref(fig:smbkc-vast-index-50kn) and \@ref(fig:smbkc-vast-index-90kn). For the models using a 90-knot mesh, the sdmTMB and VAST predictions for recent years are very similar, with the sdmTMB predictions higher in 2024. For the models using a 50-knot mesh, the sdmTMB and VAST predictions for recent years are more divergent, with the VAST model generally predicting higher abundance. 
 
 
 ## Norton Sound red king crab {-}
 
-### Model configurations {-}
+### Model diagnostics {-}
 
 We ran models with IID, random walk, and AR1 spatial estimation methods; with the Tweedie, delta gamma, and delta lognormal families; and with spatial resolutions of 30, 50, and 100 knots. Of these 27 models, the only one that passed the sanity checks was the model with random walk spatial estimation, the Tweedie family, and 30 knots. 
 
-### Model diagnostics {-}
-
-The DHARMa residuals diagnostic plot showed evidence of quantile deviations for the NSRKC model (Figure \@ref(fig:nsrkc-qq-rw-tw-30kn)), but there was no evidence of over- or underdispersion, outliers, or zero inflation.  
-
-### Model predictive skill {-}
+The DHARMa residuals diagnostic plot showed evidence of quantile deviations for the NSRKC model (Figure \@ref(fig:nsrkc-qq-rw-tw-30kn)), with no evidence of over- or underdispersion, outliers, or zero inflation.  
 
 Predictive density (log-likelihood) values for NSRKC models are shown in table \@ref(tab:nsrkc-loglik). Models with missing predictive density values are models that did not pass all sanity checks. 
 
 ### Predicted abundance {-}
 
-Heat maps of predicted NSRKC abundance for the three models with the best out-of-sample predictive skill are show in figures \@ref(fig:nsrkc-pred-30kn) - \@ref(fig:nsrkc-pred-100kn).
+A heat map of predicted NSRKC abundance for the model with random walk spatial estimation, the Tweedie family, and a 30-knot mesh is show in Figure \@ref(fig:nsrkc-spat-pred-30kn).
 
 ### Model-based index fits to observations {-}
 
-The model-predicted indices varied in their fits to the survey biomass observations.
+The predicted index showed a close fit to survey abundance estimates, with the exception of 2022, when the model seems to over-estimate abundance relative to the survey estimate (Figure \@ref(fig:nsrkc-index-obs)). The random walk, Tweedie models with 100 knot-mesh and 50 knot-mesh are shown for comparison with the 30 knot-mesh model, although only the model with the 30-knot mesh passed sanity checks.  
 
+### Comparison of sdmTMB with VAST {-}
 
-
-
+A matched comparison between sdmTMB and VAST was not possible because output from random walk, Tweedie VAST models was not available. VAST models using IID and Tweedie did not converge, and it was not clear how to implement a random walk spatial estimation method in VAST. Available VAST models used IID with a delta-gamma family and the resulting index is show in Figure \@ref(fig:nsrkc-index-vast). Recognizing that the comparison is not matched, the sdmTMB-derived index more closely follows the fluctuations in survey abundance estimates, while the VAST-derived index seems to smooth to a greater extent, and tends to estimate lower abundance overall. 
 
 # Recommended models {-}
 For Tanner crab, we recommend a delta-gamma model using a 50-knot mesh as these were consistently top-performing models across sex-maturity categories and periods. However, different best models could be explored by sex-maturity category and fitting period. 
@@ -298,7 +294,7 @@ df <- smbkc.tab %>%
   select(-X) %>%
   rename("Family" = family, "Estimation method" = estimation, "Knots" = knots, "Log-likelihood" = loglik, "Quantile" = quantile, "Dispersion" = dispersion, "Outliers" = outliers, "Zero inflation" = zero_inf)
 
-tab <- xtable(df, caption = "St. Matthew Island blue king crab fitted model predictive skill (log-likelihood) values, estimated using sdmTMB cross-validation, for models fitted with Tweedie, delta gamma, or delta lognormal model familes; spatial random fields estimated using independent and identically distributed (IID), random walk (RW), or first-order autoregressive (AR1) methods; and spatial resolution of 50, 90, or 120 knots. Predictive skill (log-likelihood) values closer to zero represent better out-of-sample predictive skill. Model configurations with missing log-likelihood values represent models that did not pass sanity checks. DHARMa residual diagnostics are also shown. All models had significant quantile deviations and underdispersion and no significant evidence of outliers. There was evidence of zero inflation for only the IID and RW models with 120 knots.", label = "tab:smbkc.loglik", digits = 0)
+tab <- xtable(df, caption = "St. Matthew Island blue king crab fitted model predictive skill (log-likelihood) values, estimated using sdmTMB cross-validation, for models fitted with Tweedie, delta gamma, or delta lognormal model familes; spatial random fields estimated using independent and identically distributed (IID), random walk (RW), or first-order autoregressive (AR1) methods; and spatial resolution of 50, 90, or 120 knots. Predictive skill (log-likelihood) values closer to zero represent better out-of-sample predictive skill. Model configurations with missing log-likelihood values represent models that did not pass sanity checks. DHARMa residual diagnostics are also shown. All models had significant quantile deviations and underdispersion and no significant evidence of outliers. There was evidence of zero inflation for only the IID and RW models with 120 knots.", label = "tab:smbkc-loglik", digits = 0)
 
 print(tab, caption.placement = "top", include.rownames = FALSE, booktabs = T)
 
@@ -314,7 +310,7 @@ df <- nsrkc.tab %>%
   select(-X) %>%
   rename("Family" = family, "Estimation method" = estimation, "Knots" = knots, "Log-likelihood" = loglik)
 
-tab <- xtable(df, caption = "Norton Sound red king crab fitted model predictive density (log-likelihood) values, estimated using sdmTMB cross-validation with 3 folds, for models fitted with Tweedie, delta gamma, or delta lognormal model familes; spatial random fields estimated using independent and identically distributed (IID), random walk (RW), or first-order autoregressive (AR1) methods; and spatial resolution of 30, 50, or 100 knots. Predictive density (log-likelihood) values closer to zero represent better out-of-sample predictive skill. Model configurations with missing log-likelihood values represent models that did not pass sanity checks. DHARMa residual diagnostics are also shown.", label = "tab:nsrkc.loglik", digits = 0)
+tab <- xtable(df, caption = "Norton Sound red king crab fitted model predictive density (log-likelihood) values, estimated using sdmTMB cross-validation with 3 folds, for models fitted with Tweedie, delta gamma, or delta lognormal model familes; spatial random fields estimated using independent and identically distributed (IID), random walk (RW), or first-order autoregressive (AR1) methods; and spatial resolution of 30, 50, or 100 knots. Predictive density (log-likelihood) values closer to zero represent better out-of-sample predictive skill. Model configurations with missing log-likelihood values represent models that did not pass sanity checks. DHARMa residual diagnostics are also shown.", label = "tab:nsrkc-loglik", digits = 0)
 
 print(tab, caption.placement = "top", include.rownames = FALSE, booktabs = T)
 
@@ -440,233 +436,307 @@ knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.abundance.sdmTMBVAS
 knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.biomass.sdmTMBVASTindex.png"))
 ```
 
-```{r nsrkc-pred-grid, fig.align = "center", fig.cap = "Prediction grid used for Norton Sound red king crab spatial abundance predictions. Spatial resolution is 5 km$^2$."}
 
-knitr::include_graphics(here::here("NSRKC/plots/prediction_grid_5km.png"))
-```
+\pagebreak
 
-```{r nsrkc-mesh-30kn, fig.align = "center", fig.cap = "Spatial mesh with 30 knots used for fitting Norton Sound red king crab spatial models. Points represent observations and vertices represent knot locations."}
-
-knitr::include_graphics(here::here("NSRKC/plots/mesh_30kn_nbs.png"))
-```
-
-```{r nsrkc-mesh-50kn, fig.align = "center", fig.cap = "Spatial mesh with 50 knots used for fitting Norton Sound red king crab spatial models. Points represent observations and vertices represent knot locations."}
-
-knitr::include_graphics(here::here("NSRKC/plots/mesh_50kn_nbs.png"))
-```
-
-```{r nsrkc-mesh-100kn, fig.align = "center", fig.cap = "Spatial mesh with 100 knots used for fitting Norton Sound red king crab spatial models. Points represent observations and vertices represent knot locations."}
-
-knitr::include_graphics(here::here("NSRKC/plots/mesh_100kn_nbs.png"))
-```
-
-```{r nsrkc-qq-30kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the Norton Sound red king crab model with 30 knots.", out.width="100%", out.height="100%"}
-
-#knitr::include_graphics(here::here("NSRKC/plots/nsrkc_30kn_qq.png"))
-```
-
-```{r nsrkc-qq-50kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the Norton Sound red king crab model with 50 knots.", out.width="100%", out.height="100%"}
-
-#knitr::include_graphics(here::here("NSRKC/plots/nsrkc_50kn_qq.png"))
-```
-
-```{r nsrkc-qq-100kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for Norton Sound red king crab model with 100 knots.", out.width="100%", out.height="100%"}
-
-#knitr::include_graphics(here::here("NSRKC/plots/nsrkc_100kn_qq.png"))
-```
-
-
-```{r nsrkc-pred-30kn, fig.align = "center", fig.cap = "Heat map of Norton Sound red king crab predicted abundance generated using the model with 50 knots."}
-
-#knitr::include_graphics(here::here("NSRKC/plots/pred_heat_iid_30kn.png"))
-```
-
-```{r nsrkc-pred-50kn, fig.align = "center", fig.cap = "Heat map of Norton Sound red blue king crab predicted abundance generated using the model with 90 knots."}
-
-#knitr::include_graphics(here::here("NSRKC/plots/pred_heat_iid_50kn.png"))
-```
-
-```{r nsrkc-pred-100kn, fig.align = "center", fig.cap = "Heat map of Norton Sound red blue king crab predicted abundance generated using the model with 120 knots."}
-
-#knitr::include_graphics(here::here("NSRKC/plots/pred_heat_iid_100kn.png"))
-```
-
-```{r nsrkc-survey-abun, fig.align = "center", fig.cap = "Estimated abundance in number of crab for Norton Sound red king crab. Colored points represent abundance (±95% CI) estimated by the trawl surveys."}
-
-#knitr::include_graphics(here::here("NSRKC/plots/nsrkc_survey_abundance.png"))
-```
-
-```{r nsrkc-index-obs, fig.align = "center", fig.cap = "Estimated abundance in number of crab for Norton Sound red king crab. Colored lines represent abundance (±95% CI) estimated using sdmTMB. Black points represent abundance (±95% CI) estimated by the trawl surveys."}
-
-#knitr::include_graphics(here::here("NSRKC/plots/nsrkc_model_fit.png"))
-```
-
-```{r smbkc-mesh-50kn, fig.align = "center", fig.cap = "Spatial mesh with 50 knots used for fitting St. Matthew Island blue king crab spatial models. Points represent observations and vertices represent knot locations."}
+```{r smbkc-mesh-50kn, fig.align = "center", fig.cap = "Spatial mesh with 50 knots used for fitting St. Matthew Island blue king crab spatial models. Points represent observations and vertices represent knot locations.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/mesh_50kn_sm.png"))
 ```
 
-```{r smbkc-mesh-90kn, fig.align = "center", fig.cap = "Spatial mesh with 90 knots used for fitting St. Matthew Island blue king crab spatial models. Points represent observations and vertices represent knot locations."}
+\pagebreak
+
+```{r smbkc-mesh-90kn, fig.align = "center", fig.cap = "Spatial mesh with 90 knots used for fitting St. Matthew Island blue king crab spatial models. Points represent observations and vertices represent knot locations.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/mesh_90kn_sm.png"))
 ```
 
-```{r smbkc-mesh-120kn, fig.align = "center", fig.cap = "Spatial mesh with 120 knots used for fitting St. Matthew Island blue king crab spatial models. Points represent observations and vertices represent knot locations."}
+\pagebreak
+
+```{r smbkc-mesh-120kn, fig.align = "center", fig.cap = "Spatial mesh with 120 knots used for fitting St. Matthew Island blue king crab spatial models. Points represent observations and vertices represent knot locations.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/mesh_120kn_sm.png"))
 ```
 
-```{r smbkc-pred-grid, fig.align = "center", fig.cap = "Prediction grid used for St. Matthew Island blue king crab spatial abundance predictions. Spatial resolution is 4 km$^2$."}
+\pagebreak
+
+```{r smbkc-pred-grid, fig.align = "center", fig.cap = "Prediction grid used for St. Matthew Island blue king crab spatial abundance predictions. Spatial resolution is 4 km$^2$.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/prediction_grid_4km.png"))
 ```
+
+\pagebreak
 
 ```{r smbkc-qq-iid-tw-120kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the SMBKC IID Tweedie model with 120 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/smbkc_iid_tw_120kn_resid.png"))
 ```
 
+\pagebreak
+
 ```{r smbkc-qq-iid-tw-90kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the SMBKC IID Tweedie model with 90 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/smbkc_iid_tw_90kn_resid.png"))
 ```
+
+\pagebreak
 
 ```{r smbkc-qq-rw-tw-120kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the SMBKC random walk Tweedie model with 120 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/smbkc_rw_tw_120kn_resid.png"))
 ```
 
+\pagebreak
+
 ```{r smbkc-qq-rw-tw-90kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the SMBKC random walk Tweedie model with 90 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/smbkc_rw_tw_90kn_resid.png"))
 ```
+
+\pagebreak
 
 ```{r smbkc-qq-rw-tw-50kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the SMBKC random walk Tweedie model with 50 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/smbkc_rw_tw_50kn_resid.png"))
 ```
 
+\pagebreak
+
 ```{r smbkc-qq-ar1-tw-120kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the SMBKC AR1 Tweedie model with 120 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/smbkc_ar1_tw_120kn_resid.png"))
 ```
+
+\pagebreak
 
 ```{r smbkc-qq-ar1-tw-90kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the SMBKC AR1 Tweedie model with 90 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/smbkc_ar1_tw_90kn_resid.png"))
 ```
 
+\pagebreak
+
 ```{r smbkc-qq-ar1-tw-50kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the SMBKC AR1 Tweedie model with 50 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/smbkc_ar1_tw_50kn_resid.png"))
 ```
+
+\pagebreak
 
 ```{r smbkc-spatresid-iid-tw-120kn, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the SMBKC IID Tweedie model with 120 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/spat_resid_iid_tw_120kn.png"))
 ```
 
+\pagebreak
+
 ```{r smbkc-spatresid-iid-tw-90kn, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the SMBKC IID Tweedie model with 90 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/spat_resid_iid_tw_90kn.png"))
 ```
+
+\pagebreak
 
 ```{r smbkc-spatresid-rw-tw-120kn, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the SMBKC random walk Tweedie model with 120 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/spat_resid_rw_tw_120kn.png"))
 ```
 
+\pagebreak
+
 ```{r smbkc-spatresid-rw-tw-90kn, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the SMBKC random walk Tweedie model with 90 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/spat_resid_rw_tw_90kn.png"))
 ```
+
+\pagebreak
 
 ```{r smbkc-spatresid-rw-tw-50kn, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the SMBKC random walk Tweedie model with 50 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/spat_resid_rw_tw_50kn.png"))
 ```
 
+\pagebreak
+
 ```{r smbkc-spatresid-ar1-tw-120kn, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the SMBKC AR1 Tweedie model with 120 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/spat_resid_ar1_tw_120kn.png"))
 ```
+
+\pagebreak
 
 ```{r smbkc-spatresid-ar1-tw-90kn, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the SMBKC AR1 Tweedie model with 90 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/spat_resid_ar1_tw_90kn.png"))
 ```
 
+\pagebreak
+
 ```{r smbkc-spatresid-ar1-tw-50kn, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the SMBKC AR1 Tweedie model with 50 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/spat_resid_ar1_tw_50kn.png"))
 ```
 
-```{r smbkc-pred-iid-tw-50kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance from the IID Tweedie model with 50 knots."}
+\pagebreak
+
+```{r smbkc-pred-iid-tw-50kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance from the IID Tweedie model with 50 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/spatial_pred_iid_tw_50kn.png"))
 ```
 
-```{r smbkc-pred-iid-tw-90kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance from the IID Tweedie model with 90 knots."}
+\pagebreak
+
+```{r smbkc-pred-iid-tw-90kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance from the IID Tweedie model with 90 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/spatial_pred_iid_tw_90kn.png"))
 ```
 
-```{r smbkc-pred-iid-tw-120kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance from the IID Tweedie model with 120 knots."}
+\pagebreak
+
+```{r smbkc-pred-iid-tw-120kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance from the IID Tweedie model with 120 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/spatial_pred_iid_tw_120kn.png"))
 ```
 
-```{r smbkc-pred-rw-tw-50kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance from the random walk Tweedie model with 50 knots."}
+\pagebreak
+
+```{r smbkc-pred-rw-tw-50kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance from the random walk Tweedie model with 50 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/spatial_pred_rw_tw_50kn.png"))
 ```
 
-```{r smbkc-pred-rw-tw-90kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance from the random walk Tweedie model with 90 knots."}
+\pagebreak
+
+```{r smbkc-pred-rw-tw-90kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance from the random walk Tweedie model with 90 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/spatial_pred_rw_tw_90kn.png"))
 ```
 
-```{r smbkc-pred-rw-tw-120kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance from the random walk Tweedie model with 120 knots."}
+\pagebreak
+
+```{r smbkc-pred-rw-tw-120kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance from the random walk Tweedie model with 120 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/spatial_pred_rw_tw_120kn.png"))
 ```
 
+\pagebreak
 
-```{r smbkc-pred-ar1-tw-50kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance from the AR1 Tweedie model with 50 knots."}
+```{r smbkc-pred-ar1-tw-50kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance from the AR1 Tweedie model with 50 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/spatial_pred_ar1_tw_50kn.png"))
 ```
 
-```{r smbkc-pred-ar1-tw-90kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance from the AR1 Tweedie model with 90 knots."}
+\pagebreak
+
+```{r smbkc-pred-ar1-tw-90kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance from the AR1 Tweedie model with 90 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/spatial_pred_ar1_tw_90kn.png"))
 ```
 
-```{r smbkc-pred-ar1-tw-120kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance from the AR1 Tweedie model with 120 knots."}
+\pagebreak
+
+```{r smbkc-pred-ar1-tw-120kn, fig.align = "center", fig.cap = "Heat map of St. Matthew Island blue king crab predicted abundance from the AR1 Tweedie model with 120 knots.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/spatial_pred_ar1_tw_120kn.png"))
 ```
 
+\pagebreak
 
-```{r smbkc-index-iid-tw, fig.align = "center", fig.cap = "Estimated biomass (t) for St. Matthew Island blue king crab. Colored lines represent biomass (±95% CI) estimated using sdmTMB with spatial random fields estimated as independent and identically distributed (IID). Black points represent biomass (±95% CI) estimated by the NMFS EBS bottom trawl survey."}
+```{r smbkc-index-iid-tw, fig.align = "center", fig.cap = "Estimated biomass (t) for St. Matthew Island blue king crab. Colored lines represent biomass (±95% CI) estimated using sdmTMB with spatial random fields estimated as independent and identically distributed (IID). Black points represent biomass (±95% CI) estimated by the NMFS EBS bottom trawl survey.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/smbkc_iid_tw_fit.png"))
 ```
 
-```{r smbkc-index-rw-tw, fig.align = "center", fig.cap = "Estimated biomass (t) for St. Matthew Island blue king crab. Colored lines represent biomass (±95% CI) estimated using sdmTMB with spatial random fields estimated using a random walk. Black points represent biomass (±95% CI) estimated by the NMFS EBS bottom trawl survey."}
+\pagebreak
+
+```{r smbkc-index-rw-tw, fig.align = "center", fig.cap = "Estimated biomass (t) for St. Matthew Island blue king crab. Colored lines represent biomass (±95% CI) estimated using sdmTMB with spatial random fields estimated using a random walk. Black points represent biomass (±95% CI) estimated by the NMFS EBS bottom trawl survey.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/smbkc_rw_tw_fit.png"))
 ```
 
-```{r smbkc-index-ar1-tw, fig.align = "center", fig.cap = "Estimated biomass (t) for St. Matthew Island blue king crab. Colored lines represent biomass (±95% CI) estimated using sdmTMB with spatial random fields estimated as first-order autoregressive (AR1). Black points represent biomass (±95% CI) estimated by the NMFS EBS bottom trawl survey."}
+\pagebreak
+
+```{r smbkc-index-ar1-tw, fig.align = "center", fig.cap = "Estimated biomass (t) for St. Matthew Island blue king crab. Colored lines represent biomass (±95% CI) estimated using sdmTMB with spatial random fields estimated as first-order autoregressive (AR1). Black points represent biomass (±95% CI) estimated by the NMFS EBS bottom trawl survey.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SMBKC/plots/smbkc_ar1_tw_fit.png"))
 ```
 
+\pagebreak
+
+```{r smbkc-vast-index-50kn, fig.align = "center", fig.cap = "Estimated biomass (t) for St. Matthew Island blue king crab. Colored lines represent biomass (±95% CI) estimated using sdmTMB or VAST. Black points represent biomass (±95% CI) estimated by the NMFS EBS bottom trawl survey.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("SMBKC/plots/vast_sdmTMB_smbkc_fit_50kn.png"))
+```
+
+
+```{r smbkc-vast-index-90kn, fig.align = "center", fig.cap = "Estimated biomass (t) for St. Matthew Island blue king crab. Colored lines represent biomass (±95% CI) estimated using sdmTMB or VAST. Black points represent biomass (±95% CI) estimated by the NMFS EBS bottom trawl survey.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("SMBKC/plots/vast_sdmTMB_smbkc_fit_90kn.png"))
+```
+
+\pagebreak
+
+```{r nsrkc-pred-grid, fig.align = "center", fig.cap = "Prediction grid used for Norton Sound red king crab spatial abundance predictions. Spatial resolution is 5 km$^2$.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/prediction_grid_5km.png"))
+```
+
+```{r nsrkc-mesh-30kn, fig.align = "center", fig.cap = "Spatial mesh with 30 knots used for fitting Norton Sound red king crab spatial models. Points represent observations and vertices represent knot locations.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/mesh_30kn_nbs.png"))
+```
+
+\pagebreak
+
+```{r nsrkc-mesh-50kn, fig.align = "center", fig.cap = "Spatial mesh with 50 knots used for fitting Norton Sound red king crab spatial models. Points represent observations and vertices represent knot locations.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/mesh_50kn_nbs.png"))
+```
+
+```{r nsrkc-mesh-100kn, fig.align = "center", fig.cap = "Spatial mesh with 100 knots used for fitting Norton Sound red king crab spatial models. Points represent observations and vertices represent knot locations.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/mesh_100kn_nbs.png"))
+```
+
+\pagebreak
+
+```{r nsrkc-qq-rw-tw-30kn, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the Norton Sound red king crab model (random walk, Tweedie, 30 knots).", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/qq_nbs_rw_tw_30kn.png"))
+```
+
+\pagebreak
+
+```{r nsrkc-spatresid-rw-tw-30kn, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the NSRKC RW Tweedie model with 30 knots.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/spat_resid_nbs_rw_tw_30kn.png"))
+```
+
+
+\pagebreak
+
+```{r nsrkc-spat-pred-30kn, fig.align = "center", fig.cap = "Heat map of Norton Sound red king crab predicted abundance generated using the model (random walk, Tweedie, 30 knots).", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/spatial_pred_rw_tw_30kn.png"))
+```
+
+
+```{r nsrkc-index-obs, fig.align = "center", fig.cap = "Estimated abundance in number of crab for Norton Sound red king crab. Colored lines represent abundance (±95% CI) estimated using sdmTMB. Black points represent abundance (±95% CI) estimated by the trawl surveys.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/nsrkc_rw_tw_fit.png"))
+```
+
+\pagebreak
+
+```{r nsrkc-index-vast, fig.align = "center", fig.cap = "Estimated abundance in number of crab for Norton Sound red king crab,. Colored lines represent abundance (±95% CI) estimated using sdmTMB or VAST. Black points represent abundance (±95% CI) estimated by the trawl surveys.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/vast_sdmTMB_nsrkc_fit.png"))
+```
 
 \clearpage
 
 # Appendix {-}
+
 ```{r bairdi-west-grid, fig.align = "center", fig.cap = "Prediction grid used to predict spatial abundance and biomass for Tanner crab west of 166°. Spatial resolution is 5km$^2$ and does not include land."}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/west_predgrid.png"))

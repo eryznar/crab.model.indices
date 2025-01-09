@@ -865,6 +865,11 @@ saveRDS(m.nbs.rw.tw.100kn.resid, file = paste0(modeldir.ns, "/m_nbs_resid_rw_tw_
 saveRDS(m.nbs.rw.tw.50kn.resid, file = paste0(modeldir.ns, "/m_nbs_resid_rw_tw_50kn.RDS"))
 saveRDS(m.nbs.rw.tw.30kn.resid, file = paste0(modeldir.ns, "/m_nbs_resid_rw_tw_30kn.RDS"))
 
+# read in saved residuals
+m.nbs.rw.tw.100kn.resid <- readRDS(paste0(modeldir.ns, "/m_nbs_resid_rw_tw_100kn.RDS"))
+m.nbs.rw.tw.50kn.resid <- readRDS(paste0(modeldir.ns, "/m_nbs_resid_rw_tw_50kn.RDS"))
+m.nbs.rw.tw.30kn.resid <- readRDS(paste0(modeldir.ns, "/m_nbs_resid_rw_tw_30kn.RDS"))
+
 # residuals tests
 # 100 knots
 DHARMa::testOutliers(m.nbs.rw.tw.100kn.resid) 
@@ -879,11 +884,11 @@ DHARMa::testDispersion(m.nbs.rw.tw.50kn.resid)
 DHARMa::testResiduals(m.nbs.rw.tw.50kn.resid)
 DHARMa::testZeroInflation(m.nbs.rw.tw.50kn.resid) 
 # 30 knots
-DHARMa::testOutliers(m.nbs.rw.tw.30kn.resid) # not significant
-DHARMa::testQuantiles(m.nbs.rw.tw.30kn.resid) # quantile deviations detected
-DHARMa::testDispersion(m.nbs.rw.tw.30kn.resid) # not significant
+m.nbs.rw.tw.30kn.resid.outl <- DHARMa::testOutliers(m.nbs.rw.tw.30kn.resid) # not significant
+m.nbs.rw.tw.30kn.resid.quan <- DHARMa::testQuantiles(m.nbs.rw.tw.30kn.resid) # quantile deviations detected
+m.nbs.rw.tw.30kn.resid.disp <- DHARMa::testDispersion(m.nbs.rw.tw.30kn.resid) # not significant
 DHARMa::testResiduals(m.nbs.rw.tw.30kn.resid)
-DHARMa::testZeroInflation(m.nbs.rw.tw.30kn.resid) # not significant
+m.nbs.rw.tw.30kn.resid.zero <- DHARMa::testZeroInflation(m.nbs.rw.tw.30kn.resid) # not significant
 
 # add the scaled residuals to one data frame and then make spatial residual plots ----
 
@@ -939,10 +944,10 @@ ggsave(paste0(plotdir.ns, "/spat_resid_nbs_rw_tw_100kn.png"), spat.resid.nbs.rw.
 m.nsrkc.compare.resid <- data.frame(family=character(),
                                     estimation=character(), 
                                     knots=numeric(), 
-                                    quantile=character(),
-                                    dispersion=character(),
-                                    outliers=character(),
-                                    zero_inf=character(),
+                                    quantile=numeric(),
+                                    dispersion=numeric(),
+                                    outliers=numeric(),
+                                    zero_inf=numeric(),
                                     stringsAsFactors=FALSE) %>%
   # IID models
   add_row(family = "Tweedie", estimation = "IID", knots = 100, quantile = NA, dispersion = NA, outliers = NA, zero_inf = NA) %>%
@@ -957,7 +962,8 @@ m.nsrkc.compare.resid <- data.frame(family=character(),
   # RW models
   add_row(family = "Tweedie", estimation = "RW", knots = 100, quantile = NA, dispersion = NA, outliers = NA, zero_inf = NA) %>%
   add_row(family = "Tweedie", estimation = "RW", knots = 50, quantile = NA, dispersion = NA, outliers = NA, zero_inf = NA) %>%
-  add_row(family = "Tweedie", estimation = "RW", knots = 30, quantile = "sig.", dispersion = "n.s.", outliers = "n.s.", zero_inf = "n.s.") %>%
+  add_row(family = "Tweedie", estimation = "RW", knots = 30, quantile = round(m.nbs.rw.tw.30kn.resid.quan$p.value, 2), dispersion = round(m.nbs.rw.tw.30kn.resid.disp$p.value, 2), outliers = round(m.nbs.rw.tw.30kn.resid.outl$p.value, 2), zero_inf = round(m.nbs.rw.tw.30kn.resid.zero$p.value, 2)) %>%
+  #add_row(family = "Tweedie", estimation = "RW", knots = 30, quantile = m.nbs.rw.tw.30kn.resid.quan$p.value, dispersion = m.nbs.rw.tw.30kn.resid.disp$p.value, outliers = m.nbs.rw.tw.30kn.resid.outl$p.value, zero_inf = m.nbs.rw.tw.30kn.resid.zero$p.value) %>%
   add_row(family = "delta gamma", estimation = "RW", knots = 100, quantile = NA, dispersion = NA, outliers = NA, zero_inf = NA) %>%
   add_row(family = "delta gamma", estimation = "RW", knots = 50, quantile = NA, dispersion = NA, outliers = NA, zero_inf = NA) %>%
   add_row(family = "delta gamma", estimation = "RW", knots = 30, quantile = NA, dispersion = NA, outliers = NA, zero_inf = NA) %>%

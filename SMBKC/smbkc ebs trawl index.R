@@ -1063,7 +1063,7 @@ saveRDS(m.smbkc.ar1.tw.50kn.resid, file = paste0(modeldir.sm, "/m_smbkc_ar1_tw_5
 # bring in saved residuals
 m.smbkc.iid.tw.120kn.resid <- readRDS(paste0(modeldir.sm, "/m_smbkc_iid_tw_120kn_resid.RDS"))
 m.smbkc.iid.tw.90kn.resid <- readRDS(paste0(modeldir.sm, "/m_smbkc_iid_tw_90kn_resid.RDS"))
-m.smbkc.iid.tw.50kn.resid <- readRDS(paste0(modeldir.sm, "/m_smbkc_iid_tw_50kn_resid.RDS"))
+#m.smbkc.iid.tw.50kn.resid <- readRDS(paste0(modeldir.sm, "/m_smbkc_iid_tw_50kn_resid.RDS"))
 m.smbkc.rw.tw.120kn.resid <- readRDS(paste0(modeldir.sm, "/m_smbkc_rw_tw_120kn_resid.RDS"))
 m.smbkc.rw.tw.90kn.resid <- readRDS(paste0(modeldir.sm, "/m_smbkc_rw_tw_90kn_resid.RDS"))
 m.smbkc.rw.tw.50kn.resid <- readRDS(paste0(modeldir.sm, "/m_smbkc_rw_tw_50kn_resid.RDS"))
@@ -1083,17 +1083,17 @@ ggplot(bkc_kgkm_utm, aes(LONGITUDE, LATITUDE, col = resids)) + scale_colour_grad
 # DHARMa residuals tests ----
 
 # IID/Tweedie models
-DHARMa::testOutliers(m.smbkc.iid.tw.120kn.resid)
-DHARMa::testOutliers(m.smbkc.iid.tw.90kn.resid)
-DHARMa::testOutliers(m.smbkc.iid.tw.50kn.resid)
+m.smbkc.iid.tw.120kn.resid.outl <- DHARMa::testOutliers(m.smbkc.iid.tw.120kn.resid)
+m.smbkc.iid.tw.90kn.resid.outl <- DHARMa::testOutliers(m.smbkc.iid.tw.90kn.resid)
+m.smbkc.iid.tw.50kn.resid.outl <- DHARMa::testOutliers(m.smbkc.iid.tw.50kn.resid)
 
-DHARMa::testQuantiles(m.smbkc.iid.tw.120kn.resid)
-DHARMa::testQuantiles(m.smbkc.iid.tw.90kn.resid)
-DHARMa::testQuantiles(m.smbkc.iid.tw.50kn.resid)
+m.smbkc.iid.tw.120kn.resid.quan <- DHARMa::testQuantiles(m.smbkc.iid.tw.120kn.resid)
+m.smbkc.iid.tw.90kn.resid.quan <- DHARMa::testQuantiles(m.smbkc.iid.tw.90kn.resid)
+m.smbkc.iid.tw.50kn.resid.quan <- DHARMa::testQuantiles(m.smbkc.iid.tw.50kn.resid)
 
-DHARMa::testDispersion(m.smbkc.iid.tw.120kn.resid)
-DHARMa::testDispersion(m.smbkc.iid.tw.90kn.resid)
-DHARMa::testDispersion(m.smbkc.iid.tw.50kn.resid)
+m.smbkc.iid.tw.120kn.resid.disp <- DHARMa::testDispersion(m.smbkc.iid.tw.120kn.resid)
+m.smbkc.iid.tw.90kn.resid.disp <- DHARMa::testDispersion(m.smbkc.iid.tw.90kn.resid)
+m.smbkc.iid.tw.50kn.resid.disp <- DHARMa::testDispersion(m.smbkc.iid.tw.50kn.resid)
 
 DHARMa::testResiduals(m.smbkc.iid.tw.120kn.resid)
 DHARMa::testResiduals(m.smbkc.iid.tw.90kn.resid)
@@ -1102,22 +1102,22 @@ DHARMa::testResiduals(m.smbkc.iid.tw.50kn.resid)
 DHARMa::testSpatialAutocorrelation(m.smbkc.iid.120kn.resid, x = bkc_kgkm_utm$X, y = bkc_kgkm_utm$Y)
 DHARMa::testSpatialAutocorrelation(m.smbkc.iid.90kn.dgs.resid, x = bkc_kgkm_utm$X, y = bkc_kgkm_utm$Y)
 
-DHARMa::testZeroInflation(m.smbkc.iid.tw.120kn.resid)
-DHARMa::testZeroInflation(m.smbkc.iid.tw.90kn.resid)
-DHARMa::testZeroInflation(m.smbkc.iid.tw.50kn.resid)
+m.smbkc.iid.tw.120kn.resid.zero <- DHARMa::testZeroInflation(m.smbkc.iid.tw.120kn.resid)
+m.smbkc.iid.tw.90kn.resid.zero <- DHARMa::testZeroInflation(m.smbkc.iid.tw.90kn.resid)
+m.smbkc.iid.tw.50kn.resid.zero <- DHARMa::testZeroInflation(m.smbkc.iid.tw.50kn.resid)
 
 # RW/Tweedie models
-DHARMa::testOutliers(m.smbkc.rw.tw.120kn.resid)
-DHARMa::testOutliers(m.smbkc.rw.tw.90kn.resid)
-DHARMa::testOutliers(m.smbkc.rw.tw.50kn.resid)
+m.smbkc.rw.tw.120kn.resid.outl <- DHARMa::testOutliers(m.smbkc.rw.tw.120kn.resid)
+m.smbkc.rw.tw.90kn.resid.outl <- DHARMa::testOutliers(m.smbkc.rw.tw.90kn.resid)
+m.smbkc.rw.tw.50kn.resid.outl <- DHARMa::testOutliers(m.smbkc.rw.tw.50kn.resid)
 
-DHARMa::testQuantiles(m.smbkc.rw.tw.120kn.resid)
-DHARMa::testQuantiles(m.smbkc.rw.tw.90kn.resid)
-DHARMa::testQuantiles(m.smbkc.rw.tw.50kn.resid)
+m.smbkc.rw.tw.120kn.resid.quan <- DHARMa::testQuantiles(m.smbkc.rw.tw.120kn.resid)
+m.smbkc.rw.tw.90kn.resid.quan <- DHARMa::testQuantiles(m.smbkc.rw.tw.90kn.resid)
+m.smbkc.rw.tw.50kn.resid.quan <- DHARMa::testQuantiles(m.smbkc.rw.tw.50kn.resid)
 
-DHARMa::testDispersion(m.smbkc.rw.tw.120kn.resid)
-DHARMa::testDispersion(m.smbkc.rw.tw.90kn.resid)
-DHARMa::testDispersion(m.smbkc.rw.tw.50kn.resid)
+m.smbkc.rw.tw.120kn.resid.disp <- DHARMa::testDispersion(m.smbkc.rw.tw.120kn.resid)
+m.smbkc.rw.tw.90kn.resid.disp <- DHARMa::testDispersion(m.smbkc.rw.tw.90kn.resid)
+m.smbkc.rw.tw.50kn.resid.disp <- DHARMa::testDispersion(m.smbkc.rw.tw.50kn.resid)
 
 DHARMa::testResiduals(m.smbkc.rw.tw.120kn.resid)
 DHARMa::testResiduals(m.smbkc.rw.tw.90kn.resid)
@@ -1126,23 +1126,23 @@ DHARMa::testResiduals(m.smbkc.rw.tw.50kn.resid)
 DHARMa::testSpatialAutocorrelation(m.smbkc.rw.120kn.resid, x = bkc_kgkm_utm$X, y = bkc_kgkm_utm$Y)
 DHARMa::testSpatialAutocorrelation(m.smbkc.rw.90kn.dgs.resid, x = bkc_kgkm_utm$X, y = bkc_kgkm_utm$Y)
 
-DHARMa::testZeroInflation(m.smbkc.rw.tw.120kn.resid)
-DHARMa::testZeroInflation(m.smbkc.rw.tw.90kn.resid)
-DHARMa::testZeroInflation(m.smbkc.rw.tw.50kn.resid)
+m.smbkc.rw.tw.120kn.resid.zero <- DHARMa::testZeroInflation(m.smbkc.rw.tw.120kn.resid)
+m.smbkc.rw.tw.90kn.resid.zero <- DHARMa::testZeroInflation(m.smbkc.rw.tw.90kn.resid)
+m.smbkc.rw.tw.50kn.resid.zero <- DHARMa::testZeroInflation(m.smbkc.rw.tw.50kn.resid)
 
 # AR1/Tweedie models
 
-DHARMa::testOutliers(m.smbkc.ar1.tw.120kn.resid)
-DHARMa::testOutliers(m.smbkc.ar1.tw.90kn.resid)
-DHARMa::testOutliers(m.smbkc.ar1.tw.50kn.resid)
+m.smbkc.ar1.tw.120kn.resid.outl <- DHARMa::testOutliers(m.smbkc.ar1.tw.120kn.resid)
+m.smbkc.ar1.tw.90kn.resid.outl <- DHARMa::testOutliers(m.smbkc.ar1.tw.90kn.resid)
+m.smbkc.ar1.tw.50kn.resid.outl <- DHARMa::testOutliers(m.smbkc.ar1.tw.50kn.resid)
 
-DHARMa::testQuantiles(m.smbkc.ar1.tw.120kn.resid)
-DHARMa::testQuantiles(m.smbkc.ar1.tw.90kn.resid)
-DHARMa::testQuantiles(m.smbkc.ar1.tw.50kn.resid)
+m.smbkc.ar1.tw.120kn.resid.quan <- DHARMa::testQuantiles(m.smbkc.ar1.tw.120kn.resid)
+m.smbkc.ar1.tw.90kn.resid.quan <- DHARMa::testQuantiles(m.smbkc.ar1.tw.90kn.resid)
+m.smbkc.ar1.tw.50kn.resid.quan <- DHARMa::testQuantiles(m.smbkc.ar1.tw.50kn.resid)
 
-DHARMa::testDispersion(m.smbkc.ar1.tw.120kn.resid)
-DHARMa::testDispersion(m.smbkc.ar1.tw.90kn.resid)
-DHARMa::testDispersion(m.smbkc.ar1.tw.50kn.resid)
+m.smbkc.ar1.tw.120kn.resid.disp <- DHARMa::testDispersion(m.smbkc.ar1.tw.120kn.resid)
+m.smbkc.ar1.tw.90kn.resid.disp <- DHARMa::testDispersion(m.smbkc.ar1.tw.90kn.resid)
+m.smbkc.ar1.tw.50kn.resid.disp <- DHARMa::testDispersion(m.smbkc.ar1.tw.50kn.resid)
 
 DHARMa::testResiduals(m.smbkc.ar1.tw.120kn.resid)
 DHARMa::testResiduals(m.smbkc.ar1.tw.90kn.resid)
@@ -1151,23 +1151,23 @@ DHARMa::testResiduals(m.smbkc.ar1.tw.50kn.resid)
 DHARMa::testSpatialAutocorrelation(m.smbkc.ar1.tw.120kn.resid, x = bkc_kgkm_utm$X, y = bkc_kgkm_utm$Y)
 DHARMa::testSpatialAutocorrelation(m.smbkc.ar1.tw.90kn.dgs.resid, x = bkc_kgkm_utm$X, y = bkc_kgkm_utm$Y)
 
-DHARMa::testZeroInflation(m.smbkc.ar1.tw.120kn.resid)
-DHARMa::testZeroInflation(m.smbkc.ar1.tw.90kn.resid)
-DHARMa::testZeroInflation(m.smbkc.ar1.tw.50kn.resid)
+m.smbkc.ar1.tw.120kn.resid.zero <- DHARMa::testZeroInflation(m.smbkc.ar1.tw.120kn.resid)
+m.smbkc.ar1.tw.90kn.resid.zero <- DHARMa::testZeroInflation(m.smbkc.ar1.tw.90kn.resid)
+m.smbkc.ar1.tw.50kn.resid.zero <- DHARMa::testZeroInflation(m.smbkc.ar1.tw.50kn.resid)
 
 
 # make table with residual analysis results ----
 m.smbkc.compare.resid <- data.frame(family=character(),
                                      estimation=character(), 
                                      knots=numeric(), 
-                                     quantile=character(),
-                                     dispersion=character(),
-                                     outliers=character(),
-                                     zero_inf=character(),
+                                     quantile=numeric(),
+                                     dispersion=numeric(),
+                                     outliers=numeric(),
+                                     zero_inf=numeric(),
                                      stringsAsFactors=FALSE) %>%
   # IID models
-  add_row(family = "Tweedie", estimation = "IID", knots = 120, quantile = "sig.", dispersion = "under", outliers = "n.s.", zero_inf = "sig.") %>%
-  add_row(family = "Tweedie", estimation = "IID", knots = 90, quantile = "sig.", dispersion = "under", outliers = "n.s.", zero_inf = "n.s.") %>%
+  add_row(family = "Tweedie", estimation = "IID", knots = 120, quantile = round(m.smbkc.iid.tw.120kn.resid.quan$p.value, 2), dispersion = round(m.smbkc.iid.tw.120kn.resid.disp$p.value, 2), outliers = round(m.smbkc.iid.tw.120kn.resid.outl$p.value, 2), zero_inf = round(m.smbkc.iid.tw.120kn.resid.zero$p.value, 2)) %>%
+  add_row(family = "Tweedie", estimation = "IID", knots = 90, quantile = round(m.smbkc.iid.tw.90kn.resid.quan$p.value, 2), dispersion = round(m.smbkc.iid.tw.90kn.resid.disp$p.value, 2), outliers = round(m.smbkc.iid.tw.90kn.resid.outl$p.value, 2), zero_inf = round(m.smbkc.iid.tw.90kn.resid.zero$p.value, 2)) %>%
   add_row(family = "Tweedie", estimation = "IID", knots = 50, quantile = NA, dispersion = NA, outliers = NA, zero_inf = NA) %>%
   add_row(family = "delta gamma", estimation = "IID", knots = 120, quantile = NA, dispersion = NA, outliers = NA, zero_inf = NA) %>%
   add_row(family = "delta gamma", estimation = "IID", knots = 90, quantile = NA, dispersion = NA, outliers = NA, zero_inf = NA) %>%
@@ -1176,15 +1176,15 @@ m.smbkc.compare.resid <- data.frame(family=character(),
   add_row(family = "delta lognormal", estimation = "IID", knots = 90, quantile = NA, dispersion = NA, outliers = NA, zero_inf = NA) %>%
   add_row(family = "delta lognormal", estimation = "IID", knots = 50, quantile = NA, dispersion = NA, outliers = NA, zero_inf = NA) %>%
   # RW models
-  add_row(family = "Tweedie", estimation = "RW", knots = 120, quantile = "sig.", dispersion = "under", outliers = "n.s.", zero_inf = "sig.") %>%
-  add_row(family = "Tweedie", estimation = "RW", knots = 90, quantile = "sig.", dispersion = "under", outliers = "n.s.", zero_inf = "n.s.") %>%
-  add_row(family = "Tweedie", estimation = "RW", knots = 50, quantile = "sig.", dispersion = "under", outliers = "n.s.", zero_inf = "n.s.") %>%
+  add_row(family = "Tweedie", estimation = "RW", knots = 120, quantile = round(m.smbkc.rw.tw.120kn.resid.quan$p.value, 2), dispersion = round(m.smbkc.rw.tw.120kn.resid.disp$p.value, 2), outliers = round(m.smbkc.rw.tw.120kn.resid.outl$p.value, 2), zero_inf = round(m.smbkc.rw.tw.120kn.resid.zero$p.value, 2)) %>%
+  add_row(family = "Tweedie", estimation = "RW", knots = 90, quantile = round(m.smbkc.rw.tw.90kn.resid.quan$p.value, 2), dispersion = round(m.smbkc.rw.tw.90kn.resid.disp$p.value, 2), outliers = round(m.smbkc.rw.tw.90kn.resid.outl$p.value, 2), zero_inf = round(m.smbkc.rw.tw.90kn.resid.zero$p.value, 2)) %>%
+  add_row(family = "Tweedie", estimation = "RW", knots = 50, quantile = round(m.smbkc.rw.tw.50kn.resid.quan$p.value, 2), dispersion = round(m.smbkc.rw.tw.50kn.resid.disp$p.value, 2), outliers = round(m.smbkc.rw.tw.50kn.resid.outl$p.value, 2), zero_inf = round(m.smbkc.rw.tw.50kn.resid.zero$p.value, 2)) %>%
   add_row(family = "delta gamma", estimation = "RW", knots = 50, quantile = NA, dispersion = NA, outliers = NA, zero_inf = NA) %>%
   add_row(family = "delta lognormal", estimation = "RW", knots = 50, quantile = NA, dispersion = NA, outliers = NA, zero_inf = NA) %>%
   # AR1 models
-  add_row(family = "Tweedie", estimation = "AR1", knots = 120, quantile = "sig.", dispersion = "under", outliers = "n.s.", zero_inf = "n.s.") %>%
-  add_row(family = "Tweedie", estimation = "AR1", knots = 90, quantile = "sig.", dispersion = "under", outliers = "n.s.", zero_inf = "n.s.") %>%
-  add_row(family = "Tweedie", estimation = "AR1", knots = 50, quantile = "sig.", dispersion = "under", outliers = "n.s.", zero_inf = "n.s.") %>%
+  add_row(family = "Tweedie", estimation = "AR1", knots = 120, quantile = round(m.smbkc.ar1.tw.120kn.resid.quan$p.value, 2), dispersion = round(m.smbkc.ar1.tw.120kn.resid.disp$p.value, 2), outliers = round(m.smbkc.ar1.tw.120kn.resid.outl$p.value, 2), zero_inf = round(m.smbkc.ar1.tw.120kn.resid.zero$p.value, 2)) %>%
+  add_row(family = "Tweedie", estimation = "AR1", knots = 90, quantile = round(m.smbkc.ar1.tw.90kn.resid.quan$p.value, 2), dispersion = round(m.smbkc.ar1.tw.90kn.resid.disp$p.value, 2), outliers = round(m.smbkc.ar1.tw.90kn.resid.outl$p.value, 2), zero_inf = round(m.smbkc.ar1.tw.90kn.resid.zero$p.value, 2)) %>%
+  add_row(family = "Tweedie", estimation = "AR1", knots = 50, quantile = round(m.smbkc.ar1.tw.50kn.resid.quan$p.value, 2), dispersion = round(m.smbkc.ar1.tw.50kn.resid.disp$p.value, 2), outliers = round(m.smbkc.ar1.tw.50kn.resid.outl$p.value, 2), zero_inf = round(m.smbkc.ar1.tw.50kn.resid.zero$p.value, 2)) %>%
   add_row(family = "delta gamma", estimation = "AR1", knots = 50, quantile = NA, dispersion = NA, outliers = NA, zero_inf = NA) %>%
   add_row(family = "delta lognormal", estimation = "AR1", knots = 50, quantile = NA, dispersion = NA, outliers = NA, zero_inf = NA)
 

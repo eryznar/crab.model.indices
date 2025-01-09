@@ -50,7 +50,7 @@ nsrkc.resid <- read.csv(paste0(here::here(), "/NSRKC/output/nsrkc_compare_resid.
 
 # Introduction {-}
 
-The goal of this investigation was to develop spatiotemporal model-based indices of abundance for three Bering Sea and Aleutian Islands (BSAI) crab stocks: Tanner crab (*Chionoecetes bairdi*), Norton Sound red king crab (*Paralithodes camtschaticus*), and St. Matthew Island blue king crab (*Paralithodes platypus*). Research suggests that spatiotemporal model-based indices can be more robust to survey changes than are design-based indices, though the models must be well-specified (Yalcin et al. 2023). Spatiotemporal model-based indices are used in North Pacific Fishery Management Council (NPFMC) groundfish stock assessments for species including Eastern Bering Sea (EBS) walleye pollock (*Gadus chalcogrammus*) and EBS Pacific cod (*Gadus macrocephalus*), both of which use the vector-autoregressive spatial temporal (VAST) approach (Thorson 2019) to produce indices used in the assessments (Ianelli et al. 2024; Barbeaux et al. 2024). Previous BSAI crab stock assessments have presented models using spatiotemporal model-based indices (e.g., Ianelli et al. 2017), although these models were not accepted for harvest specifications (SSC 2017). 
+The goal of this investigation was to develop spatiotemporal model-based indices of abundance for three Bering Sea and Aleutian Islands (BSAI) crab stocks: Tanner crab (*Chionoecetes bairdi*), St. Matthew Island blue king crab (*Paralithodes platypus*), and Norton Sound red king crab (*Paralithodes camtschaticus*). Research suggests that spatiotemporal model-based indices can be more robust to survey changes than are design-based indices, though the models must be well-specified (Yalcin et al. 2023). Spatiotemporal model-based indices are used in North Pacific Fishery Management Council (NPFMC) groundfish stock assessments for species including Eastern Bering Sea (EBS) walleye pollock (*Gadus chalcogrammus*) and EBS Pacific cod (*Gadus macrocephalus*), both of which use the vector-autoregressive spatial temporal (VAST) approach (Thorson 2019) to produce indices used in the assessments (Ianelli et al. 2024; Barbeaux et al. 2024). Previous BSAI crab stock assessments have presented models using spatiotemporal model-based indices (e.g., Ianelli et al. 2017), although these models were not accepted for harvest specifications (SSC 2017). 
 
 We generated biomass and abundance estimates using the R package *sdmTMB* (Anderson et al. 2022), which uses geostatistical time series data to estimate spatial and spatiotemporal generalized linear mixed effects models. This approach allows for index standardization when the set of stations surveyed is not consistent across years: one can generate a spatial grid that covers the area of interest, predict from the model onto that grid, and sum the predicted biomass to obtain an area-weighted biomass index that is independent of sampling locations (Anderson et al. 2022).
 
@@ -70,7 +70,7 @@ A number of decision points arise when fitting models using *sdmTMB*, including:
 
 - The model family. Many options exist, including tweedie(), delta_gamma(), and delta_lognormal(). 
 
-For each stock, we present a range of models to show the effects of choices at each of these decision points. After fitting models, we used the following steps for model evaluation:
+For each stock, we ran a range of models to examine the effects of choices at each of these decision points on model predictions. After fitting models, we used the following steps for model evaluation:
 
 - First, we checked measures such as model convergence using the sdmTMB::sanity() function. Output of this function for a model that passes all sanity checks is displayed as follows:
 
@@ -145,11 +145,11 @@ The EBS-wide model-predicted indices varied in their fits to survey abundance (F
 
 For SMBKC, only models using the Tweedie family passed the sanity checks. Models using the delta gamma and delta lognormal families did not. Models using IID, random walk, and AR1 spatial estimation methods with spatial resolutions of 50, 90, and 120 knots passed the sanity checks.
 
-Results of the tests performed on the DHARMa residuals for each model are displayed in figures \@ref(fig:smbkc-qq-iid-tw-120kn) - \@ref(fig:smbkc-qq-ar1-tw-50kn) and table \@ref(tab:smbkc-loglik). DHARMa residuals for the IID Tweedie model with 50 knots could not be generated and so residual analysis results for that model are not displayed. All models showed evidence of underdispersion, with observed data less dispersed than expected under the fitted models. None of the models showed evidence of outliers. All models showed evidence of quantile deviations. The IID and RW models with 120 knots showed evidence of zero inflation, with the observed data containing more zeros than would be expected under the fitted model.  
+Results of the tests performed on the DHARMa residuals for each model are displayed in figures \@ref(fig:smbkc-qq-iid-tw-120kn) - \@ref(fig:smbkc-qq-ar1-tw-50kn) and Table \@ref(tab:smbkc-loglik). DHARMa residuals for the IID Tweedie model with 50 knots could not be generated and so residual analysis results for that model are not displayed. All models showed evidence of underdispersion, with observed data less dispersed than expected under the fitted models. None of the models showed evidence of outliers. All models showed evidence of quantile deviations. The IID and RW models with 120 knots showed evidence of zero inflation, with the observed data containing more zeros than would be expected under the fitted model.  
 
 The spatial distribution of DHARMa residuals for each model is plotted in figures \@ref(fig:smbkc-spatresid-iid-tw-120kn) - \@ref(fig:smbkc-spatresid-ar1-tw-50kn). Spatial residual patterns are satisfactory for all models. 
 
-Predictive density (log-likelihood) values for the SMBKC models that passed the sanity checks are shown in table \@ref(tab:smbkc-loglik). Predictive density values closer to zero indicate better out-of-sample predictive skill. Models with missing predictive density values are models that did not pass all sanity checks. The three models with the best out-of-sample predictive skill all used the random walk spatial estimation method. The model with 90 knots had the best out-of-sample predictive skill, followed by the models with 50 and 120 knots.   
+Predictive density (log-likelihood) values for the SMBKC models that passed the sanity checks are shown in Table \@ref(tab:smbkc-loglik). Predictive density values closer to zero indicate better out-of-sample predictive skill. Models with missing predictive density values are models that did not pass all sanity checks. The three models with the best out-of-sample predictive skill all used the random walk spatial estimation method. The model with 90 knots had the best out-of-sample predictive skill, followed by the models with 50 and 120 knots.   
 
 ### Predicted biomass {-}
 
@@ -157,11 +157,11 @@ The spatial distribution of model-predicted SMBKC biomass for each model is show
 
 ### Model-based index fit to observations {-}
 
-For all three spatial random fields estimation methods (IID, RW, and AR1), the model fitted using a mesh with finer spatial resolution (120 knots) estimated lower blue king crab biomass than the models fitted using coarser spatial resolutions (50 or 90 knots) (Figures \@ref(fig:smbkc-index-iid-tw), \@ref(fig:smbkc-index-rw-tw), and \@ref(fig:smbkc-index-ar1-tw)). The models with 120 knots showed poorer visual fits to the survey observations, particularly in recent years, in accordance with their relatively lower predictive skill scores. For the IID, RW, and AR1 models, the model with 90 knots estimated higher biomass than did the model with 50 knots. The model with 50 knots had the best predictive skill of the IID and AR1 models, but the model with 90 knots had the best predictive skill of the RW models. 
+For all three spatial random fields estimation methods (IID, RW, and AR1), the model fitted using a mesh with finer spatial resolution (120 knots) estimated lower blue king crab biomass than the models fitted using coarser spatial resolutions (50 or 90 knots) (Figures \@ref(fig:smbkc-index-iid-tw), \@ref(fig:smbkc-index-rw-tw), and \@ref(fig:smbkc-index-ar1-tw)). The models with 120 knots showed poorer visual fits to the survey observations, particularly in recent years, in accordance with their relatively lower predictive skill scores. For the IID, RW, and AR1 models, the models with 90 knots estimated higher biomass than did the models with 50 knots. The models with 50 knots had the best predictive skill of the IID and AR1 models, but the model with 90 knots had the best predictive skill of the RW models and overall. 
 
 ### Comparison of sdmTMB with VAST {-}
 
-A matched comparison between sdmTMB and VAST for the sdmTMB models with best predictive skill was not possible because output from random walk, Tweedie VAST models was not available. It was not clear how to implement a random walk in VAST. However, output from IID, Tweedie and IID, delta-gamma VAST models was available and is shown with the indices for the two sdmTMB models with best predictive skill in Figures \@ref(fig:smbkc-vast-index-50kn) and \@ref(fig:smbkc-vast-index-90kn). For the models using a 90-knot mesh, the sdmTMB and VAST predictions for recent years are very similar, with the sdmTMB predictions higher in 2024. For the models using a 50-knot mesh, the sdmTMB and VAST predictions for recent years are more divergent, with the VAST model generally predicting higher abundance. 
+A matched comparison between sdmTMB and VAST for the sdmTMB models with the best predictive skill was not possible because output from random walk, Tweedie VAST models was not available. It was not clear how to implement a random walk in VAST. However, output from IID VAST models using the Tweedie or delta-gamma families was available, and output from the IID and Tweedie VAST models is shown compared to the indices from the two sdmTMB models with best predictive skill in Figures \@ref(fig:smbkc-vast-index-50kn) and \@ref(fig:smbkc-vast-index-90kn). For the models using a 90-knot mesh, the sdmTMB and VAST predictions for recent years are very similar, with the sdmTMB predictions higher in 2024. For the models using a 50-knot mesh, the sdmTMB and VAST predictions for recent years are more divergent, with the VAST model generally predicting higher abundance. 
 
 
 ## Norton Sound red king crab {-}
@@ -180,7 +180,7 @@ A heat map of predicted NSRKC abundance for the model with random walk spatial e
 
 ### Model-based index fits to observations {-}
 
-The predicted index showed a close fit to survey abundance estimates, with the exception of 2022, when the model seems to over-estimate abundance relative to the survey estimate (Figure \@ref(fig:nsrkc-index-obs)). The random walk, Tweedie models with 100 knot-mesh and 50 knot-mesh are shown for comparison with the 30 knot-mesh model, although only the model with the 30-knot mesh passed sanity checks.  
+The predicted index showed a close fit to survey abundance estimates, with the exception of 2022, when the model seems to over-estimate abundance relative to the survey estimate (Figure \@ref(fig:nsrkc-index-obs)). The random walk, Tweedie models with 100-knot mesh and 50-knot mesh are shown for comparison with the 30-knot mesh model, although only the model with the 30-knot mesh passed sanity checks.  
 
 ### Comparison of sdmTMB with VAST {-}
 
@@ -189,9 +189,9 @@ A matched comparison between sdmTMB and VAST was not possible because output fro
 # Recommended models {-}
 For Tanner crab, we recommend a delta-gamma model using a 50-knot mesh as these were consistently top-performing models across sex-maturity categories and periods. However, different best models could be explored by sex-maturity category and fitting period. 
 
-For St. Matthew Island blue king crab, on the basis of the predictive skill scores and visual inspection of model fits, we recommend using the index of abundance generated by either the random walk, Tweedie model with a 90 knot-mesh or the random walk, Tweedie model with a 50 knot-mesh.
+For St. Matthew Island blue king crab, on the basis of the predictive skill scores and visual inspection of model fits, we recommend using the index of abundance generated by either the random walk, Tweedie model with a 90-knot mesh or the random walk, Tweedie model with a 50-knot mesh.
 
-For Norton Sound red king crab, only one model passed the sanity checks and thus is the recommended model. That model uses random walk spatial estimation, the Tweedie family, and a 30 knot-mesh. 
+For Norton Sound red king crab, only one model passed the sanity checks and thus is the recommended model. That model uses random walk spatial estimation, the Tweedie family, and a 30-knot mesh. 
 
 # Acknowledgements {-}
 
@@ -260,7 +260,7 @@ df %>%
 
 ```
 
-
+\clearpage
 
 ```{r bairdi-bio-modeleval, results = "asis", out.width= "50%"}
 df <- read.csv(here::here("./BAIRDI/Output/model_eval_bio.csv")) %>%
@@ -283,7 +283,7 @@ df %>%
 
 ```
 
-\blandscape
+\clearpage
 
 ```{r smbkc-loglik, results = "asis"}
 
@@ -292,14 +292,15 @@ smbkc.tab <- smbkc.loglik %>%
 
 df <- smbkc.tab %>%
   select(-X) %>%
-  rename("Family" = family, "Estimation method" = estimation, "Knots" = knots, "Log-likelihood" = loglik, "Quantile" = quantile, "Dispersion" = dispersion, "Outliers" = outliers, "Zero inflation" = zero_inf)
+  rename("Family" = family, "Estimation method" = estimation, "Knots" = knots, "Log-likelihood" = loglik, "Quantiles" = quantile, "Dispersion" = dispersion, "Outliers" = outliers, "Zero inflation" = zero_inf)
 
-tab <- xtable(df, caption = "St. Matthew Island blue king crab fitted model predictive skill (log-likelihood) values, estimated using sdmTMB cross-validation, for models fitted with Tweedie, delta gamma, or delta lognormal model familes; spatial random fields estimated using independent and identically distributed (IID), random walk (RW), or first-order autoregressive (AR1) methods; and spatial resolution of 50, 90, or 120 knots. Predictive skill (log-likelihood) values closer to zero represent better out-of-sample predictive skill. Model configurations with missing log-likelihood values represent models that did not pass sanity checks. DHARMa residual diagnostics are also shown. All models had significant quantile deviations and underdispersion and no significant evidence of outliers. There was evidence of zero inflation for only the IID and RW models with 120 knots.", label = "tab:smbkc-loglik", digits = 0)
+tab <- xtable(df, caption = "St. Matthew Island blue king crab fitted model predictive skill (log-likelihood) values, estimated using sdmTMB cross-validation, for models fitted with Tweedie, delta gamma, or delta lognormal model familes; spatial random fields estimated using independent and identically distributed (IID), random walk (RW), or first-order autoregressive (AR1) methods; and spatial resolution of 50, 90, or 120 knots. Predictive skill (log-likelihood) values closer to zero represent better out-of-sample predictive skill. Model configurations with missing log-likelihood values represent models that did not pass sanity checks. Quantile, dispersion, outlier, and zero-inflation diagnostics were estimated from DHARMa residuals, with values below 0.05 indicating significant metrics.", label = "tab:smbkc-loglik", digits = 1)
 
-print(tab, caption.placement = "top", include.rownames = FALSE, booktabs = T)
+print(tab, caption.placement = "top", include.rownames = FALSE, booktabs = T, size="\\fontsize{9pt}{10pt}\\selectfont")
 
 ```
 
+\clearpage
 
 ```{r nsrkc-loglik, results = "asis"}
 
@@ -308,20 +309,21 @@ nsrkc.tab <- nsrkc.loglik %>%
 
 df <- nsrkc.tab %>%
   select(-X) %>%
-  rename("Family" = family, "Estimation method" = estimation, "Knots" = knots, "Log-likelihood" = loglik)
+  rename("Family" = family, "Estimation method" = estimation, "Knots" = knots, "Log-likelihood" = loglik, "Quantiles" = quantile, "Dispersion" = dispersion, "Outliers" = outliers, "Zero inflation" = zero_inf)
 
-tab <- xtable(df, caption = "Norton Sound red king crab fitted model predictive density (log-likelihood) values, estimated using sdmTMB cross-validation with 3 folds, for models fitted with Tweedie, delta gamma, or delta lognormal model familes; spatial random fields estimated using independent and identically distributed (IID), random walk (RW), or first-order autoregressive (AR1) methods; and spatial resolution of 30, 50, or 100 knots. Predictive density (log-likelihood) values closer to zero represent better out-of-sample predictive skill. Model configurations with missing log-likelihood values represent models that did not pass sanity checks. DHARMa residual diagnostics are also shown.", label = "tab:nsrkc-loglik", digits = 0)
+tab <- xtable(df, caption = "Norton Sound red king crab fitted model predictive density (log-likelihood) values, estimated using sdmTMB cross-validation with 3 folds, for models fitted with Tweedie, delta gamma, or delta lognormal model familes; spatial random fields estimated using independent and identically distributed (IID), random walk (RW), or first-order autoregressive (AR1) methods; and spatial resolution of 30, 50, or 100 knots. Predictive density (log-likelihood) values closer to zero represent better out-of-sample predictive skill. Model configurations with missing log-likelihood values represent models that did not pass sanity checks. Quantile, dispersion, outlier, and zero-inflation diagnostics were estimated from DHARMa residuals, with values below 0.05 indicating significant metrics.", label = "tab:nsrkc-loglik", digits = 1)
 
-print(tab, caption.placement = "top", include.rownames = FALSE, booktabs = T)
+print(tab, caption.placement = "top", include.rownames = FALSE, booktabs = T, size="\\fontsize{9pt}{10pt}\\selectfont")
 
 ```
 
 
-\elandscape
 
+\clearpage
 
 
 # Figures {-}
+
 ```{r bairdi-EBS-grid, fig.align = "center", fig.cap = "Eastern Bering Sea prediction grid used for Tanner crab spatial abundance and biomass predictions. Spatial resolution is 5km$^2$ and does not include land."}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/EBS_predgrid.png"))

@@ -10,7 +10,7 @@
 "9","delta lognormal","IID",30,NA,NA,NA,NA
 "10","Tweedie","RW",100,NA,NA,NA,NA
 "11","Tweedie","RW",50,NA,NA,NA,NA
-"12","Tweedie","RW",30,"sig.","n.s.","n.s.","n.s."
+"12","Tweedie","RW",30,0.01,0.2,0.61,0.14
 "13","delta gamma","RW",100,NA,NA,NA,NA
 "14","delta gamma","RW",50,NA,NA,NA,NA
 "15","delta gamma","RW",30,NA,NA,NA,NA

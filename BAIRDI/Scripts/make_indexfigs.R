@@ -46,32 +46,67 @@ male.TW <- rbind(read.csv(paste0(dir2, "VAST_male_TW_abund50.csv")) %>%
   mutate(matsex = "Male", family = "Tweedie")
 
 # Delta gamma
-imfem.DG <- rbind(read.csv(paste0(dir2, "VAST_imfem_DG_abund750.csv")) %>%
+imfem.DG <- rbind(read.csv(paste0(dir2, "VAST_imfem_DG_abund50.csv")) %>%
+                    mutate(knots = 50, type = "abundance"),
+                  read.csv(paste0(dir2, "VAST_imfem_DG_abund90.csv")) %>%
+                    mutate(knots = 90, type = "abundance"),
+                  read.csv(paste0(dir2, "VAST_imfem_DG_abund120.csv")) %>%
+                    mutate(knots = 120, type = "abundance"),
+                  read.csv(paste0(dir2, "VAST_imfem_DG_abund750.csv")) %>%
                     mutate(knots = 750, type = "abundance"),
+                  read.csv(paste0(dir2, "VAST_imfem_DG_bio50.csv")) %>%
+                    mutate(knots = 50, type = "biomass"),
+                  read.csv(paste0(dir2, "VAST_imfem_DG_bio90.csv")) %>%
+                    mutate(knots = 90, type = "biomass"),
+                  read.csv(paste0(dir2, "VAST_imfem_DG_bio120.csv")) %>%
+                    mutate(knots = 120, type = "biomass"),
                   read.csv(paste0(dir2, "VAST_imfem_DG_bio750.csv")) %>%
                     mutate(knots = 750, type = "biomass")) %>%
-  mutate(matsex = "Immature Female", family = "Delta gamma")
+  mutate(matsex = "Immature Female", family = "Delta-gamma")
 
-matfem.DG <- rbind(read.csv(paste0(dir2, "VAST_matfem_DG_abund750.csv")) %>%
+matfem.DG <- rbind(read.csv(paste0(dir2, "VAST_matfem_DG_abund50.csv")) %>%
+                     mutate(knots = 50, type = "abundance"),
+                   read.csv(paste0(dir2, "VAST_matfem_DG_abund90.csv")) %>%
+                     mutate(knots = 90, type = "abundance"),
+                   read.csv(paste0(dir2, "VAST_matfem_DG_abund120.csv")) %>%
+                     mutate(knots = 120, type = "abundance"),
+                   read.csv(paste0(dir2, "VAST_matfem_DG_abund750.csv")) %>%
                      mutate(knots = 750, type = "abundance"),
+                   read.csv(paste0(dir2, "VAST_matfem_DG_bio50.csv")) %>%
+                     mutate(knots = 50, type = "biomass"),
+                   read.csv(paste0(dir2, "VAST_matfem_DG_bio90.csv")) %>%
+                     mutate(knots = 90, type = "biomass"),
+                   read.csv(paste0(dir2, "VAST_matfem_DG_bio120.csv")) %>%
+                     mutate(knots = 120, type = "biomass"),
                    read.csv(paste0(dir2, "VAST_matfem_DG_bio750.csv")) %>%
                      mutate(knots = 750, type = "biomass")) %>%
-  mutate(matsex = "Mature Female", family = "Delta gamma")
+  mutate(matsex = "Mature Female", family = "Delta-gamma")
 
-male.DG <- rbind(read.csv(paste0(dir2, "VAST_male_DG_abund750.csv")) %>%
+male.DG <- rbind(read.csv(paste0(dir2, "VAST_male_DG_abund50.csv")) %>%
+                   mutate(knots = 50, type = "abundance"),
+                 read.csv(paste0(dir2, "VAST_matfem_DG_abund90.csv")) %>%
+                   mutate(knots = 90, type = "abundance"),
+                 read.csv(paste0(dir2, "VAST_male_DG_abund120.csv")) %>%
+                   mutate(knots = 120, type = "abundance"),
+                 read.csv(paste0(dir2, "VAST_male_DG_abund750.csv")) %>%
                    mutate(knots = 750, type = "abundance"),
+                 read.csv(paste0(dir2, "VAST_male_DG_bio50.csv")) %>%
+                   mutate(knots = 50, type = "biomass"),
+                 read.csv(paste0(dir2, "VAST_male_DG_bio90.csv")) %>%
+                   mutate(knots = 90, type = "biomass"),
+                 read.csv(paste0(dir2, "VAST_male_DG_bio120.csv")) %>%
+                   mutate(knots = 120, type = "biomass"),
                  read.csv(paste0(dir2, "VAST_male_DG_bio750.csv")) %>%
                    mutate(knots = 750, type = "biomass")) %>%
-  mutate(matsex = "Male", family = "Delta gamma")
+  mutate(matsex = "Male", family = "Delta-gamma")
 
-# Bind all
+# Bind all 
 VAST.24 <- rbind(imfem.TW, matfem.TW, male.TW, imfem.DG, matfem.DG, male.DG) %>%
   rename(SE = "Std..Error.for.Estimate", Year = "Time") %>%
   mutate(Stratum = case_when((Stratum == "Stratum_1") ~ "EBS",
                              (Stratum == "Stratum_2") ~ "East",
                              TRUE ~ "West"),
          model = "VAST",
-         Family = "Tweedie",
          CI = 1.96*SE)
 
 dummy <- VAST.24 %>% filter(Year == 2020) %>%
@@ -84,8 +119,9 @@ VAST.abund <- VAST.24 %>%
   mutate(Estimate = Estimate/1e6, SE = SE/1e6, CI = CI/1e6) 
 
 VAST.bio <- VAST.24 %>%
-  filter(type == "biomass") %>%
-  mutate(Estimate = Estimate/1000, SE = SE/1000, CI = CI/1000) 
+  filter(type == "biomass") 
+  # %>%
+  # mutate(Estimate = Estimate/100, SE = SE/100, CI = CI/100) # Delta gamma is not in kg
 
 
 ### Load survey observations ----------
@@ -322,6 +358,10 @@ pred_grid2 <- pred_grid %>%
   ggsave(plot = bio.ind.plot.EBS, "./BAIRDI/Figures/TannerEBS.biomass.index.png", height= 9, width = 7.5, units = "in")
   
   ## Compare sdmTMB and VAST ----
+  VAST.abund <- VAST.abund %>% filter(family == "Delta-gamma")
+  VAST.bio <- VAST.bio %>% filter(family == "Delta-gamma")
+  
+  
   ggplot()+
     geom_ribbon(All.abund.index, mapping = aes(x = Year, ymin = lwr, ymax = upr, fill = model), alpha = 0.4)+
     geom_line(All.abund.index, mapping = aes(Year, abundance, color = model))+
@@ -360,7 +400,7 @@ pred_grid2 <- pred_grid %>%
     facet_wrap(~factor(matsex, levels = c("Male", "Mature Female", "Immature Female")), scales = "free_y", nrow = 3)+
     theme_bw()+
     ylab("Abundance (millions)")+
-    ggtitle("EBS Tanner estimated abundance (delta-gamma, 50 knots)") +
+    ggtitle("EBS Tanner estimated abundance") +
     scale_color_manual(values = c("salmon", "turquoise"), labels = c("sdmTMB", "VAST"), name = "")+
     scale_fill_manual(values = c("salmon", "turquoise"), labels = c("sdmTMB", "VAST"), name = "")+
     theme(legend.position = "bottom", 
@@ -413,7 +453,7 @@ pred_grid2 <- pred_grid %>%
     scale_color_manual(values = c("salmon", "turquoise"), labels = c("sdmTMB", "VAST"), name = "")+
     scale_fill_manual(values = c("salmon", "turquoise"), labels = c("sdmTMB", "VAST"), name = "")+
     ylab("Biomass (tons)")+
-    ggtitle("EBS Tanner estimated biomass (delta-gamma, 50 knots)") +
+    ggtitle("EBS Tanner estimated biomass") +
     # scale_color_manual(values = c("salmon", "turquoise"), labels = c("50", "120"), name = "Knots")+
     # scale_fill_manual(values = c("salmon", "turquoise"), labels = c("50","120"), name = "Knots")+
     theme(legend.position = "bottom", 
@@ -699,7 +739,7 @@ pred_grid2 <- pred_grid %>%
     facet_wrap(~factor(matsex, levels = c("Male", "Mature Female", "Immature Female")), scales = "free_y", nrow = 3)+
     theme_bw()+
     ylab("Abundance (millions)")+
-    ggtitle("Tanner West estimated abundance (delta-gamma, 50 knots)") +
+    ggtitle("Tanner West estimated abundance") +
     scale_color_manual(values = c("salmon", "turquoise"), labels = c("sdmTMB", "VAST"), name = "")+
     scale_fill_manual(values = c("salmon", "turquoise"), labels = c("sdmTMB", "VAST"), name = "")+
     theme(legend.position = "bottom", 
@@ -752,7 +792,7 @@ pred_grid2 <- pred_grid %>%
     scale_color_manual(values = c("salmon", "turquoise"), labels = c("sdmTMB", "VAST"), name = "")+
     scale_fill_manual(values = c("salmon", "turquoise"), labels = c("sdmTMB", "VAST"), name = "")+
     ylab("Biomass (tons)")+
-    ggtitle("Tanner West estimated biomass (delta-gamma, 50 knots)") +
+    ggtitle("Tanner West estimated biomass") +
     # scale_color_manual(values = c("salmon", "turquoise"), labels = c("50", "120"), name = "Knots")+
     # scale_fill_manual(values = c("salmon", "turquoise"), labels = c("50","120"), name = "Knots")+
     theme(legend.position = "bottom", 
@@ -1037,7 +1077,7 @@ pred_grid2 <- pred_grid %>%
     facet_wrap(~factor(matsex, levels = c("Male", "Mature Female", "Immature Female")), scales = "free_y", nrow = 3)+
     theme_bw()+
     ylab("Abundance (millions)")+
-    ggtitle("Tanner East estimated abundance (delta-gamma, 50 knots)") +
+    ggtitle("Tanner East estimated abundance") +
     scale_color_manual(values = c("salmon", "turquoise"), labels = c("sdmTMB", "VAST"), name = "")+
     scale_fill_manual(values = c("salmon", "turquoise"), labels = c("sdmTMB", "VAST"), name = "")+
     theme(legend.position = "bottom", 
@@ -1090,7 +1130,7 @@ pred_grid2 <- pred_grid %>%
     scale_color_manual(values = c("salmon", "turquoise"), labels = c("sdmTMB", "VAST"), name = "")+
     scale_fill_manual(values = c("salmon", "turquoise"), labels = c("sdmTMB", "VAST"), name = "")+
     ylab("Biomass (tons)")+
-    ggtitle("Tanner East estimated biomass (delta-gamma, 50 knots)") +
+    ggtitle("Tanner East estimated biomass") +
     # scale_color_manual(values = c("salmon", "turquoise"), labels = c("50", "120"), name = "Knots")+
     # scale_fill_manual(values = c("salmon", "turquoise"), labels = c("50","120"), name = "Knots")+
     theme(legend.position = "bottom", 

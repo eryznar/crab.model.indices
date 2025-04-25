@@ -1,0 +1,28 @@
+"","family","estimation","knots","quantile","dispersion","outliers","zero_inf"
+"1","Tweedie","IID",100,NA,NA,NA,NA
+"2","Tweedie","IID",50,NA,NA,NA,NA
+"3","Tweedie","IID",30,NA,NA,NA,NA
+"4","delta gamma","IID",100,NA,NA,NA,NA
+"5","delta gamma","IID",50,NA,NA,NA,NA
+"6","delta gamma","IID",30,NA,NA,NA,NA
+"7","delta lognormal","IID",100,NA,NA,NA,NA
+"8","delta lognormal","IID",50,NA,NA,NA,NA
+"9","delta lognormal","IID",30,NA,NA,NA,NA
+"10","Tweedie","RW",100,NA,NA,NA,NA
+"11","Tweedie","RW",50,NA,NA,NA,NA
+"12","Tweedie","RW",30,0.01,0.2,0.61,0.14
+"13","delta gamma","RW",100,NA,NA,NA,NA
+"14","delta gamma","RW",50,NA,NA,NA,NA
+"15","delta gamma","RW",30,NA,NA,NA,NA
+"16","delta lognormal","RW",100,NA,NA,NA,NA
+"17","delta lognormal","RW",50,NA,NA,NA,NA
+"18","delta lognormal","RW",30,NA,NA,NA,NA
+"19","Tweedie","AR1",100,NA,NA,NA,NA
+"20","Tweedie","AR1",50,NA,NA,NA,NA
+"21","Tweedie","AR1",30,NA,NA,NA,NA
+"22","delta gamma","AR1",100,NA,NA,NA,NA
+"23","delta gamma","AR1",50,NA,NA,NA,NA
+"24","delta gamma","AR1",30,NA,NA,NA,NA
+"25","delta lognormal","AR1",100,NA,NA,NA,NA
+"26","delta lognormal","AR1",50,NA,NA,NA,NA
+"27","delta lognormal","AR1",30,NA,NA,NA,NA

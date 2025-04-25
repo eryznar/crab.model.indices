@@ -672,16 +672,16 @@ pred_grid2 <- pg.W %>%
   
   
   # Predict and get index
-  abund.mod1 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_50_DG_abundTMB.rda"))
-  bio.mod1 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_50_DG_bioTMB.rda"))
+  # abund.mod1 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_50_DG_abundTMB.rda"))
+  # bio.mod1 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_50_DG_bioTMB.rda"))
   # abund.mod2 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_90_DG_abundTMB.rda"))
   # bio.mod2 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_90_DG_bioTMB.rda"))
-  # abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_120_DG_bioTMB.rda"))
-  # bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_120_DG_bioTMB.rda"))
+  abund.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_120_DG_abundTMB.rda"))
+  bio.mod3 <- readRDS(paste0(dir,"Models/bairdi_Immature Female_All_pre-1982_120_DG_bioTMB.rda"))
   
-  predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  pre.imfem
+  #predict_and_getindex(newdat, abund.mod1, bio.mod1, matsex, stock, years, period, knots = 50, "Delta_gamma") ->  pre.imfem
   # predict_and_getindex(newdat, abund.mod2, bio.mod2, matsex, stock, years, period, knots = 90, "Delta_gamma") ->  pre.imfem
-  # predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 120, "Delta_gamma") ->  pre.imfem
+  predict_and_getindex(newdat, abund.mod3, bio.mod3, matsex, stock, years, period, knots = 120, "Delta_gamma") ->  pre.imfem
   # 
   
   ### Post-1982

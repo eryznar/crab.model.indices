@@ -1,0 +1,989 @@
+---
+title: "Spatiotemporal model-based survey indices of abundance for Norton Sound red king crab"
+author: |
+  | Caitlin A. Stern
+  | Alaska Department of Fish and Game 
+  | caitlin.stern@alaska.gov 
+date: "`r format(Sys.time(), '%B %Y')`"
+output:
+  bookdown::pdf_document2:
+    fig_caption: true
+    includes: null
+    toc: no
+header-includes:
+   - \usepackage{caption}
+   - \newcommand{\blandscape}{\begin{landscape}}
+   - \newcommand{\elandscape}{\end{landscape}}
+   - \usepackage{pdflscape}
+
+---
+
+\pagenumbering{arabic}
+
+```{r global_options, include=FALSE, echo = FALSE, message = FALSE, warning=FALSE}
+library(knitr)
+opts_chunk$set(fig.width = 12, fig.height = 7, fig.align = "left", echo = FALSE, warning = FALSE, message = FALSE,  dpi=300)
+
+```
+
+```{r load_packages, echo = FALSE, include = FALSE}
+
+library(xtable)
+library(tidyverse)
+
+options(xtable.comment = FALSE)
+
+```
+
+```{r load_data, echo = FALSE, include = FALSE}
+
+ns.compare <- read.csv(paste0(here::here(), "/NSRKC/output/ns_compare_models.csv"))
+moran <- read.csv(paste0(here::here(), "/NSRKC/output/moran_i_all.csv"))
+compare.ind <- read.csv(paste0(here::here(), "/NSRKC/output/ns_compare_indices.csv"))
+
+```
+
+# Introduction {-}
+
+The goal of this investigation was to develop spatiotemporal model-based indices of abundance that could be used in the Norton Sound red king crab (*Paralithodes camtschaticus*) stock assessment model, allowing comparison of stock assessment model results with model-based versus existing design-based indices. Spatiotemporal model-based indices are used in North Pacific Fishery Management Council (NPFMC) groundfish stock assessments for species including Eastern Bering Sea (EBS) walleye pollock (*Gadus chalcogrammus*) and EBS Pacific cod (*Gadus macrocephalus*), both of which use the vector-autoregressive spatial temporal (VAST) approach (Thorson & Barnett 2017; Thorson 2019) to produce indices used in the assessments (Ianelli et al. 2024; Barbeaux et al. 2024). Previous Bering Sea and Aleutian Islands (BSAI) crab stock assessments have presented models using spatiotemporal model-based indices (Ianelli et al. 2017; Hamazaki and Zheng 2021) but these models were not accepted for harvest specifications (SSC 2017; SSC 2021). 
+
+The Norton Sound red king crab stock assessment currently uses design-based indices of abundance estimated from three trawl survey time series: the National Oceanic and Atmospheric Administration (NOAA) Norton Sound trawl survey (1976-1991), the Alaska Department of Fish and Game (ADF&G) trawl survey (1996-2024), and the NOAA Northern Bering Sea (NBS) trawl survey (2010-2023) (Hamazaki 2024). The data sets from these surveys cover different years and spatial footprints, and within a survey the set of locations sampled sometimes varies among years (Figure \@ref(fig:survey-by-year)). This history of variation in survey sampling is one of the factors motivating the development of spatiotemporal model-based indices for this stock, as model-based indices can be more robust to survey changes than are design-based indices when models are well-specified (Yalcin et al. 2023). 
+
+Existing issues for design-based estimates of abundance from the three trawl surveys include the lack of standardization to address interannual changes in survey station sampling, and the mismatch between the spatial area currently used for estimating stock abundance and the spatial area likely occupied by the stock (Hamazaki 2024). Interannual changes in the set of survey stations that are sampled in the ADF&G trawl survey are not currently taken into account when calculating design-based abundance estimates, adding uncertainty about the comparability of abundance estimates across years. The management area for Norton Sound red king crab, Area Q3, covers a larger area than does the ADF&G trawl survey, and both the NOAA Norton Sound and NBS trawl surveys have observed red king crab outside of the ADF&G trawl survey area, suggesting that the area occupied by the stock is larger than the area sampled by the ADF&G trawl survey (Hamazaki 2024; Figures \@ref(fig:survey-abund-noaa) - \@ref(fig:survey-abund-nbs)). However, the design-based abundance estimate from the ADF&G trawl survey used in the stock assessment model is unexpanded, meaning it is likely an underestimate of stock abundance (Hamazaki 2024). The design-based abundance estimate from the NOAA Norton Sound trawl survey used in the stock assessment is calculated using a larger spatial area than the estimate from the ADF&G trawl survey (Hamazaki 2024), leading to questions about the comparability of these indices. The North Pacific Fishery Management Council Scientific and Statistical Committee (SSC) has expressed concerns about the lack of consistency in the area over which stock abundance is estimated and recommended development of model-based indices of abundance for the Norton Sound red king crab stock to address these concerns (SSC 2020). 
+
+Previous model-based indices for Norton Sound red king crab, estimated using VAST, predicted abundances higher than those from the design-based index (Hamazaki and Zheng 2021). Estimated mature male biomass (MMB) was higher for the stock assessment models using the model-based indices than for those using the design-based index (Hamazaki and Zheng 2021). This was true for both the index using all available trawl survey data and the index using only trawl survey data that fell within the spatial region containing current ADF&G trawl survey stations. However, these model-based indices were generated by combining all three trawl survey data sets into a single data set. Given that these surveys use different trawl gear (Hamazaki 2024) and likely have different selectivities, developing a separate model-based index for each survey may be more appropriate. 
+
+I developed a model-based approach for deriving Norton Sound red king crab survey indices of abundance with the aims of standardizing abundance estimation for each survey index and providing a shared abundance estimation framework among the three existing survey indices. I generated abundance estimates using the R package **sdmTMB** (Anderson et al. 2022). While past attempts at spatiotemporal index standardization for Norton Sound red king crab used VAST, the authors of that work found VAST difficult to use (Hamazaki and Zheng 2021). I chose to use **sdmTMB** because, compared to VAST, **sdmTMB** has a simpler user interface and faster estimation times. **sdmTMB** uses geostatistical time series data to estimate spatial and spatiotemporal generalized linear mixed effects models (GLMMs). This approach allows for index standardization when the set of stations surveyed is not consistent across years: one can generate a spatial grid that covers the area of interest, predict from the model onto that grid, and sum the predicted abundance to obtain an area-weighted index that is independent of sampling locations (Anderson et al. 2022). Using prediction grids that cover the same spatial domain for all survey indices confers consistency in the area over which stock abundance is estimated.
+
+# Methods {-}
+
+## Data sources {-}
+
+Following the Norton Sound red king crab stock assessment, I included data from the NOAA Norton Sound trawl survey (1976-1991), ADF&G trawl survey (1996-2024), and NOAA NBS trawl survey (2010-2023), which have sampling grid sizes of 10 nm, 10 nm, and 20 nm, respectively. Using a conversion factor of 1 nm = 1.852 km, this translates to sampling grid cell areas of 343.0 km$^2$ for the NOAA Norton Sound and ADF&G trawl surveys and a sampling grid cell area of 1372.0 km$^2$ for the NOAA NBS trawl survey. 
+
+Matching the assessment model, I only included information on males with carapace length $\ge$ 64 mm. Estimated density in crab/km$^2$ by survey station for each year of each survey is shown in Figures \@ref(fig:survey-abund-noaa) - \@ref(fig:survey-abund-nbs). The number of survey stations sampled per year ranged from 53 to 104 (median = 78.5) for the NOAA Norton Sound survey, 39 to 100 (median = 54.5) for the ADF&G trawl survey, and 34 to 35 (median = 35) for the NOAA NBS trawl survey. 
+The modeled response variable, crab per km$^2$, is positive continuous with many zeros for each of the survey time series (Figure \@ref(fig:survey-hist)). The percentage of sampled stations that recorded zero males with carapace length $\ge$ 64 mm over all years in the time series was 48% for the NOAA Norton Sound trawl survey, 52% for the ADF&G trawl survey, and 59% for the NOAA NBS trawl survey. 
+
+Harvest information by ADF&G statistical area is derived from ADF&G fish tickets. 
+
+## Spatiotemporal models {-}
+
+I fit geostatistical GLMMs with spatiotemporally correlated random effects to survey data using the R (R Core Team 2024) package **sdmTMB** (Anderson et al. 2022). In this approach, spatial effects are modeled using the stochastic partial differential equation (SPDE) approximation to Gaussian random fields (Lindgren et al. 2011). The rate at which spatial covariance decays with distance is defined by the Matèrn covariance function, a derived parameter of which is the spatial (or Matèrn) range, the distance at which spatial correlation decays such that two points are effectively independent (Anderson et al. 2022). 
+
+Applying the SPDE approach to modeling random fields requires defining a triangulation mesh of the spatial domain (Anderson et al. 2022). I constructed a triangulation mesh for each data set using the **sdmTMB** function make_mesh(), a wrapper for the triangulation mesh functions in the **fmesher** package (Lindgren 2023), and the **sdmTMBextra** (Anderson 2025) function add_barrier_mesh(). The add_barrier_mesh function permitted incorporation of correlation barriers based on the Norton Sound coastline. Following Sutton et al. (2024), I ensured that the number of mesh vertices was lower than the number of data points by specifying cut-off values for the minimum allowed distance between mesh vertices. For the ADF&G trawl survey, a cut-off of 40 km resulted in a mesh with 51 vertices, less than the median number of stations surveyed per year for the time series (54.5) (Figure \@ref(fig:adfg-mesh)). For the NOAA Norton Sound trawl survey, a cut-off of 25 km resulted in a mesh with 77 vertices, less than the median number of stations surveyed per year for the time series (78.5) (Figure \@ref(fig:noaa-mesh)). For the NOAA NBS trawl survey, a cut-off of 45 km resulted in a mesh with 33 vertices, less than the median number of stations surveyed per year for the time series (35) (Figure \@ref(fig:nbs-mesh)).
+
+For all models, I estimated spatiotemporal random fields as independent and identically distributed (IID). The spatial random fields are estimated for each time slice, the period of which is specified in the model (e.g., time = year). Estimating spatiotemporal random fields as IID is likely most appropriate for the standardization of survey indices intended to be used in stock assessment models as this approach minimizes the estimation covariance among years, which is usually ignored in stock assessment models (Thorson et al. 2020, Chen et al. 2024). I compared models in which the only predictor was year, specified as a factor, with models that also included survey station depth (m; centered and scaled by its standard deviation) as a covariate, as variation in the depth of stations surveyed from year to year could influence estimated abundance if not taken into account.  
+
+## Model evaluation and diagnostics {-}
+
+After fitting models, I checked model convergence using the **sdmTMB** sanity() function. Models were considered converged if they met the following criteria evaluated by the sanity() function: the non-linear minimizer suggested successful convergence; the Hessian matrix was positive definite; no extreme or very small eigenvalues were detected; all gradients with respect to fixed effects were < 0.001; no fixed-effect standard errors were NA; no standard errors looked unreasonably large; no sigma parameters were < 0.01; no sigma parameters were > 100; and the range parameter was of a reasonable size. Models that did not converge were excluded from further consideration.
+
+For models that passed all the sanity checks, I used the R package **DHARMa** (Hartig 2022) to calculate the DHARMa residuals using the function dharma_residuals(). I examined the DHARMa residual Q-Q plots for evidence of deviations from the reference distribution. I tested for quantile deviations, under- or overdispersion, outliers, and zero-inflation using the **DHARMa** functions testQuantiles(), testDispersion(), testOutliers(), and testZeroInflation(), respectively. I plotted DHARMa residuals over space and time to visualize potential patterns of autocorrelation. 
+
+I tested for spatial patterns in residuals using a global Moran's I clustering analysis, which I applied across each year of the time series for each survey in order to evaluate the evidence for autocorrelation across the spatial domain for that year (Moran 1950; Cacciapaglia et al. 2024). I ran Monte Carlo simulations of Moran's I with the mc.moran() function from the R package **spdep** (Bivand 2022), with the null hypothesis that the residual values were randomly distributed in space. The resulting Moran's I statistic for each year is an overall score of clustering for the spatial residuals across the spatial domain in the year in question. Positive Moran's I statistic values indicate spatial autocorrelation while negative values indicate negative spatial autocorrelation. P-values < 0.05 indicate significant clustering of spatial residuals.
+
+I evaluated model predictive skill (the predictive ability of the model for new observations; Anderson *et al.* 2024) using the cross validation function sdmTMB_cv(). This function measures model predictive skill by holding out subsets of the data in turn and using each as a test set. These subsets of data are termed "folds". To compare models, I performed cross validation with 10  randomly arranged folds for each model before extracting the model's summed log-likelihood value, which represents the model's predictive density. Predictive density values closer to zero indicate better out-of-sample predictive skill.
+
+## Model specification {-}
+
+For all three trawl survey time series, I modeled the number of crab per km$^2$ caught in the survey with three model structures, all of which are appropriate for modeling data with many zeros and positive continuous values: Tweedie with a log link, delta-gamma with a logit link for the binomial distribution and a log link for the gamma distribution, and delta-lognormal with a logit link for the binomial distribution and a log link for the lognormal distribution. The delta-gamma and delta-lognormal families are delta-models, which are frequently used in fisheries to separately model the encounter probability and the positive catch rate in survey time series (Pennington 1983; Thorson et al. 2021). Here, the first component estimates the effects on encounter probability (binomial, zero versus non-zero number of crab per km$^2$), while the second component (gamma or lognormal distribution) estimates effects on the positive response variable (non-zero number of crab per km$^2$).
+
+I used model predictive density values derived from cross-validation, along with other model diagnostics, to select the best model for each survey data set. For the ADF&G trawl survey, the Tweedie model with a year effect only, the Tweedie model with year and depth effects, and the delta-gamma model with year and depth effects converged. For the NOAA NBS trawl survey, the Tweedie model with a year effect only and the Tweedie model with year and depth effects converged. For the NOAA Norton Sound trawl survey, all six models (Tweedie/year, Tweedie/year + depth, delta-gamma/year, delta-gamma/year + depth, delta-lognormal/year, delta-lognormal/year + depth) converged. 
+
+## Predictions {-}
+
+The prediction grids I created vary in two dimensions: spatial resolution and spatial area. 
+
+Following the recommendations of Commander et al. (2022) that the spatial resolution of predictions should be no finer than the scale of the survey sampling unit, I created prediction grids with a resolution of 343 km$^2$ to use for the NOAA Norton Sound and ADF&G trawl surveys (Figures \@ref(fig:ns-pred-grid) and \@ref(fig:ns-pred-grid-sm)) and prediction grids with a resolution of 1372 km$2$ to use for the NOAA NBS trawl survey (Figures \@ref(fig:nbs-pred-grid) and \@ref(fig:nbs-pred-grid-sm)). 
+
+The stock assessment model for Norton Sound red king crab currently uses design-based estimates of abundance from the ADF&G survey and NOAA NBS survey that are calculated using a smaller spatial area (maximum 5,641 nm$^2$ or 19,348 km$^2$) than are those for the NOAA Norton Sound survey (7,600 nm$^2$ or 26,067 km$^2$), and the previous stock assessment author suggested using only survey stations that fall within the ADF&G survey sampling area for abundance estimation (Hamazaki 2024). To explore the implications of estimating abundance over different spatial scales, I generated prediction grids with the prediction area defined to include either all survey stations sampled in all three surveys (Figures \@ref(fig:ns-pred-grid) and \@ref(fig:nbs-pred-grid); area = 76,487 km$^2$), or the prediction area defined to include only the survey stations sampled in the ADF&G trawl survey since 2010 (Figures \@ref(fig:ns-pred-grid-sm) and \@ref(fig:nbs-pred-grid-sm); area = 32,413 km$^2$). Note that the area of the smaller prediction grid is still larger than the area over which the design-based estimates of abundance currently used in the stock assessment model are currently calculated, as those calculations leave out some southern and closer to shore areas of Norton Sound (Figure d1 in Hamazaki 2024). Comparing the prediction grids to commercial harvest information, which is available at the level of ADF&G statistical area, shows that the full prediction grid encompasses all statistical areas in which Norton Sound red king crab harvest has been recorded since 1985 (Figure \@ref(fig:harv-full-all)), while the reduced prediction grid does not (Figure \@ref(fig:harv-reduced-all)). Looking only at harvest from more recent years, the reduced prediction grid still does not encompass all statistical areas in which harvest was recorded (Figure \@ref(fig:harv-reduced-yrs)), in contrast to the full prediction grid (Figure \@ref(fig:harv-full-yrs)).
+
+I used the **sdmTMB** predict() function to generate predictions about crab abundance from each model over both the full area prediction grid and the reduced area prediction grid. To estimate uncertainty in the spatiotemporal predictions, I used simulations from the joint precision matrix to generate 100 estimates, then calculated the coefficients of variation for each year in the time series.
+
+## Indices of abundance {-}
+
+I used the **sdmTMB** get_index() function to calculate total abundance estimates and standard errors from each model/prediction grid combination. I compared model-based indices with the design-based indices currently used in the stock assessment model using the metrics Ratio, TimeOut, and Magnitude, which have previously been used to compare VAST output to design-based indices (Thorson et al. 2021; Cacciapaglia et al. 2024). Ratio is defined as $R = \overline{I}/\overline{B}$, where $\overline{I}$ is the mean of the model-based abundance index, $\overline{I}=\frac{1}{n_t}\sum_{t=1}^{n_t}I_t$, $\overline{B}$ is the mean of the design-based abundance index, $\overline{B}=\frac{1}{n_t}\sum_{t=1}^{n_t}B_t$, and $n_t$ is the number of years in the time series (Thorson et al. 2021). Ratio is a measure of the similarity in scale between the model-based and design-based indices. TimeOut is the proportion of years in the time series in which the model-based index was outside the 95% confidence interval of the design-based index; these are called outside years ($\Omega$). Magnitude is the sum across outside years of the magnitude of the model-based index relative to the design-based index: $$Magnitude = \sum_{t \in \Omega}\frac{|I_t-B_t|}{B_t}$$ (Cacciapaglia et al. 2024). I also calculated "CV Ratio", a measure of the similarity in variability between the model-based and design-based indices. CV Ratio is defined as $V_R = \overline{V_I}/\overline{V_B}$, where $\overline{V_I}$ is the mean of the CVs of the model-based abundance index, $\overline{V_I}=\frac{1}{n_t}\sum_{t=1}^{n_t}V_{I,t}$, and $\overline{V_B}$ is the mean of the CVs of the design-based abundance index, $\overline{V_B}=\frac{1}{n_t}\sum_{t=1}^{n_t}V_{B,t}$. Greater similarity in scale between the model-based and design-based indices is indicated by Ratio values closer to 1, TimeOut values closer to 0, and Magnitude values closer to 0. Greater similarity in variability between the model-based and design-based indices is indicated by CV Ratio values closer to 1. 
+
+# Results {-}
+
+## Model diagnostics {-}
+
+### ADF&G trawl survey model {-}
+
+Results of the tests performed on the DHARMa residuals for the models are displayed in Figures \@ref(fig:adfg-qq-iid-tw) - \@ref(fig:adfg-qq-dg-d) and Table \@ref(tab:ns-compare). Both the Tweedie/year and delta-gamma/year + depth models showed evidence of under- or overdispersion, while the Tweedie/year + depth model did not (Figures \@ref(fig:adfg-qq-iid-tw) - \@ref(fig:adfg-qq-dg-d); Table \@ref(tab:ns-compare)). All three models showed evidence of quantile deviations. None of the models showed evidence of deviance from the reference distribution, outliers, or zero inflation (Table \@ref(tab:ns-compare)). The spatial distributions of DHARMa residuals for the models are plotted in Figures \@ref(fig:adfg-spatresid-iid-tw) - \@ref(fig:adfg-spatresid-dg-d). The Moran's I clustering analysis for the Tweedie/year model yielded evidence of spatial autocorrelation in the residuals for 3 of the 14 years in the time series, while the clustering analyses for the Tweedie/year + depth and delta-gamma/year + depth models both showed evidence of spatial autocorrelation in only 1 of the 14 years (Table \@ref(tab:moran-adfg)). The delta-gamma/year + depth model had the predictive density (log-likelihood) value closest to zero, indicating that this model has the best out-of-sample predictive skill of the models evaluated (Table \@ref(tab:ns-compare)).
+
+### NOAA Norton Sound trawl survey model {-}
+
+Results of the tests performed on the DHARMa residuals for the models are displayed in Figures \@ref(fig:noaa-qq-iid-tw) - \@ref(fig:noaa-qq-dl-d) and Table \@ref(tab:ns-compare). None of the models showed evidence of deviance from the reference distribution, outliers, or zero inflation. All six models showed evidence of quantile deviations. Only the Tweedie/year and Tweedie/year + depth models showed evidence of under- or overdispersion. The spatial distributions of DHARMa residuals for the models are plotted in Figures \@ref(fig:noaa-spatresid-iid-tw) - \@ref(fig:noaa-spatresid-dl-d). The Moran's I clustering analysis yielded evidence of spatial autocorrelation in the residuals for 2 of the 6 years in the time series for the Tweedie/year model, 1 year for the delta-gamma/year model, 2 years for the delta-lognormal/year model, 1 year for the Tweedie/year + depth model, 2 years for the delta-gamma/year + depth model, and 2 years for the delta-lognormal/year + depth model (Table \@ref(tab:moran-noaa)). The predictive density value of the delta-lognormal/year + depth model is closest to zero, indicating that this model has the best out-of-sample predictive skill of the models evaluated (Table \@ref(tab:ns-compare)).
+
+### NOAA Northern Bering Sea trawl survey model {-}
+
+Results of the tests performed on the DHARMa residuals for the models are displayed in Figures \@ref(fig:nbs-qq-iid-tw) - \@ref(fig:nbs-qq-tw-d) and Table \@ref(tab:ns-compare). Neither of the models showed evidence of deviance from the reference distribution, outliers, or zero inflation. Both models showed evidence of quantile deviations and under- or overdispersion. The spatial distributions of DHARMa residuals for the models are plotted in Figures \@ref(fig:nbs-spatresid-iid-tw) - \@ref(fig:nbs-spatresid-tw-d). The Moran's I clustering analysis did not yield evidence of spatial autocorrelation in the residuals for any of the years in the time series for either model (Table \@ref(tab:moran-nbs)). The predictive density value of the Tweedie/year model is closer to zero than that of the Tweedie/year + depth model, indicating that the Tweedie/year model has better out-of-sample predictive skill (Table \@ref(tab:ns-compare)).
+
+## Predicted abundance {-}
+
+### ADF&G trawl survey model {-}
+
+The spatial distribution of model-predicted crab abundance for each prediction area is shown in Figures \@ref(fig:adfg-pred-iid-tw) - \@ref(fig:adfg-pred-dg-d-sm). The reduced prediction grid appears to incorporate the areas in which crab are estimated to be most abundant. Uncertainty in the predictions is displayed in Figures \@ref(fig:adfg-pred-cv-tw) - \@ref(fig:adfg-pred-cv-dg-sm-d). Uncertainty in the predictions appears to be higher for the model that does not include depth compared to the models that do include depth, particularly for predictions made over the full area. 
+
+### NOAA Norton Sound trawl survey model {-}
+
+The spatial distributions of model-predicted crab abundance for each family and prediction area are shown in Figures \@ref(fig:noaa-pred-iid-tw) - \@ref(fig:noaa-pred-iid-dl-sm-d). As for the ADF&G survey model, the reduced prediction grid appears to incorporate the areas in which crab are estimated to be most abundant, although non-zero numbers of crab are estimated to be present beyond the reduced prediction grid area. Uncertainty in the predictions is displayed in Figures \@ref(fig:noaa-pred-cv-tw) - \@ref(fig:noaa-pred-cv-dl-sm-d). 
+
+### NOAA Northern Bering Sea trawl survey model {-}
+
+The spatial distributions of model-predicted crab abundance for each prediction area are shown in Figures \@ref(fig:nbs-pred-iid-tw) - \@ref(fig:nbs-pred-iid-tw-sm-d). Non-zero numbers of crab are estimated to be present beyond the reduced prediction grid area. Uncertainty in the predictions is displayed in Figures \@ref(fig:nbs-pred-cv-tw) - \@ref(fig:nbs-pred-cv-tw-sm-d). Prediction CVs appear to be lower when the prediction grid area is reduced.
+
+## Model-based indices of abundance compared to design-based index of abundance {-}
+
+### ADF&G trawl survey model {-}
+
+The model-based indices generated by predicting over the full area covered by survey observations and those generated by predicting over the reduced area covered only by ADF&G survey observations since 2010 all estimated higher Norton Sound red king crab abundance over most of the time series compared to the design-based abundance estimates currently used in the stock assessment model (Figures \@ref(fig:adfg-index-iid-tw) - \@ref(fig:adfg-index-iid-dg-d)), as indicated by Ratio values > 1 (Table \@ref(tab:compare-indices)). The mean abundance estimates derived from the Tweedie/year + depth and delta-gamma/year + depth models with the reduced area were most similar to the design-based mean abundance estimate. For all three models, the full area model-based abundance estimates fell within the 95% confidence interval for the design-based abundance estimates for fewer of the years with survey observations than did the reduced area model-based abundance estimates, leading to lower TimeOut scores for the reduced area model-based abundance estimates (Table \@ref(tab:compare-indices)). The Magnitude scores are most useful for distinguishing between models that have the same number of year in which estimates fall outside of the design-based estimate CI; for the two model indices with the same Magnitude, Tweedie/year + depth with reduced area and delta-gamma/year + depth with reduced area, the Tweedie/year + depth index had lower Magnitude (Table \@ref(tab:compare-indices)). The CVs of the model-based survey indices show varying degrees of similarity to the CVs of the design-based index, with no index having CVs above or below those of the design-based index for all years in the time series (Figure \@ref(fig:adfg-index-iid-cv)). The mean CVs of the model-based survey indices are lower than that of the design-based survey index for all model-based indices except for the delta-gamma/year + depth model using the full area, as indicated by CV Ratio values < 1 for all of the other models, although the CV Ratio for the Tweedie/year + depth, full area model index is very close to 1 (Table \@ref(tab:compare-indices)).
+
+### NOAA Norton Sound trawl survey model {-}
+
+All of the models that include a depth covariate (Tweedie/year + depth, delta-gamma/year + depth, and delta-lognormal/year + depth) estimate mean abundance lower than the estimated design-based mean abundance, as indicated by Ratio scores < 1 (Figures \@ref(fig:noaa-index-iid-tw) - \@ref(fig:noaa-index-iid-dl-d); Table \@ref(tab:compare-indices)). For each distribution (Tweedie, delta-gamma, and delta-lognormal), the model-based index generated by predicting over the full area covered by survey observations estimates higher Norton Sound red king crab abundance than the model-based index generated by predicting over the reduced area covered only by ADF&G survey observations since 2010 (Figures \@ref(fig:noaa-index-iid-tw) - \@ref(fig:noaa-index-iid-dl)). The proportion of years in which the model-based abundance estimate is outside of the 95% CI of the design-based abundance estimate (TimeOut) is lower when predicting over the reduced area for models that do not include a depth covariate, but lower when predicting over the full area for models that do include a depth covariate (Table \@ref(tab:compare-indices)). Among the models with a TimeOut value of 0.17, Magnitude is closest to 0 for the delta-lognormal/year + depth, full area model index. The CVs of the model-based survey indices without the depth covariate are lower than those of the design-based survey index for all but one year in the time series (Figure \@ref(fig:noaa-index-cv)). The same is true for the Tweedie/year + depth model indices, but the delta-gamma and delta-lognormal model indices with depth covariates have CVs higher than that of the design-based for two of the years in the time series (Figure \@ref(fig:noaa-index-cv-d)). The time series mean of the model-based index CV is most similar to the time series mean of the design-based index for the delta-lognormal/year + depth model index over the full prediction area, as indicated by the CV Ratio value closest to 1 (Table \@ref(tab:compare-indices)).
+
+### NOAA Northern Bering Sea trawl survey model {-}
+
+The model-based indices from the models that include a depth covariate estimate abundances more similar to the design-based abundance index than do the indices from the models without a depth covariate (Figures \@ref(fig:nbs-index-iid-tw) - \@ref(fig:nbs-index-iid-tw-d)), as indicated by Ratio values closer to 1 (Table \@ref(tab:compare-indices)). Only the full area Tweedie/year model-based index has an abundance estimate outside the design-based estimate CI; all of the model-based indices had TimeOut values of 0 and thus the Magnitude scores are not useful in distinguishing among them. The CVs of the Tweedie/year model-based indices were lower than those of the design-based index across the time series, while the CVs of the Tweedie/year + depth model-based indices were higher than that of the design-based index in 2 of 6 years (Figure \@ref(fig:nbs-index-iid-tw-cv)). The time series mean of the model-based index CV is most similar to the time series mean of the design-based index for the Tweedie/year + depth model index over the full prediction area, as indicated by the CV Ratio value closest to 1 (Table \@ref(tab:compare-indices)).  
+
+# Recommended models and future work {-}
+
+For the ADF&G trawl survey, the delta-gamma model with a depth covariate had the best predictive skill and is the recommended model. For the NOAA NBS trawl surveys, the Tweedie model without a depth covariate had better predictive skill and is the recommended model. For the NOAA Norton Sound trawl survey, the delta-lognormal model with a depth covariate had the best predictive skill and is the recommended model.
+
+Further study is needed before making a recommendation regarding whether to use the model-based indices estimated using the full or reduced prediction areas. While the scales of model-based indices estimated using the reduced prediction area are more similar to those of the design-based indices, the design-based indices may underestimate stock abundance (Hamazaki 2024), meaning that a closer match in scale may not be desirable.    
+
+I plan to use the model-based indices of abundance from the recommended models in Norton Sound red king crab stock assessment model runs, comparing results from runs using the full prediction area model-based indices to those using the reduced prediction area model-based indices, and comparing results from runs using design-based indices to those using model-based indices of abundance. Future work for this stock will focus on model-based standardization of size composition data. 
+
+# Acknowledgements {-}
+
+I thank Katie Palof, Mike Litzow, André Punt, Cody Szuwalski, Tyler Jackson, and Buck Stockhausen for their feedback on an earlier version of this work at the January 2025 Crab Plan Team modeling workshop, Emily Ryznar and Jon Richar for collaborating on that earlier version, and Alex Reich for helpful comments on this document.
+
+\clearpage
+
+# References {-}
+
+Anderson SC (2025) sdmTMBextra: Extra Functions for Working with 'sdmTMB' Models. R package version 0.0.4, commit 63f236912e12ce78b5a0529eedf1e11cb93d0a10, [https://github.com/pbs-assess/sdmTMBextra](https://github.com/pbs-assess/sdmTMBextra).
+
+Anderson SC, Ward EJ, English PA, Barnett LAK (2022) sdmTMB: An R package for fast, flexible, and user-friendly generalized linear mixed effects models with spatial and spatiotemporal random fields. bioRxiv, *2022.03.24.485545*. [doi:10.1101/2022.03.24.485545](https://doi.org/10.1101/2022.03.24.485545).
+
+Anderson SC, Ward EJ, English PA, Barnett LAK, Thorson JT (2024) Cross-validation for model evaluation and comparison. Retrieved from [https://pbs-assess.github.io/sdmTMB/articles/cross-validation.html](https://pbs-assess.github.io/sdmTMB/articles/cross-validation.html).
+
+Barbeaux SJ, Barnett L, Hulson P, Nielsen J, Shotwell SK, Siddon E, Spies I (2024) Assessment of the Pacific cod stock in the Eastern Bering Sea. In: Stock Assessment and Fishery Evaluation report for the Groundfish Resources of the Bering Sea/Aleutian Islands regions. North Pacific Fishery Management Council, Anchorage, AK. [PDF](https://www.npfmc.org/wp-content/PDFdocuments/SAFE/2024/EBSpcod.pdf) 
+
+Bivand RS. 2022. spdep: Spatial Dependence: Weighting Schemes, Statistics. R Package Version 1.2-1, [https://CRAN.R-project.org/package=spdep](https://CRAN.R-project.org/package=spdep).
+
+Cacciapaglia C, Brooks EN, Adams CF, Legault CM, Perretti CT, Hart D (2024) Developing workflow and diagnostics for model selection of a vector autoregressive spatiotemporal (VAST) model in comparison to design-based indices. Fisheries Research 275:107009.
+
+Chen J, Gao J, Zhang F (2024) Spatiotemporal model improves survey indices for witch flounder stock assessment in the Grand Banks. Canadian Journal of Fisheries and Aquatic Sciences 81:459–487 [doi:10.1139/cjfas-2023-0101](https://doi.org/10.1139/cjfas-2023-0101)
+
+Commander CJC, Barnett LAK, Ward EJ, Anderson SC, Essington TE (2022) The shadow model: how and why small choices in spatially explicit species distribution models affect predictions. PeerJ 10:e12783. [doi:10.7717/peerj.12783](https://doi.org/10.7717/peerj.12783)
+
+DeFilippo L, Kotwicki S, Barnett L, Richar J, Litzow MA, Stockhausen WT, Palof K (2023) Evaluating the impacts of reduced sampling density in a systematic fisheries-independent survey design. Frontiers in Marine Science 10:1219283. [doi:10.3389/fmars.2023.1219283](https://doi.org/10.3389/fmars.2023.1219283)
+
+Hamazaki T (2024) Norton Sound red king crab stock assessment for the fishing year 2024. In: Stock Assessment and Fishery Evaluation Report for the King and Tanner Crab Fisheries of the Bering Sea and Aleutian Islands: 2024 Final Crab SAFE. North Pacific Fishery Management Council, Anchorage AK. [PDF](https://meetings.npfmc.org/CommentReview/DownloadFile?p=46282fb4-4419-4386-bffb-e30e7e928752.pdf&fileName=C3%20NSRKC%202024%20SAFE%20Chapter.pdf)
+
+Hamazaki T, Zheng J (2021) Norton Sound Red King Crab Stock Assessment for the fishing year 2021. In: Stock Assessment and Fishery Evaluation Report for the King and Tanner Crab Fisheries of the Bering Sea and Aleutian Islands: 2021 Final Crab SAFE. North Pacific Fishery Management Council, Anchorage AK. [PDF](https://meetings.npfmc.org/CommentReview/DownloadFile?p=92b2de9d-ba87-470e-89b2-9856d24b1013.pdf&fileName=C5%20BSAI%20Crab%20SAFE%20Ch%207%20NSRKC.pdf).
+
+Hartig F (2022) DHARMa: Residual Diagnostics for Hierarchical (Multi-Level/Mixed) Regression Models. R package version 0.4.6, [https://CRAN.R-project.org/package=DHARMa](https://CRAN.R-project.org/package=DHARMa).
+
+Ianelli J, Webber D, Zheng J, Letaw A (2017) Saint Matthew Island blue king crab stock assessment 2017. In: Stock Assessment and Fishery Evaluation Report for the King and Tanner Crab Fisheries of the Bering Sea and Aleutian Islands: 2017 Final Crab SAFE. North Pacific Fishery Management Council, Anchorage AK.
+
+Ianelli J, Honkalehto T, Wassermann S, McCarthy A, Steinessen S, McGilliard C, Siddon E. (2024) Assessment of walleye pollock in the eastern Bering Sea. In: Stock Assessment and Fishery Evaluation report for the Groundfish Resources of the Bering Sea/Aleutian Islands regions. North Pacific Fishery Management Council, Anchorage, AK. [PDF](https://www.npfmc.org/wp-content/PDFdocuments/SAFE/2024/EBSpollock.pdf)
+
+Lindgren F (2023) fmesher: Triangle Meshes and Related Geometry Tools. R package version 0.1.2, [https://CRAN.R-project.org/package=fmesher](https://CRAN.R-project.org/package=fmesher).
+
+Lindgren F, Rue H, Lindström J (2011). An explicit link between Gaussian fields and Gaussian Markov random fields: the stochastic partial differential equation approach. Journal of the Royal Statistical Society B 73:423–498. [doi:10.1111/j.1467-9868.2011.00777.x](https://doi.org/10.1111/j.1467-9868.2011.00777.x)
+
+Moran PA (1950) Notes on continuous stochastic phenomena. Biometrika 37:17–23. [doi:10.1093/biomet/37.1-2.17](https://doi.org/10.1093/biomet/37.1-2.17)
+
+Pennington M (1983) Efficient estimators of abundance, for fish and plankton surveys. Biometrics 39:281-286. [doi:10.2307/2530830](https://doi.org/10.2307/2530830)
+
+R Core Team (2024) R: A Language and Environment for Statistical Computing. R Foundation for Statistical Computing, Vienna, Austria. [https://www.R-project.org/](https://www.R-project.org/).
+
+SSC (2017) Scientific and Statistical Committee report to the North Pacific Fishery Management Council, October 2nd-4th, 2017. North Pacific Fishery Management Council, Anchorage, AK. [PDF](https://meetings.npfmc.org/CommentReview/DownloadFile?p=140c63dc-1f77-478b-8270-968b2f8a0e3b.pdf&fileName=SSC%20Report%20Oct%202017%20Final.pdf)
+
+SSC (2020) Scientific and Statistical Committee final report to the North Pacific Fishery Management Council, September 28th-October 2nd, 2020. North Pacific Fishery Management Council, Anchorage, AK. [PDF](https://meetings.npfmc.org/CommentReview/DownloadFile?p=e2b1ff6f-3b1f-4be2-a02b-9bbb9b713719.pdf&fileName=SSC%20REPORT%20October%202020.pdf)
+
+SSC (2021) Scientific and Statistical Committee report to the North Pacific Fishery Management Council, February 1st-5th, 2021. North Pacific Fishery Management Council, Anchorage, AK. [PDF](https://meetings.npfmc.org/CommentReview/DownloadFile?p=24dad3b9-00e9-4f74-94f3-8ac9984eef68.pdf&fileName=SSC%20DRAFT%20Full%20Report.pdf)
+
+Stockhausen WT (2024) 2024 stock assessment and fishery evaluation report for the Tanner crab fisheries of the Bering Sea and Aleutians Islands regions. In: Stock Assessment and Fishery Evaluation Report for the King and Tanner Crab Fisheries of the Bering Sea and Aleutian Islands: 2024 Final Crab SAFE. North Pacific Fishery Management Council, Anchorage AK. [PDF](https://meetings.npfmc.org/CommentReview/DownloadFile?p=4be0d944-87ac-48f6-8983-99dce7d52583.pdf&fileName=Tanner%20Crab%20SAFE.pdf)
+
+Sutton JT, McDermid JL, Landry L, Turcotte F (2024). Spatiotemporal analysis provides solutions to mitigate bycatch of southern Gulf of St. Lawrence Atlantic Cod in an expanding Redfish fishery. Fisheries Research 276:107038. [doi:10.1016/j.fishres.2024.107038](https://doi.org/10.1016/j.fishres.2024.107038)
+
+Thorson JT (2019) Guidance for decisions using the vector autoregressive spatio-temporal (VAST) package in stock, ecosystem, habitat, and climate assessments. Fisheries Research 210:143-161. [doi:10.1016/j.fishres.2018.10.013](https://doi.org/10.1016/j.fishres.2018.10.013)
+
+Thorson JT, Barnett LAK (2017) Comparing estimates of abundance trends and distribution shifts using single- and multispecies models of fishes and biogenic habitat. ICES Journal of Marine Science 74:1311–1321. [doi:10.1093/icesjms/fsw193](https://doi.org/10.1093/icesjms/fsw193)
+
+Thorson JT, Cunningham CJ, Jorgensen E, Havron A, Hulson P-JF, Monnahan CC, von Szalay P (2021) The surprising sensitivity of index scale to delta-model assumptions: recommendations for model-based index standardization. Fisheries Research 233:105745. [doi:10.1016/j.fishres.2020.105745](https://doi.org/10.1016/j.fishres.2020.105745)
+
+Thorson JT, Maunder MN, Punt AE (2020) The development of spatio-temporal models of fishery catch-per-unit effort data to derive indices of relative abundance. Fisheries Research 230:105611. [doi:10.1016/j.fishres.2020.105611](https://doi.org/10.1016/j.fishres.2020.105611)
+
+Yalcin S, Anderson SC, Regular PM, English PA (2023) Exploring the limits of spatiotemporal and design-based index standardization under reduced survey coverage. ICES Journal of Marine Sciences 80:2368-2379. [doi:10.1093/icesjms/fsad155](https://doi.org/10.1093/icesjms/fsad155)
+
+\clearpage
+
+\blandscape
+
+# Tables {-}
+
+```{r ns-compare, results = "asis"}
+
+ns.tab <- ns.compare
+
+df <- ns.tab %>%
+  dplyr::select(-X) %>%
+  rename("Model" = model, "Log-likelihood" = loglik, "Kolmogorov-\nSmirnov" = ks, "Quantiles" = quantile, "Dispersion" = dispersion, "Outliers" = outliers, "Zero inflation" = zero_inf)
+
+tab <- xtable(df, caption = "Norton Sound red king crab trawl survey fitted model predictive density (log-likelihood) values, estimated using sdmTMB cross-validation with 10 folds, for models fitted with spatial random fields estimated as independent and identically distributed (IID). Predictive density values closer to zero represent better out-of-sample predictive skill. Kolmogorov-Smirnov, quantile, dispersion, outlier, and zero-inflation diagnostics were estimated from DHARMa residuals, with values below 0.05 indicating significant metrics. Models were fitted separately to time series from the Alaska Department of Fish and Game (ADF\\&G), National Atmospheric and Oceanic Administration (NOAA) Norton Sound (NS), and NOAA Northern Bering Sea (NBS) trawl surveys. Only results from converged models are shown.", label = "tab:ns-compare", digits = 2)
+
+print(tab, caption.placement = "top", include.rownames = FALSE, booktabs = T, size="\\fontsize{9pt}{10pt}\\selectfont", hline.after=c(-1,0,3,9,11))
+
+```
+
+\elandscape
+
+\clearpage
+
+```{r moran-adfg, results = "asis"}
+
+df <- moran %>%
+  dplyr::select(-X) %>%
+  filter(survey == "ADF&G") %>%
+  rename("Survey" = survey, "Model" = model, "Year" = year, "Moran's I statistic" = statistic, "p-value" = p.value)
+
+tab <- xtable(df, caption = "Clustering analyses for spatiotemporal models fitted to the Alaska Department of Fish and Game (ADF\\&G) trawl survey time series for Norton Sound red king crab. The Moran's I statistic for each year is an overall score of clustering for the spatial residuals across the spatial domain in that year. Positive Moran's I statistic values indicate spatial autocorrelation while negative values indicate negative spatial autocorrelation. P-values < 0.05 indicate significant clustering of spatial residuals.", label = "tab:moran-adfg", digits = 3)
+
+print(tab, caption.placement = "top", include.rownames = FALSE, booktabs = T, size="\\fontsize{9pt}{10pt}\\selectfont", hline.after=c(-1,0,14,28,42))
+
+```
+
+\clearpage
+
+```{r moran-noaa, results = "asis"}
+
+df <- moran %>%
+  dplyr::select(-X) %>%
+  filter(survey == "NOAA NS") %>%
+  rename("Survey" = survey, "Model" = model, "Year" = year, "Moran's I statistic" = statistic, "p-value" = p.value)
+
+tab <- xtable(df, caption = "Clustering analyses for spatiotemporal models fitted to the National Atmospheric and Oceanic Administration (NOAA) Norton Sound (NS) trawl survey time series for Norton Sound red king crab. The Moran's I statistic for each year is an overall score of clustering for the spatial residuals across the spatial domain in that year. Positive Moran's I statistic values indicate spatial autocorrelation while negative values indicate negative spatial autocorrelation. P-values < 0.05 indicate significant clustering of spatial residuals.", label = "tab:moran-noaa", digits = 3)
+
+print(tab, caption.placement = "top", include.rownames = FALSE, booktabs = T, size="\\fontsize{9pt}{10pt}\\selectfont", hline.after=c(-1,0,6,12,18,24,30,36))
+
+```
+
+\clearpage
+
+```{r moran-nbs, results = "asis"}
+
+df <- moran %>%
+  dplyr::select(-X) %>%
+  filter(survey == "NOAA NBS") %>%
+  rename("Survey" = survey, "Model" = model, "Year" = year, "Moran's I statistic" = statistic, "p-value" = p.value)
+
+tab <- xtable(df, caption = "Clustering analyses for spatiotemporal models fitted to the National Atmospheric and Oceanic Administration (NOAA) Northern Bering Sea (NBS) trawl survey time series for Norton Sound red king crab. The Moran's I statistic for each year is an overall score of clustering for the spatial residuals across the spatial domain in that year. Positive Moran's I statistic values indicate spatial autocorrelation while negative values indicate negative spatial autocorrelation. P-values < 0.05 indicate significant clustering of spatial residuals.", label = "tab:moran-nbs", digits = 3)
+
+print(tab, caption.placement = "top", include.rownames = FALSE, booktabs = T, size="\\fontsize{9pt}{10pt}\\selectfont", hline.after=c(-1,0,6,12))
+
+```
+
+\clearpage
+
+```{r compare-indices, results = "asis"}
+
+df <- compare.ind %>%
+  dplyr::select(-X) %>%
+  mutate(Survey = case_when(
+    fleet == "ADFG_Trawl" ~ "ADF&G",
+    fleet == "NMFS_Trawl" ~ "NOAA NS",
+    fleet == "NBS_Trawl" ~ "NOAA NBS"
+  )) %>%
+  rename("Model" = model, "Effects" = effects, "Prediction grid" = grid, "CV Ratio" = CV.Ratio) %>%
+  dplyr::select(Survey, Model, Effects, `Prediction grid`, Ratio, TimeOut, Magnitude, `CV Ratio`)
+
+tab <- xtable(df, caption = "Comparison of model-based to design-based indices for the Alaska Department of Fish and Game (ADF\\&G), National Atmospheric and Oceanic Administration (NOAA) Norton Sound (NS), and NOAA Northern Bering Sea (NBS) trawl survey time series using the metrics Ratio, TimeOut, Magnitude, and CV Ratio. Ratio is the time series mean of the model-based abundance index divided by the time series mean of the design-based abundance index (Thorson et al. 2021). TimeOut is the proportion of years in the time series in which the model-based index was outside the 95\\% confidence interval of the design-based index; these are called outside years. Magnitude is the sum across outside years of the magnitude of the model-based index relative to the design-based index (Cacciapaglia et al. 2024). CV Ratio is the time series mean of the model-based abundance index CV divided by the time series mean of the design-based abundance index CV. Greater similarity in scale between the model-based and design-based indices is indicated by Ratio values closer to 1, TimeOut values closer to 0, and Magnitude values closer to 0. Greater similarity in variability between the model-based and design-based indices is indicated by CV Ratio values closer to 1.", label = "tab:compare-indices", digits = 2)
+
+print(tab, caption.placement = "top", include.rownames = FALSE, booktabs = T, size="\\fontsize{10pt}{11pt}\\selectfont", hline.after=c(-1,0,6,18,22))
+
+```
+
+\clearpage
+
+# Figures {-}
+
+```{r survey-by-year, fig.align = "center", fig.cap = "Survey sampling by year for the Norton Sound red king crab stock from the NOAA Norton Sound trawl survey (green), ADF\\&G trawl survey (blue), and NOAA Northern Bering Sea survey (gold)."}
+
+knitr::include_graphics(here::here("NSRKC/plots/survey_by_year.png"))
+```
+
+\clearpage
+
+```{r survey-abund-noaa, fig.align = "center", fig.cap = "Estimated density in crab/km$^2$ for males $\\ge$ 64 mm in carapace length by survey station in the NOAA Norton Sound trawl survey. Black points represent sampled survey stations while green points indicate estimated density.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/survey_abund_noaa.png"))
+```
+
+\clearpage
+
+```{r survey-abund-adfg, fig.align = "center", fig.cap = "Estimated density in crab/km$^2$ for males $\\ge$ 64 mm in carapace length by survey station in the ADF\\&G trawl survey. Black points represent sampled survey stations while green points indicate estimated density.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/survey_abund_adfg.png"))
+```
+
+\clearpage
+
+```{r survey-abund-nbs, fig.align = "center", fig.cap = "Estimated density in crab/km$^2$ for males $\\ge$ 64 mm in carapace length by survey station in the NOAA Northern Bering Sea trawl survey. Black points represent sampled survey stations while green points indicate estimated density.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/survey_abund_nbs.png"))
+```
+
+\clearpage
+
+```{r survey-hist, fig.align = "center", fig.cap = "Distribution of density estimates (in crab/km$^2$) for males $\\ge$ 64 mm in carapace length in each trawl survey time series.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/hist_surveys.png"))
+```
+
+\clearpage
+
+```{r adfg-mesh, fig.align = "center", fig.cap = "Spatial mesh used for fitting Norton Sound red king crab spatial models to Alaska Department of Fish and Game (ADF\\&G) trawl survey data. The mesh incorporates correlation barriers based on the Norton Sound coastline. Points represent ADF\\&G trawl survey observations.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/mesh_adfg.png"))
+```
+
+\clearpage
+
+```{r noaa-mesh, fig.align = "center", fig.cap = "Spatial mesh used for fitting Norton Sound red king crab spatial models to National Oceanic and Atmospheric Administration (NOAA) Norton Sound trawl survey data. The mesh incorporates correlation barriers based on the Norton Sound coastline. Points represent NOAA Norton Sound trawl survey observations.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/mesh_noaa.png"))
+```
+
+\clearpage
+
+```{r nbs-mesh, fig.align = "center", fig.cap = "Spatial mesh used for fitting Norton Sound red king crab spatial models to National Oceanic and Atmospheric Administration (NOAA) Northern Bering Sea (NBS) trawl survey data. The mesh incorporates correlation barriers based on the Norton Sound coastline. Points represent NOAA NBS trawl survey observations.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/mesh_nbs.png"))
+```
+
+\clearpage
+
+```{r ns-pred-grid, fig.align = "center", fig.cap = "Norton Sound prediction grid used for red king crab spatial abundance predictions for the NOAA Norton Sound trawl survey and the ADF\\&G trawl survey. Both of these trawl surveys use a grid size of 10 nm, which corresponds to grid cells with area equal to 343 km$^2$. Prediction grid spatial resolution is 343 km$^2$ and the grid does not include land. Survey data from all years of these two trawl surveys are shown for comparison. The spatial area of the prediction grid is defined to include all survey stations sampled in the three trawl surveys."}
+
+knitr::include_graphics(here::here("NSRKC/plots/ns_pred_grid.png"))
+```
+
+```{r ns-pred-grid-sm, fig.align = "center", fig.cap = "Norton Sound prediction grid used for red king crab spatial abundance predictions for the NOAA Norton Sound trawl survey and the ADF\\&G trawl survey. Both of these trawl surveys use a grid size of 10 nm, which corresponds to grid cells with area equal to 343 km$^2$. Prediction grid spatial resolution is 343 km$^2$ and the grid does not include land. Survey data from all years of these two trawl surveys are shown for comparison. The spatial area of the prediction grid is defined to include only ADF\\&G trawl survey stations sampled since 2010."}
+
+knitr::include_graphics(here::here("NSRKC/plots/ns_pred_grid_s.png"))
+```
+
+\clearpage
+
+```{r nbs-pred-grid, fig.align = "center", fig.cap = "Norton Sound prediction grid used for red king crab spatial abundance predictions for the NOAA Northern Bering Sea (NBS) trawl survey. This trawl survey uses a grid size of 20 nm, which corresponds to grid cells with area equal to 1372 km$^2$. Prediction grid spatial resolution is 1372 km$^2$ and the grid does not include land. Survey data from all years of the NOAA NBS trawl survey are shown for comparison. The spatial area of the prediction grid is defined to include all survey stations sampled in the three trawl surveys."}
+
+knitr::include_graphics(here::here("NSRKC/plots/nbs_pred_grid.png"))
+```
+
+```{r nbs-pred-grid-sm, fig.align = "center", fig.cap = "Norton Sound prediction grid used for red king crab spatial abundance predictions for the NOAA Northern Bering Sea (NBS) trawl survey. This trawl survey uses a grid size of 20 nm, which corresponds to grid cells with area equal to 1372 km$^2$. Prediction grid spatial resolution is 1372 km$^2$ and the grid does not include land. Survey data from all years of the NOAA NBS trawl survey are shown for comparison. The spatial area of the prediction grid is defined to include only ADF\\&G trawl survey stations sampled since 2010."}
+
+knitr::include_graphics(here::here("NSRKC/plots/nbs_pred_grid_s.png"))
+```
+
+\clearpage
+
+```{r harv-full-all, fig.align = "center", fig.cap = "Norton Sound prediction grid used for red king crab spatial abundance predictions for the NOAA Norton Sound trawl survey and the ADF\\&G trawl survey (white points) overlaid on the ADF\\&G statistical areas in which commercial harvest of Norton Sound red king crab has been recorded (blue fill) or not recorded (gray fill) since 1985. The spatial area of the prediction grid is defined to include all survey stations sampled in the three trawl surveys."}
+
+knitr::include_graphics(here::here("NSRKC/plots/harvest_full_all.png"))
+```
+
+\clearpage
+
+```{r harv-reduced-all, fig.align = "center", fig.cap = "Norton Sound prediction grid used for red king crab spatial abundance predictions for the NOAA Norton Sound trawl survey and the ADF\\&G trawl survey (white points) overlaid on the ADF\\&G statistical areas in which commercial harvest of Norton Sound red king crab has been recorded (blue fill) or not recorded (gray fill) since 1985. The spatial area of the prediction grid is defined to include only ADF\\&G trawl survey stations sampled since 2010."}
+
+knitr::include_graphics(here::here("NSRKC/plots/harvest_reduced_all.png"))
+```
+
+\clearpage
+
+```{r harv-reduced-yrs, fig.align = "center", fig.cap = "Norton Sound prediction grid used for red king crab spatial abundance predictions for the NOAA Norton Sound trawl survey and the ADF\\&G trawl survey (white points) overlaid on the ADF\\&G statistical areas in which commercial harvest of Norton Sound red king crab has been recorded (blue fill) or not recorded (gray fill) by year since 2017. The spatial area of the prediction grid is defined to include only ADF\\&G trawl survey stations sampled since 2010."}
+
+knitr::include_graphics(here::here("NSRKC/plots/harvest_reduced_yrs.png"))
+```
+
+\clearpage
+
+```{r harv-full-yrs, fig.align = "center", fig.cap = "Norton Sound prediction grid used for red king crab spatial abundance predictions for the NOAA Norton Sound trawl survey and the ADF\\&G trawl survey (white points) overlaid on the ADF\\&G statistical areas in which commercial harvest of Norton Sound red king crab has been recorded (blue fill) or not recorded (gray fill) by year since 2017. The spatial area of the prediction grid is defined to include all survey stations sampled in the three trawl surveys."}
+
+knitr::include_graphics(here::here("NSRKC/plots/harvest_full_yrs.png"))
+```
+
+\clearpage
+
+```{r adfg-qq-iid-tw, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the ADF\\&G trawl survey model with the Tweedie family and a year effect only.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/qq_adfg_iid_tw.png"))
+```
+
+\clearpage
+
+```{r adfg-qq-tw-d, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the ADF\\&G trawl survey model with the Tweedie family and both year and depth effects.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/qq_adfg_tw_d.png"))
+```
+
+\clearpage
+
+```{r adfg-qq-dg-d, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the ADF\\&G trawl survey model with the delta-gamma family and both year and depth effects.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/qq_adfg_dg_d.png"))
+```
+
+\clearpage
+
+```{r adfg-spatresid-iid-tw, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the ADFG trawl survey model using the Tweedie family with a year effect only.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/spat_resid_adfg_iid_tw.png"))
+```
+
+\clearpage
+
+```{r adfg-spatresid-tw-d, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the ADFG trawl survey model using the Tweedie family with both year and depth effects.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/spat_resid_adfg_tw_d.png"))
+```
+
+\clearpage
+
+```{r adfg-spatresid-dg-d, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the ADFG trawl survey model using the delta-gamma family with both year and depth effects.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/spat_resid_adfg_dg_d.png"))
+```
+
+\clearpage
+
+```{r noaa-qq-iid-tw, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the NOAA Norton Sound trawl survey model with the Tweedie family and a year effect only.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/qq_noaa_iid_tw.png"))
+```
+
+\clearpage
+
+```{r noaa-qq-iid-dg, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the NOAA Norton Sound trawl survey model with the delta gamma family and a year effect only.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/qq_noaa_iid_dg.png"))
+```
+
+\clearpage
+
+```{r noaa-qq-iid-dl, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the NOAA Norton Sound trawl survey model with the delta lognormal family and a year effect only.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/qq_noaa_iid_dl.png"))
+```
+
+\clearpage
+
+```{r noaa-qq-tw-d, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the NOAA Norton Sound trawl survey model with the Tweedie family and both year and depth effects.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/qq_noaa_tw_d.png"))
+```
+
+\clearpage
+
+```{r noaa-qq-dg-d, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the NOAA Norton Sound trawl survey model with the delta-gamma family and both year and depth effects.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/qq_noaa_dg_d.png"))
+```
+
+\clearpage
+
+```{r noaa-qq-dl-d, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the NOAA Norton Sound trawl survey model with the delta-lognormal family and both year and depth effects.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/qq_noaa_dl_d.png"))
+```
+
+\clearpage
+
+```{r noaa-spatresid-iid-tw, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the NOAA Norton Sound trawl survey model using the Tweedie family and a year effect only.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/spat_resid_noaa_iid_tw.png"))
+```
+
+\clearpage
+
+```{r noaa-spatresid-iid-dg, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the NOAA Norton Sound trawl survey model using the delta gamma family and a year effect only.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/spat_resid_noaa_iid_dg.png"))
+```
+
+\clearpage
+
+```{r noaa-spatresid-iid-dl, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the NOAA Norton Sound trawl survey model using the delta lognormal family and a year effect only.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/spat_resid_noaa_iid_dl.png"))
+```
+
+\clearpage
+
+```{r noaa-spatresid-tw-d, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the NOAA Norton Sound trawl survey model using the Tweedie family and both year and depth effects.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/spat_resid_noaa_tw_d.png"))
+```
+
+\clearpage
+
+```{r noaa-spatresid-dg-d, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the NOAA Norton Sound trawl survey model using the delta-gamma family and both year and depth effects.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/spat_resid_noaa_dg_d.png"))
+```
+
+\clearpage
+
+```{r noaa-spatresid-dl-d, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the NOAA Norton Sound trawl survey model using the delta-lognormal family and both year and depth effects.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/spat_resid_noaa_dl_d.png"))
+```
+
+\clearpage
+
+```{r nbs-qq-iid-tw, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the NOAA Northern Bering Sea trawl survey model with the Tweedie family and a year effect only.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/qq_nbs_iid_tw.png"))
+```
+
+\clearpage
+
+```{r nbs-qq-tw-d, fig.align = "center", fig.cap = "Model diagnostic plots using DHARMa residuals for the NOAA Northern Bering Sea trawl survey model with the Tweedie family and both year and depth effects.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/qq_nbs_tw_d.png"))
+```
+
+\clearpage
+
+```{r nbs-spatresid-iid-tw, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the NOAA Northern Bering Sea trawl survey model using the Tweedie family and a year effect only.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/spat_resid_nbs_iid_tw.png"))
+```
+
+\clearpage
+
+```{r nbs-spatresid-tw-d, fig.align = "center", fig.cap = "Spatial distribution of DHARMa residuals for the NOAA Northern Bering Sea trawl survey model using the Tweedie family and both year and depth effects only.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/spat_resid_nbs_tw_d.png"))
+```
+
+\clearpage
+
+```{r adfg-pred-iid-tw, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using ADF\\&G trawl survey data, the Tweedie family, a year effect, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_adfg_iid_tw.png"))
+```
+
+\clearpage
+
+```{r adfg-pred-tw-d, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using ADF\\&G trawl survey data, the Tweedie family, year and depth effects, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_adfg_iid_tw_d.png"))
+```
+
+\clearpage
+
+```{r adfg-pred-dg-d, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using ADF\\&G trawl survey data, the delta-gamma family, year and depth effects, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_adfg_iid_dg_d.png"))
+```
+
+\clearpage
+
+```{r adfg-pred-iid-tw-sm, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using ADF\\&G trawl survey data, the Tweedie family, a year effect, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_adfg_iid_tw_s.png"))
+```
+
+\clearpage
+
+```{r adfg-pred-tw-d-sm, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using ADF\\&G trawl survey data, the Tweedie family, year and depth effects, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_adfg_iid_tw_s_d.png"))
+```
+
+\clearpage
+
+```{r adfg-pred-dg-d-sm, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using ADF\\&G trawl survey data, the delta-gamma family, year and depth effects, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_adfg_iid_dg_s_d.png"))
+```
+
+\clearpage
+
+```{r adfg-pred-cv-tw, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using ADF\\&G trawl survey data, the Tweedie family, a year effect, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_adfg_tw.png"))
+```
+
+\clearpage
+
+```{r adfg-pred-cv-tw-d, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using ADF\\&G trawl survey data, the Tweedie family, year and depth effects, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_adfg_tw_d.png"))
+```
+
+\clearpage
+
+```{r adfg-pred-cv-dg-d, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using ADF\\&G trawl survey data, the delta-gamma family, year and depth effects, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_adfg_dg_d.png"))
+```
+
+\clearpage
+
+```{r adfg-pred-cv-tw-sm, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using ADF\\&G trawl survey data, the Tweedie family, a year effect, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_adfg_tw_s.png"))
+```
+
+\clearpage
+
+```{r adfg-pred-cv-tw-sm-d, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using ADF\\&G trawl survey data, the Tweedie family, year and depth effects, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_adfg_tw_s_d.png"))
+```
+
+\clearpage
+
+```{r adfg-pred-cv-dg-sm-d, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using ADF\\&G trawl survey data, the delta-gamma family, year and depth effects, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_adfg_dg_s_d.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-iid-tw, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the Tweedie family, a year effect, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_noaa_iid_tw.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-iid-tw-d, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the Tweedie family, year and depth effects, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_noaa_iid_tw_d.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-iid-dg, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the delta gamma family, a year effect, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_noaa_iid_dg.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-iid-dg-d, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the delta gamma family, year and depth effects, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_noaa_iid_dg_d.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-iid-dl, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the delta lognormal family, a year effect, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_noaa_iid_dl.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-iid-dl-d, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the delta lognormal family, year and depth effects, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_noaa_iid_dl_d.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-iid-tw-sm, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the Tweedie family, a year effect, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_noaa_iid_tw_s.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-iid-tw-sm-d, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the Tweedie family, year and depth effects, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_noaa_iid_tw_s_d.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-iid-dg-sm, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the delta gamma family, a year effect, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_noaa_iid_dg_s.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-iid-dg-sm-d, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the delta gamma family, year and depth effects, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_noaa_iid_dg_s_d.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-iid-dl-sm, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the delta lognormal family, a year effect, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_noaa_iid_dl_s.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-iid-dl-sm-d, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the delta lognormal family, year and depth effects, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_noaa_iid_dl_s_d.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-cv-tw, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the Tweedie family, a year effect, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_noaa_tw.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-cv-tw-sm, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the Tweedie family, a year effect, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_noaa_tw_s.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-cv-tw-d, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the Tweedie family, year and depth effects, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_noaa_tw_d.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-cv-tw-sm-d, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the Tweedie family, year and depth effects, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_noaa_tw_s_d.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-cv-dg, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the delta gamma (DG) family, a year effect, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_noaa_dg.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-cv-dg-sm, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the delta gamma (DG) family, a year effect, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_noaa_dg_s.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-cv-dg-d, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the delta gamma (DG) family, year and depth effects, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_noaa_dg_d.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-cv-dg-sm-d, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the delta gamma (DG) family, year and depth effects, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_noaa_dg_s_d.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-cv-dl, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the delta lognormal (DL) family, a year effect, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_noaa_dl.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-cv-dl-sm, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the delta lognormal (DL) family, a year effect, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_noaa_dl_s.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-cv-dl-d, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the delta lognormal (DL) family, year and depth effects, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_noaa_dl_d.png"))
+```
+
+\clearpage
+
+```{r noaa-pred-cv-dl-sm-d, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Norton Sound trawl survey data, the delta lognormal (DL) family, year and depth effects, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_noaa_dl_s_d.png"))
+```
+
+\clearpage
+
+```{r nbs-pred-iid-tw, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Northern Bering Sea trawl survey data, the Tweedie family, a year effect, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_nbs_iid_tw.png"))
+```
+
+\clearpage
+
+```{r nbs-pred-iid-tw-sm, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Northern Bering Sea trawl survey data, the Tweedie family, a year effect, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_nbs_iid_tw_s.png"))
+```
+
+\clearpage
+
+```{r nbs-pred-iid-tw-d, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Northern Bering Sea trawl survey data, the Tweedie family, year and depth effects, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_nbs_iid_tw_d.png"))
+```
+
+\clearpage
+
+```{r nbs-pred-iid-tw-sm-d, fig.align = "center", fig.cap = "Predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Northern Bering Sea trawl survey data, the Tweedie family, year and depth effects,, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/sppred_nbs_iid_tw_s_d.png"))
+```
+
+\clearpage
+
+```{r nbs-pred-cv-tw, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Northern Bering Sea trawl survey data, the Tweedie family, a year effect, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_nbs_tw.png"))
+```
+
+\clearpage
+
+```{r nbs-pred-cv-tw-sm, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Northern Bering Sea trawl survey data, the Tweedie family, a year effect, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_nbs_tw_s.png"))
+```
+
+\clearpage
+
+```{r nbs-pred-cv-tw-d, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Northern Bering Sea trawl survey data, the Tweedie family, year and depth effects, and the full area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_nbs_tw_d.png"))
+```
+
+\clearpage
+
+```{r nbs-pred-cv-tw-sm-d, fig.align = "center", fig.cap = "Coefficient of variation (CV) for predicted abundance of Norton Sound red king crab males $\\ge$ 64 mm in carapace length by year from the model using NOAA Northern Bering Sea trawl survey data, the Tweedie family, year and depth effects, and the reduced area prediction grid.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/predcv_nbs_tw_s_d.png"))
+```
+
+\clearpage
+
+```{r adfg-index-iid-tw, fig.align = "center", fig.cap = "Estimated abundance (1000's of crab) for male Norton Sound red king crab with carapace length $\\ge$ 64 mm from the ADF\\&G trawl survey. Colored lines represent abundance (±95% CI) estimated using sdmTMB with the Tweedie family and a year effect. Model-based abundance estimates were generated by predicting over either an area that encompasses all survey observations (full) or an area that encompasses only observations from the ADF\\&G trawl survey since 2010 (reduced). Black points represent design-based abundance (±95% CI) estimates currently used in the stock assessment model.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/nsrkc_adfg_iid_tw_fit.png"))
+```
+
+\clearpage
+
+```{r adfg-index-iid-tw-d, fig.align = "center", fig.cap = "Estimated abundance (1000's of crab) for male Norton Sound red king crab with carapace length $\\ge$ 64 mm from the ADF\\&G trawl survey. Colored lines represent abundance (±95% CI) estimated using sdmTMB with the Tweedie family and both year and depth effects. Model-based abundance estimates were generated by predicting over either an area that encompasses all survey observations (full) or an area that encompasses only observations from the ADF\\&G trawl survey since 2010 (reduced). Black points represent design-based abundance (±95% CI) estimates currently used in the stock assessment model.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/nsrkc_adfg_iid_tw_d_fit.png"))
+```
+
+\clearpage
+
+```{r adfg-index-iid-dg-d, fig.align = "center", fig.cap = "Estimated abundance (1000's of crab) for male Norton Sound red king crab with carapace length $\\ge$ 64 mm from the ADF\\&G trawl survey. Colored lines represent abundance (±95% CI) estimated using sdmTMB with the delta-gamma family and both year and depth effects. Model-based abundance estimates were generated by predicting over either an area that encompasses all survey observations (full) or an area that encompasses only observations from the ADF\\&G trawl survey since 2010 (reduced). Black points represent design-based abundance (±95% CI) estimates currently used in the stock assessment model.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/nsrkc_adfg_iid_dg_d_fit.png"))
+```
+
+\clearpage
+
+```{r adfg-index-iid-cv, fig.align = "center", fig.cap = "Coefficient of variation (CV) for design-based versus model-based indices of abundance for male Norton Sound red king crab with carapace length $\\ge$ 64 mm from the ADF\\&G trawl survey. Model-based abundance estimates were generated by predicting over either an area that encompasses all survey observations (full) or an area that encompasses only observations from the ADF\\&G trawl survey since 2010 (reduced).", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/cv_ind_adfg.png"))
+```
+
+\clearpage
+
+```{r noaa-index-iid-tw, fig.align = "center", fig.cap = "Estimated abundance (1000's of crab) for male Norton Sound red king crab with carapace length $\\ge$ 64 mm from the NOAA Norton Sound trawl survey. Colored lines represent abundance (±95% CI) estimated using sdmTMB with the Tweedie (TW) family and a year effect. Model-based abundance estimates were generated by predicting over either an area that encompasses all survey observations (full) or an area that encompasses only observations from the ADF\\&G trawl survey since 2010 (reduced). Black points represent design-based abundance (±95% CI) estimates currently used in the stock assessment model.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/nsrkc_noaa_iid_tw_fit.png"))
+```
+
+\clearpage
+
+```{r noaa-index-iid-dg, fig.align = "center", fig.cap = "Estimated abundance (1000's of crab) for male Norton Sound red king crab with carapace length $\\ge$ 64 mm from the NOAA Norton Sound trawl survey. Colored lines represent abundance (±95% CI) estimated using sdmTMB with the delta gamma (DG) family and a year effect. Model-based abundance estimates were generated by predicting over either an area that encompasses all survey observations (full) or an area that encompasses only observations from the ADF\\&G trawl survey since 2010 (reduced). Black points represent design-based abundance (±95% CI) estimates currently used in the stock assessment model.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/nsrkc_noaa_iid_dg_fit.png"))
+```
+
+
+\clearpage
+
+```{r noaa-index-iid-dl, fig.align = "center", fig.cap = "Estimated abundance (1000's of crab) for male Norton Sound red king crab with carapace length $\\ge$ 64 mm from the NOAA Norton Sound trawl survey. Colored lines represent abundance (±95% CI) estimated using sdmTMB with the delta lognormal (DL) family and a year effect. Model-based abundance estimates were generated by predicting over either an area that encompasses all survey observations (full) or an area that encompasses only observations from the ADF\\&G trawl survey since 2010 (reduced). Black points represent design-based abundance (±95% CI) estimates currently used in the stock assessment model.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/nsrkc_noaa_iid_dl_fit.png"))
+```
+
+\clearpage
+
+```{r noaa-index-iid-tw-d, fig.align = "center", fig.cap = "Estimated abundance (1000's of crab) for male Norton Sound red king crab with carapace length $\\ge$ 64 mm from the NOAA Norton Sound trawl survey. Colored lines represent abundance (±95% CI) estimated using sdmTMB with the Tweedie (TW) family and both year and depth effects. Model-based abundance estimates were generated by predicting over either an area that encompasses all survey observations (full) or an area that encompasses only observations from the ADF\\&G trawl survey since 2010 (reduced). Black points represent design-based abundance (±95% CI) estimates currently used in the stock assessment model.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/nsrkc_noaa_iid_tw_d_fit.png"))
+```
+
+\clearpage
+
+```{r noaa-index-iid-dg-d, fig.align = "center", fig.cap = "Estimated abundance (1000's of crab) for male Norton Sound red king crab with carapace length $\\ge$ 64 mm from the NOAA Norton Sound trawl survey. Colored lines represent abundance (±95% CI) estimated using sdmTMB with the delta gamma (DG) family and both year and depth effects. Model-based abundance estimates were generated by predicting over either an area that encompasses all survey observations (full) or an area that encompasses only observations from the ADF\\&G trawl survey since 2010 (reduced). Black points represent design-based abundance (±95% CI) estimates currently used in the stock assessment model.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/nsrkc_noaa_iid_dg_d_fit.png"))
+```
+
+
+\clearpage
+
+```{r noaa-index-iid-dl-d, fig.align = "center", fig.cap = "Estimated abundance (1000's of crab) for male Norton Sound red king crab with carapace length $\\ge$ 64 mm from the NOAA Norton Sound trawl survey. Colored lines represent abundance (±95% CI) estimated using sdmTMB with the delta lognormal (DL) family and both year and depth effects. Model-based abundance estimates were generated by predicting over either an area that encompasses all survey observations (full) or an area that encompasses only observations from the ADF\\&G trawl survey since 2010 (reduced). Black points represent design-based abundance (±95% CI) estimates currently used in the stock assessment model.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/nsrkc_noaa_iid_dl_d_fit.png"))
+```
+
+\clearpage
+
+```{r noaa-index-cv, fig.align = "center", fig.cap = "Coefficient of variation for design-based versus model-based indices of abundance for male Norton Sound red king crab with carapace length $\\ge$ 64 mm from the NOAA Norton Sound trawl survey. Models included a year effect only. Model-based abundance estimates were generated by predicting over either an area that encompasses all survey observations (full) or an area that encompasses only observations from the ADF\\&G trawl survey since 2010 (reduced).", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/cv_ind_noaa.png"))
+```
+
+\clearpage
+
+```{r noaa-index-cv-d, fig.align = "center", fig.cap = "Coefficient of variation for design-based versus model-based indices of abundance for male Norton Sound red king crab with carapace length $\\ge$ 64 mm from the NOAA Norton Sound trawl survey. Models included both year and depth effects. Model-based abundance estimates were generated by predicting over either an area that encompasses all survey observations (full) or an area that encompasses only observations from the ADF\\&G trawl survey since 2010 (reduced).", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/cv_ind_noaa_d.png"))
+```
+
+\clearpage
+
+```{r nbs-index-iid-tw, fig.align = "center", fig.cap = "Estimated abundance (1000's of crab) for male Norton Sound red king crab with carapace length $\\ge$ 64 mm from the NOAA Northern Bering Sea trawl survey. Colored lines represent abundance (±95% CI) estimated using sdmTMB with the Tweedie (TW) family. Models included a year effect only. Model-based abundance estimates were generated by predicting over either an area that encompasses all survey observations (full) or an area that encompasses only observations from the ADF\\&G trawl survey since 2010 (reduced). Black points represent design-based abundance (±95% CI) estimates currently used in the stock assessment model.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/nsrkc_nbs_iid_tw_fit.png"))
+```
+
+\clearpage
+
+```{r nbs-index-iid-tw-d, fig.align = "center", fig.cap = "Estimated abundance (1000's of crab) for male Norton Sound red king crab with carapace length $\\ge$ 64 mm from the NOAA Northern Bering Sea trawl survey. Colored lines represent abundance (±95% CI) estimated using sdmTMB with the Tweedie (TW) family. Models included both year and depth effects. Model-based abundance estimates were generated by predicting over either an area that encompasses all survey observations (full) or an area that encompasses only observations from the ADF\\&G trawl survey since 2010 (reduced). Black points represent design-based abundance (±95% CI) estimates currently used in the stock assessment model.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/nsrkc_nbs_iid_tw_d_fit.png"))
+```
+
+\clearpage
+
+```{r nbs-index-iid-tw-cv, fig.align = "center", fig.cap = "Coefficient of variation for design-based versus Tweedie family model-based indices of abundance for male Norton Sound red king crab with carapace length $\\ge$ 64 mm from the NOAA Northern Bering Sea trawl survey. Model-based abundance estimates were generated by predicting over either an area that encompasses all survey observations (full) or an area that encompasses only observations from the ADF\\&G trawl survey since 2010 (reduced).", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("NSRKC/plots/cv_ind_nbs_tw.png"))
+```

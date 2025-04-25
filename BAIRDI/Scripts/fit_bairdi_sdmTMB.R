@@ -438,6 +438,57 @@ pred_grid2 <- pred_grid %>%
     fit_models(data, matsex, stock, years, period, dist = "DG", knots = 90) -> out
     fit_models(data, matsex, stock, years, period, dist = "DG", knots = 50) -> out
     
-   
+    
+## Immature Females -----  
+    data <- tan.cpue2
+    matsex <- "Immature Female"
+    stock <- "All"
+    
+    ### Pre-1982
+    years <- c(1975:1981)
+    period <- "pre-1982"
+    newdat <- pred_grid2
+    
+    # Fit models
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 120) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 90) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 50) -> out
+    
+    
+    ### Post-1982
+    years <- c(1982:2019, 2021:2024)
+    period <- "post-1982"
+    newdat <- pred_grid2
+    
+    # Fit models
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 120) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 90) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 50) -> out
+    
+## Mature Females -----  
+    data <- tan.cpue2
+    matsex <- "Mature Female"
+    stock <- "All"
+    
+    ### Pre-1982
+    years <- c(1975:1981)
+    period <- "pre-1982"
+    newdat <- pred_grid2
+    
+    # Fit models
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 120) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 90) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 50) -> out
+    
+    
+    ### Post-1982
+    years <- c(1982:2019, 2021:2024)
+    period <- "post-1982"
+    newdat <- pred_grid2
+    
+    # Fit models
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 120) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 90) -> out
+    fit_models(data, matsex, stock, years, period, dist = "DG", knots = 50) -> out
 # 1) Fit male biomass DG models across all knots, 2) Fit female bio/abund DG models across all knots
 # 3) Eval diagnostics for female bio/abund @50 knots 4) Predict/get index for all DG models at 50 knots

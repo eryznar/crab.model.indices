@@ -1,0 +1,20 @@
+"","family","estimation","knots","loglik"
+"1","Tweedie","IID",120,-9880.92156921491
+"2","Tweedie","IID",90,-9924.01702914585
+"3","Tweedie","IID",50,-9732.55781310272
+"4","delta gamma","IID",120,NA
+"5","delta gamma","IID",90,NA
+"6","delta gamma","IID",50,NA
+"7","delta lognormal","IID",120,NA
+"8","delta lognormal","IID",90,NA
+"9","delta lognormal","IID",50,NA
+"10","Tweedie","RW",120,-9646.61567628514
+"11","Tweedie","RW",90,-9630.6474637134
+"12","Tweedie","RW",50,-9636.01981181698
+"13","delta gamma","RW",50,NA
+"14","delta lognormal","RW",50,NA
+"15","Tweedie","AR1",120,-9952.35667624462
+"16","Tweedie","AR1",90,-9860.51009299488
+"17","Tweedie","AR1",50,-9700.14368191589
+"18","delta gamma","AR1",50,NA
+"19","delta lognormal","AR1",50,NA

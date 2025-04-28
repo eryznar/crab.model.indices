@@ -25,53 +25,66 @@ fit_models <- function(data, category, years, dist, knots, region){
       mutate(year_fac = as.factor(year)) -> data2
   }
   
-  # Set spatiotemporal estimator
-  if(region != "EBS"){
-    sptmp <- "ar1"
-  }else{
-    sptmp <- "iid"
-  }
-   
+  # # Set spatiotemporal estimator
+  # if(region != "EBS"){
+  #   sptmp <- "ar1"
+  # }else{
+  #   sptmp <- "iid"
+  # }
+  #  
   # Make mesh
   mesh2 <- make_mesh(data2, c("lon","lat"), n_knots = knots, type = "kmeans")
   
   if(dist == "DG"){
-    # Fit models
-    print("Fitting biomass model")
-    bio <- sdmTMB(cpue_kg_km ~ 0 + year_fac, #the 0 is there so there is a factor predictor for each time slice
-                  spatial = "on",
-                  spatiotemporal = sptmp,
-                  mesh = mesh2,
-                  family = delta_gamma(type = "poisson-link"),
-                  time = "year",
-                  anisotropy = TRUE,
-                  data = data2)
+    if(region != "EBS"){
+      # Fit models
+      print("Fitting biomass model")
+      bio <- sdmTMB(cpue_kg_km ~ 0 + year_fac, #the 0 is there so there is a factor predictor for each time slice
+                    spatial = "on",
+                    spatiotemporal = "ar1",
+                    mesh = mesh2,
+                    family = delta_gamma(type = "poisson-link"),
+                    time = "year",
+                    anisotropy = TRUE,
+                    data = data2)
+    } else{
+      print("Fitting biomass model")
+      bio <- sdmTMB(cpue_kg_km ~ 0 + year_fac, #the 0 is there so there is a factor predictor for each time slice
+                    spatial = "on",
+                    spatiotemporal = "iid",
+                    mesh = mesh2,
+                    family = delta_gamma(type = "poisson-link"),
+                    time = "year",
+                    anisotropy = TRUE,
+                    data = data2)
+    }
+   
     
   } else if(dist == "TW"){
-    # Fit models
-    print("Fitting biomass model")
-    bio <- sdmTMB(cpue_kg_km ~ 0 + year_fac, #the 0 is there so there is a factor predictor for each time slice
-                  spatial = "on",
-                  spatiotemporal = sptmp,
-                  mesh = mesh2,
-                  family = tweedie(link = "log"),
-                  time = "year",
-                  anisotropy = TRUE,
-                  data = data2)
-  } else{
-    # Fit models
-    print("Fitting biomass model")
-    bio <- sdmTMB(cpue_kg_km ~ 0 + year_fac, #the 0 is there so there is a factor predictor for each time slice
-                  spatial = "on",
-                  spatiotemporal = sptmp,
-                  mesh = mesh2,
-                  family = delta_lognormal(),
-                  time = "year",
-                  anisotropy = TRUE,
-                  data = data2)
+    if(region != "EBS"){
+      # Fit models
+      print("Fitting biomass model")
+      bio <- sdmTMB(cpue_kg_km ~ 0 + year_fac, #the 0 is there so there is a factor predictor for each time slice
+                    spatial = "on",
+                    spatiotemporal = "ar1",
+                    mesh = mesh2,
+                    family = tweedie(link = "log"),
+                    time = "year",
+                    anisotropy = TRUE,
+                    data = data2)
+    } else{
+      print("Fitting biomass model")
+      bio <- sdmTMB(cpue_kg_km ~ 0 + year_fac, #the 0 is there so there is a factor predictor for each time slice
+                    spatial = "on",
+                    spatiotemporal = "iid",
+                    mesh = mesh2,
+                    family = tweedie(link = "log"),
+                    time = "year",
+                    anisotropy = TRUE,
+                    data = data2)
+    }
     
-  }
-  
+  } 
   
   saveRDS(bio, paste0(dir, "Models/snow_", region, "_", category, "_", knots, "_", dist, "_bioTMB.rda"))
   

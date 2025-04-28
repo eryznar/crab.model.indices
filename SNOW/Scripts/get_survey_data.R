@@ -57,9 +57,3 @@ matfem_cpue_NBS  <- calc_cpue(crab_data = specimen_data_NBS,
 
 saveRDS(setDT(rbind(matfem_cpue_EBS, matfem_cpue_NBS)), paste0(dir, "Data/snow_survey_cpue_matfem_EBSNBS.rda"))
 
-# Calculate male morphometric maturity ----
-minima <- read.csv(paste0(dir, "Data/opilio_cutline_minima.csv"))
-
-
-specimen_data_NBS$specimen %>%
-  filter(is.na(CHELA_HEIGHT) == FALSE)

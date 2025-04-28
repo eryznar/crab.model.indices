@@ -68,48 +68,28 @@ snow.matfem.cpue <- readRDS(paste0(dir, "Data/snow_survey_cpue_matfem_EBSNBS.rda
          cpue = CPUE, cpue_mt = CPUE_MT, category = CATEGORY, region = REGION) %>%
   mutate(lat = lat/1000, # scale to km so values don't get too large
          lon = lon/1000) %>%
-  dplyr::select(year, category, region, cpue, cpue_mt, cpue_km, cpue_kg_km, lon, lat)
+  dplyr::select(year, category, region, cpue, cpue_mt, cpue_km, cpue_kg_km, lon, lat) %>%
+  mutate(category = "Mature female")
 
-# Create dummy 2020 data
-# tan.cpue %>% 
-#   filter(year == 2024) %>%
-#   mutate(year = 2020) -> dummy
-# 
-# rbind(tan.cpue, dummy) -> tan.cpue
-
-# group male categories
-tan.cpue2 <- tan.cpue %>%
-  mutate(matsex = case_when((matsex %in% c("Immature Male", "Mature Male")) ~ "Male",
-                            TRUE ~ matsex)) %>%
-  group_by(year, lon, lat, matsex, stock) %>%
-  reframe(cpue = sum(cpue),
-          cpue_kg = sum(cpue_kg),
-          cpue_km = sum(cpue_km),
-          cpue_kg_km = sum(cpue_kg_km)) %>%
-  rename(mat.sex = matsex, stck = stock)
-
-
-# Load observed abundance/biomass
-tan.obs <- right_join(rbind(read.csv(paste0(dir, "Data/E166_CB_OBSERVEDabundbio.csv")),
-                            read.csv(paste0(dir, "Data/W166_CB_OBSERVEDabundbio.csv"))) %>%
-                        rename(Year = AKFIN_SURVEY_YEAR, matsex = MAT_SEX, stock = STOCK, abundance= ABUNDANCE, biomass = BIOMASS) %>%
-                        dplyr::select(Year, matsex, abundance, biomass, stock) %>%
-                        mutate(abundance = abundance/1e6, biomass = biomass/1000) %>%
-                        pivot_longer(., c("abundance", "biomass"), names_to = "type", values_to = "value"),
-                      rbind(read.csv(paste0(dir, "Data/E166_CB_OBSERVEDabundbio.csv")),
-                            read.csv(paste0(dir, "Data/W166_CB_OBSERVEDabundbio.csv"))) %>%
-                        dplyr::select(AKFIN_SURVEY_YEAR,MAT_SEX, ABUNDANCE_CI, BIOMASS_CI, STOCK) %>%
-                        rename(Year = AKFIN_SURVEY_YEAR, matsex = MAT_SEX, stock = STOCK, abundance = ABUNDANCE_CI, biomass = BIOMASS_CI) %>%
-                        mutate(abundance = abundance/1e6, biomass = biomass/1000) %>%
-                        pivot_longer(., c("abundance", "biomass"), names_to = "type", values_to = "CI")) %>%
-  filter(matsex %in% c("Immature Female", "Mature Female", "Immature Male", "Mature Male")) %>%
-  mutate(matsex = case_when(matsex %in% c("Immature Male", "Mature Male") ~ "Male",
-                            TRUE ~ matsex)) %>%
-  group_by(Year, type, matsex, stock) %>%
-  reframe(value = sum(value),
-          CI = sum(CI))
+snow.male95.cpue <- readRDS(paste0(dir, "Data/snow_survey_cpue_male_EBSNBS.rda")) %>%
+  filter(SIZE_1MM >=95) %>%
+  group_by(SPECIES, YEAR, REGION, STATION_ID, LATITUDE, LONGITUDE, SEX_TEXT, DISTRICT, STRATUM,
+           TOTAL_AREA) %>%
+  reframe(COUNT = sum(COUNT),
+          CPUE = sum(CPUE),
+          CPUE_MT = sum(CPUE_MT),
+          CPUE_LBS = sum(CPUE_LBS)) %>%
+  st_as_sf(., coords = c("LONGITUDE", "LATITUDE"), crs = "+proj=longlat +datum=WGS84") %>%
+  st_transform(., crs = "+proj=utm +zone=2") %>%
+  cbind(st_coordinates(.)) %>%
+  as.data.frame(.) %>%
+  mutate(cpue_km = CPUE/3.429904, # num crab per nmi2 to km2
+         cpue_kg_km = (CPUE_MT * 1000)/3.429904) %>% # crab kg per km2
+  dplyr::rename(year = YEAR, lat = Y, lon = X,
+                cpue = CPUE, cpue_mt = CPUE_MT, region = REGION) %>%
+  mutate(lat = lat/1000, # scale to km so values don't get too large
+         lon = lon/1000) %>%
+  dplyr::select(year, region, cpue, cpue_mt, cpue_km, cpue_kg_km, lon, lat) %>%
+  mutate(category = "Male95")
 
 
-# ggplot(tan.obs %>% filter(stock == "TannerW", type == "abundance"), aes(Year, value))+
-#   geom_line()+
-#   facet_wrap(~matsex, scales = "free_y")

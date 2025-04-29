@@ -93,22 +93,3 @@ snow.male95.cpue <- readRDS(paste0(dir, "Data/snow_survey_cpue_male_EBSNBS.rda")
   mutate(category = "Male95")
 
 
-# Load and process survey data
-m.surv <- readRDS(paste0(dir, "Data/snow_survey_biomass_male_EBSNBS.rda")) %>%
-            filter(SIZE_1MM >=95) %>%
-        group_by(YEAR, REGION) %>%
-        reframe(BIOMASS_MT = sum(BIOMASS_MT),
-                BIOMASS_MT_CV = sum(BIOMASS_MT_CV),
-                BIOMASS_MT_CI = sum(BIOMASS_MT_CI)) %>%
-        mutate(category = "Male95",
-               BIOMASS_KG = BIOMASS_MT,
-               BIOMASS_KG_CV = BIOMASS_MT_CV,
-               BIOMASS_KG_CI = BIOMASS_MT_CI)
-
-mf.surv <- readRDS(paste0(dir, "Data/snow_survey_biomass_matfem_EBSNBS.rda")) %>%
-        mutate(category = "Mature female",
-               BIOMASS_KG = BIOMASS_MT,
-               BIOMASS_KG_CV = BIOMASS_MT_CV,
-               BIOMASS_KG_CI = BIOMASS_MT_CI) %>%
-        dplyr::select(YEAR, REGION, BIOMASS_MT, BIOMASS_MT_CV, BIOMASS_MT_CI, category, BIOMASS_KG, BIOMASS_KG_CV,
-                      BIOMASS_KG_CI)

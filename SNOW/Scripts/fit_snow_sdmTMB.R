@@ -97,13 +97,8 @@ years <- c(1980:2019, 2021:2024)
 
 # Filter pred_grid by stock, transform to UTM, replicate by number of years
 ebs_grid2 <- ebs_grid %>%
-  st_as_sf(., coords = c("X", "Y"), crs = "+proj=utm +zone=2") %>%
-  st_transform(., crs = "+proj=utm +zone=2") %>%
-  cbind(st_coordinates(.)) %>%
-  as.data.frame(.) %>%
   dplyr::select(area_km2, X, Y) %>%
   replicate_df(., "year", years) %>%
-  mutate(X = X/1000, Y = Y/1000) %>%
   rename(lon = X, lat = Y)
 
 ## Mature female EBS DG -----
@@ -113,8 +108,9 @@ region <- "EBS"
 dist <- "DG"
 
 # Fit models
-fit_models(data, category, years, dist, knots = 50, region) -> ebs.mf.50
-fit_models(data, category, years, dist, knots = 120, region) -> ebs.mf.120
+#fit_models(data, category, years, dist, knots = 50, region) -> ebs.mf.50
+fit_models(data, category, years, dist, knots = 90, region) -> ebs.mf.90
+#fit_models(data, category, years, dist, knots = 120, region) -> ebs.mf.120
 
 ## Mature female EBS TW -----
 data <- snow.matfem.cpue
@@ -123,7 +119,8 @@ region <- "EBS"
 dist <- "TW"
 
 # Fit models
-fit_models(data, category, years, dist, knots = 50, region) -> ebs.mf.50
+#fit_models(data, category, years, dist, knots = 50, region) -> ebs.mf.50
+fit_models(data, category, years, dist, knots = 90, region) -> ebs.mf.90
 #fit_models(data, category, years, dist, knots = 120, region) -> ebs.mf.120 # doesn't fit!!!
 
 ## Male EBS DG -----
@@ -133,8 +130,9 @@ region <- "EBS"
 dist <- "DG"
 
 # Fit models
-fit_models(data, category, years, dist, knots = 50, region) -> ebs.m.50
-fit_models(data, category, years, dist, knots = 120, region) -> ebs.m.120
+#fit_models(data, category, years, dist, knots = 50, region) -> ebs.m.50
+fit_models(data, category, years, dist, knots = 90, region) -> ebs.m.90
+#fit_models(data, category, years, dist, knots = 120, region) -> ebs.m.120
 
 ## Male EBS TW -----
 data <- snow.male95.cpue 
@@ -143,15 +141,7 @@ region <- "EBS"
 dist <- "TW"
 
 # Fit models
-fit_models(data, category, years, dist, knots = 50, region) -> ebs.m.50
-fit_models(data, category, years, dist, knots = 120, region) -> ebs.m.120
+#fit_models(data, category, years, dist, knots = 50, region) -> ebs.m.50
+fit_models(data, category, years, dist, knots = 90, region) -> ebs.m.90
+#fit_models(data, category, years, dist, knots = 120, region) -> ebs.m.120
 
-
-# # Predict and get index
-# abund.mod <- readRDS("./BAIRDI/Models/bairdi_Male_TannerW_pre-1988_50_abundTMB.rda")
-# bio.mod <- readRDS("./BAIRDI/Models/bairdi_Male_TannerW_pre-1988_50_bioTMB.rda")
-# 
-# abund.mod <- readRDS("./BAIRDI/Models/bairdi_Male_TannerW_pre-1988_120_abundTMB.rda")
-# bio.mod <- readRDS("./BAIRDI/Models/bairdi_Male_TannerW_pre-1988_120_bioTMB.rda")
-
-#predict_and_getindex(newdat, abund.mod, bio.mod, matsex, stock, years, period, knots = 120) ->  ind.Wmale1

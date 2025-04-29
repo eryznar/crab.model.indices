@@ -66,11 +66,28 @@ male_bio_EBS  <- calc_bioabund(crab_data = specimen_data_EBS,
                             bin_1mm = TRUE,
                             species = "SNOW") 
 
-male_cpue_NBS  <- calc_cpue(crab_data = specimen_data_NBS, 
+male_bio_NBS  <- calc_bioabund(crab_data = specimen_data_NBS, 
                             sex = "male", 
                             region = "NBS", 
                             district = "ALL",
                             bin_1mm = TRUE,
                             species = "SNOW") 
 
-saveRDS(setDT(rbind(male_cpue_EBS, male_cpue_NBS)), paste0(dir, "Data/snow_survey_cpue_male_EBSNBS.rda"))
+saveRDS(setDT(rbind(male_bio_EBS, male_bio_NBS)), paste0(dir, "Data/snow_survey_biomass_male_EBSNBS.rda"))
+
+# Get all mature female biomass ----
+mf_bio_EBS  <- calc_bioabund(crab_data = specimen_data_EBS, 
+                                  sex = "female", 
+                                       crab_category = "mature_female",
+                                       region = "EBS", 
+                                       district = "ALL",
+                                       species = "SNOW")
+
+mf_bio_NBS  <- calc_bioabund(crab_data = specimen_data_NBS, 
+                              sex = "female", 
+                              crab_category = "mature_female",
+                              region = "NBS", 
+                              district = "ALL",
+                              species = "SNOW") 
+
+saveRDS(setDT(rbind(mf_bio_EBS, mf_bio_NBS)), paste0(dir, "Data/snow_survey_biomass_matfem_EBSNBS.rda"))

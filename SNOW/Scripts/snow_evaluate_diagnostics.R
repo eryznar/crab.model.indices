@@ -207,13 +207,8 @@ years <- c(1980:2019, 2021:2024)
 
 # Filter pred_grid by stock, transform to UTM, replicate by number of years
 ebs_grid2 <- ebs_grid %>%
-  st_as_sf(., coords = c("X", "Y"), crs = "+proj=utm +zone=2") %>%
-  st_transform(., crs = "+proj=utm +zone=2") %>%
-  cbind(st_coordinates(.)) %>%
-  as.data.frame(.) %>%
   dplyr::select(area_km2, X, Y) %>%
   replicate_df(., "year", years) %>%
-  mutate(X = X/1000, Y = Y/1000) %>%
   rename(lon = X, lat = Y)
 
 ## Mature female EBS 50 knots Delta gamma ----

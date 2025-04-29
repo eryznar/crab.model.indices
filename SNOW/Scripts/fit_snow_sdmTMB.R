@@ -1,11 +1,11 @@
 ### PURPOSE ----------------------------------------------------------------------
-# To generate model-based indices of biomass for EBS snow crab for males >=95mm
+# To generate model-based indices of biomass for EBS snow crab for males >95mm
 # and mature females. Time range is 1980-present.
 
 # Author: Emily Ryznar
 
 # TO DOs:
-# 1)
+# 1) MAKE SURE PACKAGE VERSIONS (sdmTMB, glmmTMB, Matrix, TMB...) ARE THE SAME BETWEEN DESKTOP AND VM!! 
 
 ### LOAD LIBRARIES/DATA -----------------------------------------------------------
 source("./SNOW/Scripts/snow_load_libs_functions.R")
@@ -45,6 +45,7 @@ fit_models <- function(data, category, years, dist, knots, region){
                     mesh = mesh2,
                     family = delta_gamma(type = "poisson-link"),
                     time = "year",
+                    extra_time = c(2020),
                     anisotropy = TRUE,
                     data = data2)
     } else{
@@ -108,9 +109,9 @@ region <- "EBS"
 dist <- "DG"
 
 # Fit models
-#fit_models(data, category, years, dist, knots = 50, region) -> ebs.mf.50
+fit_models(data, category, years, dist, knots = 50, region) -> ebs.mf.50
 fit_models(data, category, years, dist, knots = 90, region) -> ebs.mf.90
-#fit_models(data, category, years, dist, knots = 120, region) -> ebs.mf.120
+fit_models(data, category, years, dist, knots = 120, region) -> ebs.mf.120
 
 ## Mature female EBS TW -----
 data <- snow.matfem.cpue
@@ -119,9 +120,9 @@ region <- "EBS"
 dist <- "TW"
 
 # Fit models
-#fit_models(data, category, years, dist, knots = 50, region) -> ebs.mf.50
+fit_models(data, category, years, dist, knots = 50, region) -> ebs.mf.50
 fit_models(data, category, years, dist, knots = 90, region) -> ebs.mf.90
-#fit_models(data, category, years, dist, knots = 120, region) -> ebs.mf.120 # doesn't fit!!!
+fit_models(data, category, years, dist, knots = 120, region) -> ebs.mf.120 # doesn't fit!!!
 
 ## Male EBS DG -----
 data <- snow.male95.cpue 
@@ -130,9 +131,9 @@ region <- "EBS"
 dist <- "DG"
 
 # Fit models
-#fit_models(data, category, years, dist, knots = 50, region) -> ebs.m.50
+fit_models(data, category, years, dist, knots = 50, region) -> ebs.m.50
 fit_models(data, category, years, dist, knots = 90, region) -> ebs.m.90
-#fit_models(data, category, years, dist, knots = 120, region) -> ebs.m.120
+fit_models(data, category, years, dist, knots = 120, region) -> ebs.m.120
 
 ## Male EBS TW -----
 data <- snow.male95.cpue 
@@ -141,7 +142,52 @@ region <- "EBS"
 dist <- "TW"
 
 # Fit models
-#fit_models(data, category, years, dist, knots = 50, region) -> ebs.m.50
+fit_models(data, category, years, dist, knots = 50, region) -> ebs.m.50
 fit_models(data, category, years, dist, knots = 90, region) -> ebs.m.90
-#fit_models(data, category, years, dist, knots = 120, region) -> ebs.m.120
+fit_models(data, category, years, dist, knots = 120, region) -> ebs.m.120
+
+
+## Mature female EBS-NBS DG -----
+data <- snow.matfem.cpue
+category <- "Mature female"
+region <- "All"
+dist <- "DG"
+
+# Fit models
+fit_models(data, category, years, dist, knots = 50, region) -> all.mf.50
+fit_models(data, category, years, dist, knots = 90, region) -> all.mf.90
+fit_models(data, category, years, dist, knots = 120, region) -> all.mf.120
+
+## Mature female EBS-NBS TW -----
+data <- snow.matfem.cpue
+category <- "Mature female"
+region <- "All"
+dist <- "TW"
+
+# Fit models
+fit_models(data, category, years, dist, knots = 50, region) -> all.mf.50
+fit_models(data, category, years, dist, knots = 90, region) -> all.mf.90
+fit_models(data, category, years, dist, knots = 120, region) -> all.mf.120 # doesn't fit!!!
+
+## Male EBS-NBS DG -----
+data <- snow.male95.cpue 
+category <- "Male95"
+region <- "all"
+dist <- "DG"
+
+# Fit models
+fit_models(data, category, years, dist, knots = 50, region) -> all.m.50
+fit_models(data, category, years, dist, knots = 90, region) -> all.m.90
+fit_models(data, category, years, dist, knots = 120, region) -> all.m.120
+
+## Male EBS-NBS TW -----
+data <- snow.male95.cpue 
+category <- "Male95"
+region <- "all"
+dist <- "TW"
+
+# Fit models
+fit_models(data, category, years, dist, knots = 50, region) -> all.m.50
+fit_models(data, category, years, dist, knots = 90, region) -> all.m.90
+fit_models(data, category, years, dist, knots = 120, region) -> all.m.120
 

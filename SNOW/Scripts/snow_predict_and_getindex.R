@@ -1,3 +1,13 @@
+### PURPOSE ----------------------------------------------------------------------
+# To generate model-based indices of biomass for EBS snow crab for males >95mm
+# and mature females. Time range is 1980-present.
+
+# Author: Emily Ryznar
+
+# TO DOs:
+# 1) MAKE SURE PACKAGE VERSIONS (sdmTMB, glmmTMB, Matrix, TMB...) ARE THE SAME BETWEEN DESKTOP AND VM!! 
+
+### LOAD LIBS/PARAMBS
 source("./SNOW/Scripts/snow_load_libs_functions.R")
 
 ### LOAD FUNCTION -----------------------------------------------------------------------------------------
@@ -33,58 +43,90 @@ ebs_grid2 <- ebs_grid %>%
   replicate_df(., "year", years) %>%
   rename(lon = X, lat = Y)
 
-## Mature female EBS 50 knots Delta gamma ----
+# ## Mature female EBS 50 knots Delta gamma ----
+# data <- snow.matfem.cpue
+# category <- "Mature female"
+# region <- "EBS"
+# model <- readRDS(paste0(dir, "Models/snow_EBS_Mature female_50_DG_bioTMB.rda"))
+# 
+# predict_and_getindex(ebs_grid2, model, category, region, years, knots = 50, dist = "DG") -> ebs.mf.DG50
+
+## Mature female EBS 90 knots Delta gamma ----
 data <- snow.matfem.cpue
 category <- "Mature female"
 region <- "EBS"
-model <- readRDS(paste0(dir, "Models/snow_EBS_Mature female_50_DG_bioTMB.rda"))
+model <- readRDS(paste0(dir, "Models/snow_EBS_Mature female_90_DG_bioTMB.rda"))
 
-predict_and_getindex(ebs_grid2, model, category, region, years, knots = 50, dist = "DG") -> ebs.mf.DG50
+predict_and_getindex(ebs_grid2, model, category, region, years, knots = 90, dist = "DG") -> ebs.mf.DG90
 
-## Mature female EBS 120 knots Delta gamma ----
-data <- snow.matfem.cpue
-category <- "Mature female"
-region <- "EBS"
-model <- readRDS(paste0(dir, "Models/snow_EBS_Mature female_120_DG_bioTMB.rda"))
+# ## Mature female EBS 120 knots Delta gamma ----
+# data <- snow.matfem.cpue
+# category <- "Mature female"
+# region <- "EBS"
+# model <- readRDS(paste0(dir, "Models/snow_EBS_Mature female_120_DG_bioTMB.rda"))
+# 
+# predict_and_getindex(ebs_grid2, model, category, region, years, knots = 120, dist = "DG") -> ebs.mf.DG120
 
-predict_and_getindex(ebs_grid2, model, category, region, years, knots = 120, dist = "DG") -> ebs.mf.DG120
+# ## Mature female EBS 50 knots tweedie (120 knots doesn't fit)----
+# data <- snow.matfem.cpue
+# category <- "Mature female"
+# region <- "EBS"
+# model <- readRDS(paste0(dir, "Models/snow_EBS_Mature female_50_TW_bioTMB.rda"))
+# 
+# predict_and_getindex(ebs_grid2, model, category, region, years, knots = 50, dist = "TW") -> ebs.mf.TW50
 
-## Mature female EBS 50 knots tweedie (120 knots doesn't fit)----
+## Mature female EBS 90 knots tweedie ----
 data <- snow.matfem.cpue
 category <- "Mature female"
 region <- "EBS"
 model <- readRDS(paste0(dir, "Models/snow_EBS_Mature female_50_TW_bioTMB.rda"))
 
-predict_and_getindex(ebs_grid2, model, category, region, years, knots = 50, dist = "TW") -> ebs.mf.TW50
+predict_and_getindex(ebs_grid2, model, category, region, years, knots = 90, dist = "TW") -> ebs.mf.TW90
 
-## Male95 EBS 50 knots Delta gamma ----
+# ## Male95 EBS 50 knots Delta gamma ----
+# data <- snow.male95.cpue
+# category <- "Male95"
+# region <- "EBS"
+# model <- readRDS(paste0(dir, "Models/snow_EBS_Male95_50_DG_bioTMB.rda"))
+# 
+# predict_and_getindex(ebs_grid2, model, category, region, years, knots = 50, dist = "DG") -> ebs.m.DG50
+
+## Male95 EBS 90 knots Delta gamma ----
 data <- snow.male95.cpue
 category <- "Male95"
 region <- "EBS"
-model <- readRDS(paste0(dir, "Models/snow_EBS_Male95_50_DG_bioTMB.rda"))
+model <- readRDS(paste0(dir, "Models/snow_EBS_Male95_90_DG_bioTMB.rda"))
 
-predict_and_getindex(ebs_grid2, model, category, region, years, knots = 50, dist = "DG") -> ebs.m.DG50
+predict_and_getindex(ebs_grid2, model, category, region, years, knots = 90, dist = "DG") -> ebs.m.DG90
 
-## Male95 EBS 120 knots Delta gamma ----
+# ## Male95 EBS 120 knots Delta gamma ----
+# data <- snow.male95.cpue
+# category <- "Male95"
+# region <- "EBS"
+# model <- readRDS(paste0(dir, "Models/snow_EBS_Male95_120_DG_bioTMB.rda"))
+# 
+# predict_and_getindex(ebs_grid2, model, category, region, years, knots = 120, dist = "DG") -> ebs.m.DG120
+# 
+# ## Male95 EBS 50 knots tweedie ----
+# data <- snow.male95.cpue
+# category <- "Male95"
+# region <- "EBS"
+# model <- readRDS(paste0(dir, "Models/snow_EBS_Male95_50_TW_bioTMB.rda"))
+# 
+# predict_and_getindex(ebs_grid2, model, category, region, years, knots = 50, dist = "TW") -> ebs.m.TW50
+
+## Male95 EBS 90 knots tweedie ----
 data <- snow.male95.cpue
 category <- "Male95"
 region <- "EBS"
-model <- readRDS(paste0(dir, "Models/snow_EBS_Male95_120_DG_bioTMB.rda"))
+model <- readRDS(paste0(dir, "Models/snow_EBS_Male95_90_TW_bioTMB.rda"))
 
-predict_and_getindex(ebs_grid2, model, category, region, years, knots = 120, dist = "DG") -> ebs.m.DG120
+predict_and_getindex(ebs_grid2, model, category, region, years, knots = 90, dist = "TW") -> ebs.m.TW90
 
-## Male95 EBS 50 knots tweedie ----
-data <- snow.male95.cpue
-category <- "Male95"
-region <- "EBS"
-model <- readRDS(paste0(dir, "Models/snow_EBS_Male95_50_TW_bioTMB.rda"))
-
-predict_and_getindex(ebs_grid2, model, category, region, years, knots = 50, dist = "TW") -> ebs.m.TW50
-
-## Male95 EBS 120 knots tweedie ----
-data <- snow.male95.cpue
-category <- "Male95"
-region <- "EBS"
-model <- readRDS(paste0(dir, "Models/snow_EBS_Male95_120_TW_bioTMB.rda"))
-
-predict_and_getindex(ebs_grid2, model, category, region, years, knots = 120, dist = "TW") -> ebs.m.TW120
+# ## Male95 EBS 120 knots tweedie ----
+# data <- snow.male95.cpue
+# category <- "Male95"
+# region <- "EBS"
+# model <- readRDS(paste0(dir, "Models/snow_EBS_Male95_120_TW_bioTMB.rda"))
+# 
+# predict_and_getindex(ebs_grid2, model, category, region, years, knots = 120, dist = "TW") -> ebs.m.TW120

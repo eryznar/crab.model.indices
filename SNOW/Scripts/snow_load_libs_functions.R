@@ -1,16 +1,11 @@
 ### PURPOSE ----------------------------------------------------------------------
-# To generate model-based indices of abundance and biomass for EBS Tanner crab for all males, immature females, and 
-# mature females. Minimum size is 25 mm CW and the time range is 1975-present. Try fitting separate models for 1975-1981 and 
-# 1982+. 
+# To generate model-based indices of biomass for EBS snow crab for males >95mm
+# and mature females. Time range is 1980-present.
 
 # Author: Emily Ryznar
 
-#PLOTS: 1) model 100 between knots 2) QQ plots and spatial residuals 3) index
-# other different distribution, ar1 vs. iid, joining timeseries together, depth
-
 # TO DOs:
-# 1) Look at residuals
-# 2) Add in scripts to load new survey data (CPUE, BIO/ABUND) and process each year (CPUE script is in TECHMEMONEW)
+# 1) MAKE SURE PACKAGE VERSIONS (sdmTMB, glmmTMB, Matrix, TMB...) ARE THE SAME BETWEEN DESKTOP AND VM!! 
 
 ### LOAD LIBRARIES/PARAMS --------------------------------------------------------
 
@@ -95,7 +90,7 @@ snow.male95.cpue <- readRDS(paste0(dir, "Data/snow_survey_cpue_male_EBSNBS.rda")
 
 # Load and process survey data
 m.surv <- readRDS(paste0(dir, "Data/snow_survey_biomass_male_EBSNBS.rda")) %>%
-            filter(SIZE_1MM >=95) %>%
+            filter(SIZE_1MM >95) %>%
         group_by(YEAR, REGION) %>%
         reframe(BIOMASS_MT = sum(BIOMASS_MT),
                 BIOMASS_MT_CV = sum(BIOMASS_MT_CV),

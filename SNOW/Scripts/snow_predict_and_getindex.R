@@ -1,4 +1,4 @@
-source("./SNOW/Scripts/load_libs_functions.R")
+source("./SNOW/Scripts/snow_load_libs_functions.R")
 
 ### LOAD FUNCTION -----------------------------------------------------------------------------------------
 

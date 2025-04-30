@@ -176,7 +176,7 @@ evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
   
   saveRDS(resids, paste0(dir, "Output/DHARMa_", mod, ".csv"))
   
-  return(list(sanity_check_pre, sanity_check_post, resids, eval.df))
+  return(list(resids, eval.df))
 } 
 
 

@@ -84,7 +84,7 @@ evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
     theme(axis.title = element_text(size = 10),
           legend.position = "bottom") -> res_plot
 
-  ggsave(plot = res_plot, paste0("./SNOW/Figures/DHARMa_", mod, "_SPATIAL.png"), height = 9, width = 8.5, units = "in")
+  ggsave(plot = res_plot, paste0("./SNOW/Figures/DHARMa_", mod, "_SPATIAL.png"), height = 10, width = 10, units = "in")
 
   print("Calculating log-likelihood")
   # Calculate log-likelihood

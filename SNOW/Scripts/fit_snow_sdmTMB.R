@@ -111,84 +111,84 @@ dist <- "DG"
 
 # Fit models
 fit_models(data, category, years, dist, knots = 50, reg) -> ebs.mf.50
-fit_models(data, category, years, dist, knots = 90, region) -> ebs.mf.90
-fit_models(data, category, years, dist, knots = 120, region) -> ebs.mf.120
+fit_models(data, category, years, dist, knots = 90, reg) -> ebs.mf.90
+fit_models(data, category, years, dist, knots = 120, reg) -> ebs.mf.120
 
 ## Mature female EBS TW -----
 data <- snow.matfem.cpue
 category <- "Mature female"
-region <- "EBS"
+reg <- "EBS"
 dist <- "TW"
 
 # Fit models
-fit_models(data, category, years, dist, knots = 50, region) -> ebs.mf.50
-fit_models(data, category, years, dist, knots = 90, region) -> ebs.mf.90 # doesn't fit!!!
-fit_models(data, category, years, dist, knots = 120, region) -> ebs.mf.120 # doesn't fit!!!
+fit_models(data, category, years, dist, knots = 50, reg) -> ebs.mf.50
+fit_models(data, category, years, dist, knots = 90, reg) -> ebs.mf.90 # doesn't fit!!!
+fit_models(data, category, years, dist, knots = 120, reg) -> ebs.mf.120 # doesn't fit!!!
 
 ## Male EBS DG -----
 data <- snow.male95.cpue 
 category <- "Male95"
-region <- "EBS"
+reg <- "EBS"
 dist <- "DG"
 
 # Fit models
-fit_models(data, category, years, dist, knots = 50, region) -> ebs.m.50
-fit_models(data, category, years, dist, knots = 90, region) -> ebs.m.90
-fit_models(data, category, years, dist, knots = 120, region) -> ebs.m.120
+fit_models(data, category, years, dist, knots = 50, reg) -> ebs.m.50
+fit_models(data, category, years, dist, knots = 90, reg) -> ebs.m.90
+fit_models(data, category, years, dist, knots = 120, reg) -> ebs.m.120
 
 ## Male EBS TW -----
 data <- snow.male95.cpue 
 category <- "Male95"
-region <- "EBS"
+reg <- "EBS"
 dist <- "TW"
 
 # Fit models
-fit_models(data, category, years, dist, knots = 50, region) -> ebs.m.50
-fit_models(data, category, years, dist, knots = 90, region) -> ebs.m.90
-fit_models(data, category, years, dist, knots = 120, region) -> ebs.m.120
+fit_models(data, category, years, dist, knots = 50, reg) -> ebs.m.50
+fit_models(data, category, years, dist, knots = 90, reg) -> ebs.m.90
+fit_models(data, category, years, dist, knots = 120, reg) -> ebs.m.120
 
 
 ## Mature female EBS-NBS DG -----
 data <- snow.matfem.cpue
 category <- "Mature female"
-region <- "All"
+reg <- "All"
 dist <- "DG"
 
 # Fit models
-fit_models(data, category, years, dist, knots = 50, region) -> all.mf.50
-fit_models(data, category, years, dist, knots = 90, region) -> all.mf.90
-fit_models(data, category, years, dist, knots = 120, region) -> all.mf.120
+fit_models(data, category, years, dist, knots = 50, reg) -> all.mf.50
+fit_models(data, category, years, dist, knots = 90, reg) -> all.mf.90
+fit_models(data, category, years, dist, knots = 120, reg) -> all.mf.120
 
 ## Mature female EBS-NBS TW -----
 data <- snow.matfem.cpue
 category <- "Mature female"
-region <- "All"
+reg <- "All"
 dist <- "TW"
 
 # Fit models
-fit_models(data, category, years, dist, knots = 50, region) -> all.mf.50
-fit_models(data, category, years, dist, knots = 90, region) -> all.mf.90
-fit_models(data, category, years, dist, knots = 120, region) -> all.mf.120
+fit_models(data, category, years, dist, knots = 50, reg) -> all.mf.50
+fit_models(data, category, years, dist, knots = 90, reg) -> all.mf.90
+fit_models(data, category, years, dist, knots = 120, reg) -> all.mf.120
 
 ## Male EBS-NBS DG -----
 data <- snow.male95.cpue 
 category <- "Male95"
-region <- "All"
+reg <- "All"
 dist <- "DG"
 
 # Fit models
-fit_models(data, category, years, dist, knots = 50, region) -> all.m.50
-fit_models(data, category, years, dist, knots = 90, region) -> all.m.90
-fit_models(data, category, years, dist, knots = 120, region) -> all.m.120
+fit_models(data, category, years, dist, knots = 50, reg) -> all.m.50
+fit_models(data, category, years, dist, knots = 90, reg) -> all.m.90
+fit_models(data, category, years, dist, knots = 120, reg) -> all.m.120
 
 ## Male EBS-NBS TW -----
 data <- snow.male95.cpue 
 category <- "Male95"
-region <- "All"
+reg <- "All"
 dist <- "TW"
 
 # Fit models
-fit_models(data, category, years, dist, knots = 50, region) -> all.m.50 # doesn't fit!!!
-fit_models(data, category, years, dist, knots = 90, region) -> all.m.90
-fit_models(data, category, years, dist, knots = 120, region) -> all.m.120
+fit_models(data, category, years, dist, knots = 50, reg) -> all.m.50 # doesn't fit!!!
+fit_models(data, category, years, dist, knots = 90, reg) -> all.m.90
+fit_models(data, category, years, dist, knots = 120, reg) -> all.m.120
 

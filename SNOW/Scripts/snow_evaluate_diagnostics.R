@@ -74,7 +74,7 @@ evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
   # visualize residuals across the EBS
   ggplot(data2) +
     #geom_sf(data = shoreline) +
-    geom_point(aes(y = lat, x = lon), size = 1) +
+    geom_point(aes(y = lat, x = lon, color = resids), size = 1) +
     scale_color_gradient2(midpoint = 0) +
     labs(y = "Latitude",
          x = "Longitude") +

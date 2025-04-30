@@ -11,9 +11,9 @@
 source("./SNOW/Scripts/load_libs_functions.R")
 
 ### LOAD FUNCTION --------------------------------------------------------------
-evaluate_diagnostics <- function(data, model, category, region, knots, dist){
+evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
   
-  mod <- paste0(category, "-", region, "-", knots, "-", dist)
+  mod <- paste0(category, "-", reg, "-", knots, "-", dist)
   
   # Run sanity check
   print("Sanity")
@@ -36,8 +36,7 @@ evaluate_diagnostics <- function(data, model, category, region, knots, dist){
  
   ggsave(paste0("./SNOW/Figures/DHARMa_", mod, "_QQplot.png"), height = 8, width = 7, units = "in")
   
- resid %>%
-    mutate(category = category) -> resids
+
   
   print("Testing residuals")
   # Test residuals
@@ -52,27 +51,22 @@ evaluate_diagnostics <- function(data, model, category, region, knots, dist){
 
   round(DHARMa::testZeroInflation(resid, plot = FALSE)$p.value, 2) -> zz
 
- if(region != "All"){
+ if(reg != "All"){
    data %>% 
-     filter(region == region) %>%
-     mutate(resids = c(resid$scaledResiduals)) -> data2
+     filter(region == reg) %>%
+     mutate(resids = resid$scaledResiduals) -> data2
  } else{
    data %>% 
-     mutate(resids = c(resid$scaledResiduals)) -> data2
+     mutate(resids = resid$scaledResiduals) -> data2
  }
   
-  # Set spatiotemporal estimator
-  if(region != "EBS"){
-    sptmp <- "ar1"
-  }else{
-    sptmp <- "iid"
-  }
+ 
   
   print("Plotting spatial residuals")
   # visualize residuals across the EBS
   ggplot(data2) +
     #geom_sf(data = shoreline) +
-    geom_point(aes(y = lat, x = lon, color = resids), size = 1) +
+    geom_point(aes(y = lat, x = lon), size = 1) +
     scale_color_gradient2(midpoint = 0) +
     labs(y = "Latitude",
          x = "Longitude") +
@@ -82,44 +76,78 @@ evaluate_diagnostics <- function(data, model, category, region, knots, dist){
     theme(axis.title = element_text(size = 10),
           legend.position = "bottom") -> res_plot
 
-  ggsave(plot = res_plot, paste0("./SNOW/Figures/DHARMa", mod, "_SPATIAL.png"), height = 9, width = 8.5, units = "in")
+  ggsave(plot = res_plot, paste0("./SNOW/Figures/DHARMa_", mod, "_SPATIAL.png"), height = 9, width = 8.5, units = "in")
 
   print("Calculating log-likelihood")
   # Calculate log-likelihood
   clust <- sample(seq_len(10), size = nrow(model$data), replace = TRUE)
   
   if(dist == "DG"){
-    ll <- sdmTMB_cv(
-      data = model$data,
-      formula = cpue_kg_km ~ 0 + year_fac,
-      spatial = "on",
-      time = "year",
-      mesh = model$spde,
-      spatiotemporal = sptmp,
-      silent = FALSE,
-      anisotropy = TRUE,
-      family = delta_gamma(type = "poisson-link"),
-      fold_ids = clust
-    )
+    if(reg != "EBS"){
+      ll <- sdmTMB_cv(
+        data = model$data,
+        formula = cpue_kg_km ~ 0 + year_fac,
+        spatial = "on",
+        time = "year",
+        mesh = model$spde,
+        spatiotemporal = "ar1",
+        extra_time = c(2020),
+        silent = FALSE,
+        anisotropy = TRUE,
+        family = delta_gamma(type = "poisson-link"),
+        fold_ids = clust
+      )
+    } else{
+      ll <- sdmTMB_cv(
+        data = model$data,
+        formula = cpue_kg_km ~ 0 + year_fac,
+        spatial = "on",
+        time = "year",
+        mesh = model$spde,
+        spatiotemporal = "iid",
+        silent = FALSE,
+        anisotropy = TRUE,
+        family = delta_gamma(type = "poisson-link"),
+        fold_ids = clust
+      )
+    }
+    
   } else if(dist == "TW"){
-    ll <- sdmTMB_cv(
-      data = model$data,
-      formula = cpue_kg_km ~ 0 + year_fac,
-      spatial = "on",
-      time = "year",
-      mesh = model$spde,
-      spatiotemporal = sptmp,
-      silent = FALSE,
-      anisotropy = TRUE,
-      family = tweedie(link = "log"),
-      fold_ids = clust
-    )
+    if(reg != "EBS"){
+      ll <- sdmTMB_cv(
+        data = model$data,
+        formula = cpue_kg_km ~ 0 + year_fac,
+        spatial = "on",
+        time = "year",
+        mesh = model$spde,
+        spatiotemporal = "ar1",
+        extra_time = c(2020),
+        silent = FALSE,
+        anisotropy = TRUE,
+        family = tweedie(link = "log"),
+        fold_ids = clust
+      )
+    } else{
+      ll <- sdmTMB_cv(
+        data = model$data,
+        formula = cpue_kg_km ~ 0 + year_fac,
+        spatial = "on",
+        time = "year",
+        mesh = model$spde,
+        spatiotemporal = "iid",
+        silent = FALSE,
+        anisotropy = TRUE,
+        family = tweedie(link = "log"),
+        fold_ids = clust
+      )
+    }
+    
   }
   
   print("Creating evaluation dataframe")
   # Combine evaluation df
   eval.df <- data.frame(category = category,
-                        region = region,
+                        region = reg,
                         knots = knots,
                         dist = dist,
                         method = sptmp,

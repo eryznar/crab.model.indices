@@ -121,7 +121,7 @@ dist <- "TW"
 
 # Fit models
 fit_models(data, category, years, dist, knots = 50, region) -> ebs.mf.50
-fit_models(data, category, years, dist, knots = 90, region) -> ebs.mf.90
+fit_models(data, category, years, dist, knots = 90, region) -> ebs.mf.90 # doesn't fit!!!
 fit_models(data, category, years, dist, knots = 120, region) -> ebs.mf.120 # doesn't fit!!!
 
 ## Male EBS DG -----

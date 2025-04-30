@@ -67,7 +67,7 @@ snow.matfem.cpue <- readRDS(paste0(dir, "Data/snow_survey_cpue_matfem_EBSNBS.rda
   mutate(category = "Mature female")
 
 snow.male95.cpue <- readRDS(paste0(dir, "Data/snow_survey_cpue_male_EBSNBS.rda")) %>%
-  filter(SIZE_1MM >=95) %>%
+  filter(SIZE_1MM >95) %>%
   group_by(SPECIES, YEAR, REGION, STATION_ID, LATITUDE, LONGITUDE, SEX_TEXT, DISTRICT, STRATUM,
            TOTAL_AREA) %>%
   reframe(COUNT = sum(COUNT),

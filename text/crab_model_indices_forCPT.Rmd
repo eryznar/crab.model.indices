@@ -506,59 +506,62 @@ knitr::include_graphics(here::here("SNOW/Figures/mesh90.png"))
 knitr::include_graphics(here::here("SNOW/Figures/mesh120.png"))
 ```
 
-```{r snow-DHARMa-biomass-QQ-50-EBS, fig.align = "center", fig.cap = "Q-Q plot of DHARMa residuals for biomass models fit with NMFS summer bottom trawl survey data from the EBS only using a delta-gamma model family and 50 knots in the model mesh."}
+```{r snow-DHARMa-male95-QQ-50-EBS, fig.align = "center", fig.cap = "Q-Q plot of DHARMa residuals for male (>95mm) biomass snow crab models fit with NMFS summer bottom trawl survey data from the EBS only using a delta-gamma model family and 50 knots in the model mesh."}
 
-knitr::include_graphics(here::here("SNOW/Figures/DHARMa_biomass_50-Delta-gamma_QQplot-EBS.png"))
+knitr::include_graphics(here::here("SNOW/Figures/DHARMa_Male95-EBS-50-DG_QQplot.png"))
+```
+
+```{r snow-DHARMa-matfem-QQ-50-EBS, fig.align = "center", fig.cap = "Q-Q plot of DHARMa residuals for mature female biomass snow crab models fit with NMFS summer bottom trawl survey data from the EBS only using a delta-gamma model family and 50 knots in the model mesh."}
+
+knitr::include_graphics(here::here("SNOW/Figures/DHARMa_Mature female-EBS-50-DG_QQplot.png"))
+```
+
+```{r snow-DHARMa-spat-50-male95-EBS, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for male (> 95mm) snow crab biomass models fit using NMFS summer bottom trawl survey data from the EBS only with a 50-knot mesh and a delta-gamma model family.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("SNOW/Figures/DHARMa_Male95-EBS-50-DG_SPATIAL.png"))
 ```
 
 
-```{r snow-DHARMa-bio-spat-50-male-EBS, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for males > 95mm biomass models fit using NMFS summer bottom trawl survey data from the EBS only with a 50-knot mesh and a delta-gamma model family.", out.width="100%", out.height="100%"}
+```{r snow-DHARMa-spat-50-matfem-EBS, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for mature female snow crab biomass models fit using NMFS summer bottom trawl survey data from the EBS only with a 50-knot mesh and a delta-gamma model family.", out.width="100%", out.height="100%"}
 
-knitr::include_graphics(here::here("SNOW/Figures/DHARMa_Male95_biomass-50-Delta_gamma_SPATIAL-EBS.png"))
+knitr::include_graphics(here::here("SNOW/Figures/DHARMa_Mature female-EBS-50-DG_SPATIAL.png"))
 ```
 
 
-```{r snow-DHARMa-bio-spat-50-matfem-EBS, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for mature female biomass models fit using NMFS summer bottom trawl survey data from the EBS only with a 50-knot mesh and a delta-gamma model family.", out.width="100%", out.height="100%"}
+```{r snow-DHARMa-spat-50-male95-EBSNBS, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for male (> 95mm) snow crab biomass models fit using NMFS summer bottom trawl survey data from the EBS and NBS with a 50-knot mesh and a delta-gamma model family.", out.width="100%", out.height="100%"}
 
-knitr::include_graphics(here::here("SNOW/Figures/DHARMa_Mature female_biomass-50-Delta_gamma_SPATIAL-EBS.png"))
-```
-
-```{r snow-DHARMa-bio-spat-50-male-EBSNBS, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for males > 95mm biomass models fit using NMFS summer bottom trawl survey data from the EBS and NBS with a 50-knot mesh and a delta-gamma model family.", out.width="100%", out.height="100%"}
-
-knitr::include_graphics(here::here("SNOW/Figures/DHARMa_Male95_biomass-50-Delta_gamma_SPATIAL-EBSNBS.png"))
+knitr::include_graphics(here::here("SNOW/Figures/DHARMa_Male95-All-50-DG_SPATIAL.png"))
 ```
 
 
-```{r snow-DHARMa-bio-spat-50-matfem-EBS, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for mature female biomass models fit using NMFS summer bottom trawl survey data from the EBS and NBS with a 50-knot mesh and a delta-gamma model family.", out.width="100%", out.height="100%"}
+```{r snow-DHARMa-spat-50-matfem-EBSNBS, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for mature female snow crab biomass models fit using NMFS summer bottom trawl survey data from the EBS and NBS with a 50-knot mesh and a delta-gamma model family.", out.width="100%", out.height="100%"}
 
-knitr::include_graphics(here::here("SNOW/Figures/DHARMa_Mature female_biomass-50-Delta_gamma_SPATIAL-EBSNBS.png"))
+knitr::include_graphics(here::here("SNOW/Figures/DHARMa_Mature female-All-50-DG_SPATIAL.png"))
 ```
 
 
-```{r snow-spatpred-bio-50-male-EBS, fig.align = "center", fig.cap = "Spatial predictions of male (>95mm) abundance across the Eastern Bering Sea using NMFS summer bottom trawl survey data from the EBS only with a 50-knot mesh and a delta-gamma model family. .", out.width="100%", out.height="100%"}
+```{r snow-spatpred-50-male95-EBS, fig.align = "center", fig.cap = "Spatial predictions of snow crab male (>95mm) biomass across the Eastern Bering Sea using NMFS summer bottom trawl survey data from the EBS only with a 50-knot mesh and a delta-gamma model family. .", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SNOW/Figures/EBS_Male95_spatabund.png"))
 ```
 
+```{r snow-spatpred-50-matfem-EBS, fig.align = "center", fig.cap = "Spatial predictions of snow crab mature female biomass across the Eastern Bering Sea using NMFS summer bottom trawl survey data from the EBS only with a 50-knot mesh and a delta-gamma model family. .", out.width="100%", out.height="100%"}
 
-```{r snow-spatpred-bio-50-matfem-EBS, fig.align = "center", fig.cap = "Spatial predictions of mature female abundance across the Eastern Bering Sea using NMFS summer bottom trawl survey data from the EBS only with a 50-knot mesh and a delta-gamma model family. .", out.width="100%", out.height="100%"}
-
-knitr::include_graphics(here::here("SNOW/Figures/EBS_Mature Female_spatabund.png"))
+knitr::include_graphics(here::here("SNOW/Figures/EBS_Mature female_spatabund.png"))
 ```
 
-```{r snow-spatpred-bio-50-male-EBSNBS, fig.align = "center", fig.cap = "Spatial predictions of male (>95mm) abundance across the Eastern Bering Sea using NMFS summer bottom trawl survey data from the EBS and NBS with a 50-knot mesh and a delta-gamma model family. .", out.width="100%", out.height="100%"}
+```{r snow-spatpred-50-male95-EBSNBS, fig.align = "center", fig.cap = "Spatial predictions of snow crab male (>95mm) biomass across the Eastern Bering Sea using NMFS summer bottom trawl survey data from the EBS and NBS with a 50-knot mesh and a delta-gamma model family. .", out.width="100%", out.height="100%"}
 
-knitr::include_graphics(here::here("SNOW/Figures/EBSNBS_Male95_spatabund.png"))
+knitr::include_graphics(here::here("SNOW/Figures/All_Male95_spatabund.png"))
+```
+
+```{r snow-spatpred-50-matfem-EBSNBS, fig.align = "center", fig.cap = "Spatial predictions of snow crab mature female biomass across the Eastern Bering Sea using NMFS summer bottom trawl survey data from the EBS and NBS with a 50-knot mesh and a delta-gamma model family. .", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("SNOW/Figures/All_Mature female_spatabund.png"))
 ```
 
 
-```{r snow-spatpred-bio-50-matfem-EBS, fig.align = "center", fig.cap = "Spatial predictions of mature female abundance across the Eastern Bering Sea using NMFS summer bottom trawl survey data from the EBS and NBS with a 50-knot mesh and a delta-gamma model family. .", out.width="100%", out.height="100%"}
-
-knitr::include_graphics(here::here("SNOW/Figures/EBSNBS_Mature Female_spatabund.png"))
-```
-
-
-```{r snow-bio-index, fig.align = "center", fig.cap = "Estimated biomass (tons) for Eastern Bering Sea snow crab. Colored lines represent biomass (±95% CI) estimated by sdmTMB in a delta-model frameword, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent biomass (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
+```{r snow-bio-index, fig.align = "center", fig.cap = "Estimated biomass (tons) for Eastern Bering Sea snow crab. Colored lines represent biomass (±95% CI) estimated by sdmTMB in a delta-model framework, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent biomass (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("SNOW/Figures/snow.biomass.index.png"))
 ```

@@ -265,6 +265,7 @@ model120 <- readRDS(paste0(dir, "Models/snow_EBS_Male95_120_TW_bioTMB.rda"))
 evaluate_diagnostics(data, model50, category, region, knots = 50, dist = "TW") -> ebs.m.TW0
 evaluate_diagnostics(data, model90, category, region, knots = 90, dist = "TW") -> ebs.m.TW90
 evaluate_diagnostics(data, model120, category, region, knots = 120, dist = "TW") -> ebs.m.TW120
+
 ## Mature female EBS-NBS Delta gamma ----
 data <- snow.matfem.cpue
 category <- "Mature female"

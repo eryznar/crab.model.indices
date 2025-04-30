@@ -11,12 +11,12 @@
 source("./SNOW/Scripts/snow_load_libs_functions.R")
 
 ### LOAD FUNCTION -----------------------------------------------------------------
-fit_models <- function(data, category, years, dist, knots, region){
+fit_models <- function(data, category, years, dist, knots, reg){
   
   # Filter data by params
   if(region != "All"){
     data %>%
-      filter(category == category, year %in% years, region == region) %>%
+      filter(category == category, year %in% years, region == reg) %>%
       mutate(year_fac = as.factor(year)) -> data2
   
   }else{
@@ -36,7 +36,7 @@ fit_models <- function(data, category, years, dist, knots, region){
   mesh2 <- make_mesh(data2, c("lon","lat"), n_knots = knots, type = "kmeans")
   
   if(dist == "DG"){
-    if(region != "EBS"){
+    if(reg != "EBS"){
       # Fit models
       print("Fitting biomass model")
       bio <- sdmTMB(cpue_kg_km ~ 0 + year_fac, #the 0 is there so there is a factor predictor for each time slice
@@ -62,7 +62,7 @@ fit_models <- function(data, category, years, dist, knots, region){
    
     
   } else if(dist == "TW"){
-    if(region != "EBS"){
+    if(reg != "EBS"){
       # Fit models
       print("Fitting biomass model")
       bio <- sdmTMB(cpue_kg_km ~ 0 + year_fac, #the 0 is there so there is a factor predictor for each time slice
@@ -88,7 +88,7 @@ fit_models <- function(data, category, years, dist, knots, region){
     
   } 
   
-  saveRDS(bio, paste0(dir, "Models/snow_", region, "_", category, "_", knots, "_", dist, "_bioTMB.rda"))
+  saveRDS(bio, paste0(dir, "Models/snow_", reg, "_", category, "_", knots, "_", dist, "_bioTMB.rda"))
   
   return(list(bioTMB = bio, mesh = mesh2))
   
@@ -106,11 +106,11 @@ ebs_grid2 <- ebs_grid %>%
 ## Mature female EBS DG -----
 data <- snow.matfem.cpue
 category <- "Mature female"
-region <- "EBS"
+reg <- "EBS"
 dist <- "DG"
 
 # Fit models
-fit_models(data, category, years, dist, knots = 50, region) -> ebs.mf.50
+fit_models(data, category, years, dist, knots = 50, reg) -> ebs.mf.50
 fit_models(data, category, years, dist, knots = 90, region) -> ebs.mf.90
 fit_models(data, category, years, dist, knots = 120, region) -> ebs.mf.120
 

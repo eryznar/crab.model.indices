@@ -31,14 +31,14 @@ category <- "Male95"
 region <- "EBS"
 
 # 50 - DG
-m.index.bio50 <- read.csv(paste0(dir, "Output/snow_EBS_Male95_50_DG_biomassindex.csv")) %>%
+m.index.bio50 <- read.csv(paste0(dir, "Output/Indices/snow_EBS_Male95_50_DG_biomassindex.csv")) %>%
                   rename(biomass = est, Year = year) %>%
                   mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
                   mutate(knots = 50, category = category, region = region, dist = "DG")
 
 
 # 120 - DG
-m.index.bio120 <- read.csv(paste0(dir, "Output/snow_EBS_Male95_120_DG_biomassindex.csv")) %>%
+m.index.bio120 <- read.csv(paste0(dir, "Output/Indices/snow_EBS_Male95_120_DG_biomassindex.csv")) %>%
                     rename(biomass = est, Year = year) %>%
                     mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
                     mutate(knots = 120, category = category, region = region, dist = "DG")
@@ -49,14 +49,14 @@ category <- "Mature female"
 region <- "EBS"
 
 # 50 - DG
-mf.index.bio50 <- read.csv(paste0(dir, "Output/snow_EBS_Mature female_50_DG_biomassindex.csv")) %>%
+mf.index.bio50 <- read.csv(paste0(dir, "Output/Indices/snow_EBS_Mature female_50_DG_biomassindex.csv")) %>%
   rename(biomass = est, Year = year) %>%
   mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
   mutate(knots = 50, category = category, region = region, dist = "DG")
 
 
 # 120 - DG
-mf.index.bio120 <- read.csv(paste0(dir, "Output/snow_EBS_Mature female_120_DG_biomassindex.csv")) %>%
+mf.index.bio120 <- read.csv(paste0(dir, "Output/Indices/snow_EBS_Mature female_120_DG_biomassindex.csv")) %>%
   rename(biomass = est, Year = year) %>%
   mutate(biomass = biomass/1000, lwr = lwr/1000, upr= upr/1000)%>% 
   mutate(knots = 120, category = category, region = region, dist = "DG")

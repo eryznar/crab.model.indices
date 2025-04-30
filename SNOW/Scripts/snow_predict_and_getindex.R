@@ -28,7 +28,7 @@ predict_and_getindex <- function(newdat, model, category, region, years, knots, 
     print("getting biomass index")
     get_index_split(model, newdata = newdat2, area = newdat2$area_km2, bias_correct = TRUE, nsplit = 3) -> ind.bio
    
-  write.csv(ind.bio, paste0(dir, "Output/snow_", region, "_", category, "_", knots, "_", dist, "_biomassindex.csv"))
+  write.csv(ind.bio, paste0(dir, "Output/Indices/snow_", region, "_", category, "_", knots, "_", dist, "_biomassindex.csv"))
   
   
   return(list(pred.bio = pred.bio$data))

@@ -10,6 +10,9 @@
 ### LOAD LIBRARIES/DATA ----------------------------- ---------------------------
 source("./SNOW/Scripts/load_libs_functions.R")
 
+### Set parallel processing for sdmTMB_cv()
+plan(multisession, workers =4)
+
 ### LOAD FUNCTION --------------------------------------------------------------
 evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
   
@@ -60,6 +63,11 @@ evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
      mutate(resids = resid$scaledResiduals) -> data2
  }
   
+ if(reg != "EBS"){
+   sptmp = "ar1"
+ } else{
+   sptmp = "iid"
+ }
  
   
   print("Plotting spatial residuals")
@@ -95,7 +103,8 @@ evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
         silent = FALSE,
         anisotropy = TRUE,
         family = delta_gamma(type = "poisson-link"),
-        fold_ids = clust
+        fold_ids = clust,
+        parallel = TRUE
       )
     } else{
       ll <- sdmTMB_cv(
@@ -108,7 +117,9 @@ evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
         silent = FALSE,
         anisotropy = TRUE,
         family = delta_gamma(type = "poisson-link"),
-        fold_ids = clust
+        fold_ids = clust,
+        parallel = TRUE
+        
       )
     }
     
@@ -125,7 +136,9 @@ evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
         silent = FALSE,
         anisotropy = TRUE,
         family = tweedie(link = "log"),
-        fold_ids = clust
+        fold_ids = clust,
+        parallel = TRUE
+        
       )
     } else{
       ll <- sdmTMB_cv(
@@ -138,7 +151,9 @@ evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
         silent = FALSE,
         anisotropy = TRUE,
         family = tweedie(link = "log"),
-        fold_ids = clust
+        fold_ids = clust,
+        parallel = TRUE
+        
       )
     }
     

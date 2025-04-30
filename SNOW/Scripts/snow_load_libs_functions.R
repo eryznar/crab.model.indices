@@ -22,6 +22,8 @@ library(concaveman)
 library(png)
 library(crabpack)
 library(data.table)
+library(future)
+library(future.apply)
 
 # Read in spatial layers
 source("Y:/KOD_Survey/EBS Shelf/Spatial crab/load.spatialdata.R")

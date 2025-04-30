@@ -71,6 +71,7 @@ fit_models <- function(data, category, years, dist, knots, region){
                     mesh = mesh2,
                     family = tweedie(link = "log"),
                     time = "year",
+                    extra_time = c(2020),
                     anisotropy = TRUE,
                     data = data2)
     } else{
@@ -167,12 +168,12 @@ dist <- "TW"
 # Fit models
 fit_models(data, category, years, dist, knots = 50, region) -> all.mf.50
 fit_models(data, category, years, dist, knots = 90, region) -> all.mf.90
-fit_models(data, category, years, dist, knots = 120, region) -> all.mf.120 # doesn't fit!!!
+fit_models(data, category, years, dist, knots = 120, region) -> all.mf.120
 
 ## Male EBS-NBS DG -----
 data <- snow.male95.cpue 
 category <- "Male95"
-region <- "all"
+region <- "All"
 dist <- "DG"
 
 # Fit models
@@ -183,11 +184,11 @@ fit_models(data, category, years, dist, knots = 120, region) -> all.m.120
 ## Male EBS-NBS TW -----
 data <- snow.male95.cpue 
 category <- "Male95"
-region <- "all"
+region <- "All"
 dist <- "TW"
 
 # Fit models
-fit_models(data, category, years, dist, knots = 50, region) -> all.m.50
+fit_models(data, category, years, dist, knots = 50, region) -> all.m.50 # doesn't fit!!!
 fit_models(data, category, years, dist, knots = 90, region) -> all.m.90
 fit_models(data, category, years, dist, knots = 120, region) -> all.m.120
 

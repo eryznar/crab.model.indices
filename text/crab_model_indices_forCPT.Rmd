@@ -50,13 +50,13 @@ nsrkc.resid <- read.csv(paste0(here::here(), "/NSRKC/output/nsrkc_compare_resid.
 
 # Introduction {-}
 
-The goal of this investigation was to develop spatiotemporal model-based indices of abundance for three Bering Sea and Aleutian Islands (BSAI) crab stocks: Tanner crab (*Chionoecetes bairdi*), St. Matthew Island blue king crab (*Paralithodes platypus*), and Norton Sound red king crab (*Paralithodes camtschaticus*). Research suggests that spatiotemporal model-based indices can be more robust to survey changes than are design-based indices, though the models must be well-specified (Yalcin et al. 2023). Spatiotemporal model-based indices are used in North Pacific Fishery Management Council (NPFMC) groundfish stock assessments for species including Eastern Bering Sea (EBS) walleye pollock (*Gadus chalcogrammus*) and EBS Pacific cod (*Gadus macrocephalus*), both of which use the vector-autoregressive spatial temporal (VAST) approach (Thorson 2019) to produce indices used in the assessments (Ianelli et al. 2024; Barbeaux et al. 2024). Previous BSAI crab stock assessments have presented models using spatiotemporal model-based indices (e.g., Ianelli et al. 2017), although these models were not accepted for harvest specifications (SSC 2017). 
+The goal of this investigation was to develop spatiotemporal model-based indices of abundance for three Bering Sea and Aleutian Islands (BSAI) crab stocks: Tanner crab (*Chionoecetes bairdi*), snow crab (*Chionoecetes opilio*), St. Matthew Island blue king crab (*Paralithodes platypus*), and Norton Sound red king crab (*Paralithodes camtschaticus*). Research suggests that spatiotemporal model-based indices can be more robust to survey changes than are design-based indices, though the models must be well-specified (Yalcin et al. 2023). Spatiotemporal model-based indices are used in North Pacific Fishery Management Council (NPFMC) groundfish stock assessments for species including Eastern Bering Sea (EBS) walleye pollock (*Gadus chalcogrammus*) and EBS Pacific cod (*Gadus macrocephalus*), both of which use the vector-autoregressive spatial temporal (VAST) approach (Thorson 2019) to produce indices used in the assessments (Ianelli et al. 2024; Barbeaux et al. 2024). Previous BSAI crab stock assessments have presented models using spatiotemporal model-based indices (e.g., Ianelli et al. 2017), although these models were not accepted for harvest specifications (SSC 2017). 
 
 We generated biomass and abundance estimates using the R package *sdmTMB* (Anderson et al. 2022), which uses geostatistical time series data to estimate spatial and spatiotemporal generalized linear mixed effects models. This approach allows for index standardization when the set of stations surveyed is not consistent across years: one can generate a spatial grid that covers the area of interest, predict from the model onto that grid, and sum the predicted abundance/biomass to obtain an area-weighted index that is independent of sampling locations (Anderson et al. 2022).
 
-All three stock assessments for the crab stocks presented here use data from the National Marine Fisheries Service (NMFS) Eastern Bering Sea (EBS) bottom trawl survey (Stockhausen 2024; Hamazaki 2024; Stern and Palof 2024). The St. Matthew Island blue king crab stock assessment also uses data from the Alaska Department of Fish and Game (ADF&G) St. Matthew Island blue king crab pot survey, while the Norton Sound red king crab stock assessment uses data from the NMFS Northern Bering Sea bottom trawl survey and the ADF&G Norton Sound red king crab trawl survey. 
+All four stock assessments for the crab stocks presented here use data from the National Marine Fisheries Service (NMFS) Eastern Bering Sea (EBS) bottom trawl survey (Stockhausen 2024; Hamazaki 2024; Stern and Palof 2024). The St. Matthew Island blue king crab stock assessment also uses data from the Alaska Department of Fish and Game (ADF&G) St. Matthew Island blue king crab pot survey, while the Norton Sound red king crab stock assessment uses data from the NMFS Northern Bering Sea bottom trawl survey and the ADF&G Norton Sound red king crab trawl survey. 
 
-Spatiotemporal model-based index development is expected to confer distinct advantages for each of the three stocks. For the St. Matthew Island blue king crab stock, standardizing the survey indices could allow the assessment to use the existing survey data more rigorously. The NMFS EBS trawl survey is undergoing changes including dropping the high sampling density "corner stations" near St. Matthew Island from 2024 onward (DeFilippo et al. 2023; Stern & Palof 2024); index standardization will allow the assessment to continue using the full time series of data despite changes in the spatial footprint of the survey. For Norton Sound red king crab, a model-based approach could provide a more consistent way to combine the three existing trawl survey data sets into a single index of abundance. For Tanner crab, spatiotemporal model-indices will permit index standardization across the full survey time series despite changes in the survey footprint in early survey years. 
+Spatiotemporal model-based index development is expected to confer distinct advantages for each of the four stocks. For the St. Matthew Island blue king crab stock, standardizing the survey indices could allow the assessment to use the existing survey data more rigorously. The NMFS EBS trawl survey is undergoing changes including dropping the high sampling density "corner stations" near St. Matthew Island from 2024 onward (DeFilippo et al. 2023; Stern & Palof 2024); index standardization will allow the assessment to continue using the full time series of data despite changes in the spatial footprint of the survey. For Norton Sound red king crab, a model-based approach could provide a more consistent way to combine the three existing trawl survey data sets into a single index of abundance. For Tanner crab and snow crab, spatiotemporal model-indices will permit index standardization across the full survey time series despite changes in the survey footprint in early survey years. 
 
 Spatiotemporal index standardization can also be accomplished using vector autoregressive spatiotemporal models (VAST). However, compared to *sdmTMB*, VAST is often criticized for having a difficult user interface, slower estimation times, and less-flexible model specification. Therefore, we mainly use *sdmTMB* in the following index standardization. 
 
@@ -100,12 +100,15 @@ $\checkmark$ Range parameter doesn't look unreasonably large
 
 - We evaluated model predictive skill (the predictive ability of the model for new observations; Anderson *et al.* 2024) using the cross validation function sdmTMB_cv(). This function measures model predictive skill by holding out subsets of the data in turn and using each as a test set. These subsets of data are termed "folds". To compare models, we did cross validation with the same number of folds for each model then extracted the model's summed log-likelihood value, which represents the model's predictive density. Predictive density values closer to zero indicate better out-of-sample predictive skill. We also plotted model-predicted indices against observed values and examined goodness-of-fit. 
 
-- We also compared model-predicted indices using the best model framework for each stock with indices generated in VAST using a comparable framework to evaluate potential differences in index generation between model algorithms. 
+- We also compared model-predicted indices using the best model framework for each stock with indices generated in VAST (when available) using a comparable framework to evaluate potential differences in index generation between model algorithms. 
 
 ## Tanner crab {-}
 
 We utilized abundance and biomass data collected from the NMFS EBS bottom trawl survey (1975-2024) to fit Tanner crab models in *sdmTMB*. Sex-maturity categories included all males combined, immature females, and mature females, and data were filtered to only include crab with a carapace width greater than or equal to 25mm. As the survey gear and methods were standardized in 1982 (Stauffer 2004), we fit separate models to data before 1982 and data in and after 1982 for each sex-size/maturity category. To evaluate decision points for model formulations, we fit models using a 50-knot, 90-knot, and 120-knot mesh (Figures \@ref(fig:bairdi-50-mesh) - \@ref(fig:bairdi-120-mesh)), a Tweedie or delta-gamma model family, and a IID spatiotemporal random field. Models fit using the delta-lognormal family did not pass initial model sanity checks and models using an AR1 or random walk spatiotemporal random field did not converge. Therefore, we do not discuss these frameworks any further. The best model framework was used to predict Tanner crab abundance and biomass on an EBS-wide survey grid (Figure \@ref(fig:bairdi-EBS-grid)), a grid encompassing the EBS area west of 166° (for the Tanner West stock; Figure \@ref(fig:bairdi-west-grid), Appendix), and a grid encompassing the EBS area east of 166° (for the Tanner East stock; Figure \@ref(fig:bairdi-east-grid), Appendix). Each prediction grid was a resolution of 5 km$^2$.
 
+## Snow crab {-}
+
+We utilized biomass data collected from the NMFS bottom trawl survey (1980-2024) to fit snow crab models in *sdmTMB*. Sex-size/maturity categories included males greater than 95mm and mature females. To evaluate decision points for model formulations, we fit models using a 50-knot, 90-knot, and 120-knot mesh (Figures \@ref(fig:snow-50-mesh) - \@ref(fig:snow-120-mesh)), a Tweedie or delta-gamma model family, and a IID spatiotemporal random field. Models initially were fit using EBS data only then compared to models fit with both EBS and NBS data to evaluate if including NBS data enhanced model performance. The best model framework was then used to predict snow crab biomass on an EBS-wide survey grid (Figure \@ref(fig:snow-EBS-grid)). The prediction grid was a resolution of 5 km$^2$.
 
 ## Norton Sound red king crab {-}
 
@@ -140,6 +143,24 @@ The EBS-wide model-predicted indices using a delta-gamma family varied in their 
 
 ### Comparison of *sdmTMB* with VAST {-}
 For the EBS, abundance and biomass indices were similar between *sdmTMB* and VAST estimates (Figures \@ref(fig:EBSbairdi-abund-compare) - \@ref(fig:EBSbairdi-bio-compare)). Across sex-maturity categories, the greatest differences in *sdmTMB* and VAST estimates were in the pre-1982 period, with *sdmTMB* estimates generally exhibiting greater uncertainty in this period. Among sex-maturity categories, the greatest difference in estimates were for mature females, where *sdmTMB* estimates were generally slightly higher than VAST but still tracking the observed survey values. Similar patterns were seen in *sdmTMB* and VAST estimates for Tanner crab west of 166° (Figures \@ref(fig:Westbairdi-abund-compare) - \@ref(fig:Westbairdi-bio-compare), Appendix) and east of 166°(Figures \@ref(fig:Eastbairdi-abund-compare) - \@ref(fig:Eastbairdi-bio-compare), Appendix).
+
+## Snow crab {-}
+
+### Model diagnostics {-}
+
+All models passed sanity checks. Model diagnostics using DHARMa residuals varied among the number of knots specified in the mesh (50, 90, 120) and model family (Tweedie, delta-gamma) for biomass (Table \@ref(tab:snow-bio-modeleval)) models. For male biomass using EBS data only, a delta-gamma model using 50 knots had the largest log-likelihood. This model showed evidence of quantile deviation, dispersion, and outliers. For mature female biomass using EBS data only, a Tweedie model using 50 knots had the greatest log-likelihood. This model showed evidence of quantile deviation, dispersion, outliers, and zero-inflation where the delta-gamma model did not show evidence of dispersion. For male biomass fit with EBS and NBS data...For mature female biomass fit with EBS and NBS data...
+
+Accounting for strong model performance across sex-maturity categories, we selected the delta-gamma model family and a 50-knot mesh as a parsimonious model framework for prediction. DHARMa residuals for these models across sex-maturity categories and periods did not strongly diverge from the 1-1 line (Figure \@ref(fig:snow_DHARMa-bio-QQ-50)) despite some evidence of quantile dispersion. In addition, DHARMa residuals for these models did not show evidence of spatiotemporal autocorrelation (Figures \@ref(fig:snow_DHARMa-bio-spat-50-male) - \@ref(fig:snow_DHARMa-bio-spat-50-matfem)).
+
+### Predicted abundance and biomass {-}
+
+Heat maps of EBS-wide predicted biomass for snow crab males and mature females are shown in figures \@ref(fig:snow_spatpred-bio-50-male) - \@ref(fig:snow_spatpred-bio-50-matfem), respectively, using our chosen model framework (delta-gamma, 50 knots). 
+
+### Predicted index fits to observations {-}
+The EBS-wide model-predicted indices using a delta-gamma family varied in their fits to survey biomass observations (Figure \@ref(fig:snow-bio-index)) between sex-size/maturity categories. Between sex-maturity categories, model fits with different knots were most variable before 1982, which could be due to high variability in the spatial footprint of the survey in this period. In this period, uncertainty was generally greater in indices predicted using 50 knots, with the majority of survey observations points and associated uncertainty overlapping with model predicted values and uncertainty. From 1982 onward, indices predicted at different knots are less variable compared with each other, with models using 50 knots generally exhibiting greater uncertainty than 90 and 120 knots. As before, the majority of survey observations points and associated uncertainty overlap with model predicted values and uncertainty across knot specifications. 
+
+### Comparison of *sdmTMB* with VAST {-}
+Updated VAST indices for snow crab are not available, so we only present sdmTMB indices. 
 
 ## St. Matthew Island blue king crab {-}
 
@@ -278,6 +299,29 @@ library(kableExtra)
 
 df %>%
   kable(booktabs = TRUE, caption = "Tanner crab diagnostic values for biomass models fit with Tweedie or delta gamma families and a spatial resolution of 50, 90, or 120 knots across sex-size maturity categories and model-fitting periods (pre-1982, during or after 1982). Log-likelihood values were estimated using the cross-validation function in sdmTMB with 3 folds. Quantile, dispersion, outlier, and zero-inflation diagnostics were estimated from DHARMa residuals, with values below 0.05 indicating significant metrics. Values are ordered within sex-size maturity category and period by decreasing log-likelihood.", digits = c(1)) %>%
+  kable_styling(full_width = FALSE, latex_options = "scale_down",
+                row_label_position='c') %>%
+  kable_paper(full_width = FALSE) 
+
+
+```
+
+\clearpage
+
+```{r snow-bio-modeleval, results = "asis", out.width= "50%"}
+df <- read.csv(here::here("./SNOW/Output/model_eval_bio.csv")) %>%
+  dplyr::select(!c(type, method)) %>%
+  rename("Category" = category, "Region" = region, "Knots"= knots, "Family" = dist, "Log-likelihood" = loglik, "Quantiles" = quantiles, "Dispersion" = dispersion, "Outliers" = outliers, "Zero-inflation" = zeroinf) %>%
+  dplyr::select(c("Category", "Period", "Family", "Knots", "Log-likelihood", "Quantiles", "Dispersion", "Outliers", "Zero-inflation")) %>%
+  mutate(Family = case_when((Family == "DG") ~ "Delta-gamma",
+                            TRUE ~ "Tweedie"),
+         Region = case_when((Region == "All") ~ "EBS-NBS",
+                            TRUE ~ "EBS"))
+
+library(kableExtra)
+
+df %>%
+  kable(booktabs = TRUE, caption = "Snow crab diagnostic values for biomass models fit with Tweedie or delta gamma families and a spatial resolution of 50, 90, or 120 knots across sex-size/maturity categories and regions (EBS only, EBS-NBS. Log-likelihood values were estimated using the cross-validation function in sdmTMB with 3 folds. Quantile, dispersion, outlier, and zero-inflation diagnostics were estimated from DHARMa residuals, with values below 0.05 indicating significant metrics. Values are ordered within sex-size/maturity category and period by decreasing log-likelihood.", digits = c(1)) %>%
   kable_styling(full_width = FALSE, latex_options = "scale_down",
                 row_label_position='c') %>%
   kable_paper(full_width = FALSE) 
@@ -438,6 +482,85 @@ knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.abundance.sdmTMBVAS
 ```{r EBSbairdi-bio-compare, fig.align = "center", fig.cap = "Estimated biomass (tons; ±95% CI) for Eastern Bering Sea Tanner crab predicted using sdmTMB (pink) and VAST (blue). Both algorithms fit models using a delta-gamma family at 50 knots. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.biomass.sdmTMBVASTindex.png"))
+```
+
+\pagebreak
+
+```{r snow-EBS-grid, fig.align = "center", fig.cap = "Eastern Bering Sea prediction grid used for snow crab spatial abundance and biomass predictions. Spatial resolution is 5km$^2$ and does not include land."}
+
+knitr::include_graphics(here::here("SNOW/Figures/EBS_predgrid.png"))
+```
+
+```{r snow-50-mesh, fig.align = "center", fig.cap = "Spatial mesh with 50 knots used for fitting snow crab spatial models. Points represent observations and vertices represent knot locations. The title denotes the realized number of knots after mesh generation. "}
+
+knitr::include_graphics(here::here("SNOW/Figures/mesh50.png"))
+```
+
+```{r snow-90-mesh, fig.align = "center", fig.cap = "Spatial mesh with 90 knots used for fitting snow crab spatial models. Points represent observations and vertices represent knot locations. The title denotes the realized number of knots after mesh generation. "}
+
+knitr::include_graphics(here::here("SNOW/Figures/mesh90.png"))
+```
+
+```{r snow-120-mesh, fig.align = "center", fig.cap = "Spatial mesh with 120 knots used for fitting snow crab spatial models. Points represent observations and vertices represent knot locations. The title denotes the realized number of knots after mesh generation. "}
+
+knitr::include_graphics(here::here("SNOW/Figures/mesh120.png"))
+```
+
+```{r snow-DHARMa-biomass-QQ-50-EBS, fig.align = "center", fig.cap = "Q-Q plot of DHARMa residuals for biomass models fit with NMFS summer bottom trawl survey data from the EBS only using a delta-gamma model family and 50 knots in the model mesh."}
+
+knitr::include_graphics(here::here("SNOW/Figures/DHARMa_biomass_50-Delta-gamma_QQplot-EBS.png"))
+```
+
+
+```{r snow-DHARMa-bio-spat-50-male-EBS, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for males > 95mm biomass models fit using NMFS summer bottom trawl survey data from the EBS only with a 50-knot mesh and a delta-gamma model family.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("SNOW/Figures/DHARMa_Male95_biomass-50-Delta_gamma_SPATIAL-EBS.png"))
+```
+
+
+```{r snow-DHARMa-bio-spat-50-matfem-EBS, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for mature female biomass models fit using NMFS summer bottom trawl survey data from the EBS only with a 50-knot mesh and a delta-gamma model family.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("SNOW/Figures/DHARMa_Mature female_biomass-50-Delta_gamma_SPATIAL-EBS.png"))
+```
+
+```{r snow-DHARMa-bio-spat-50-male-EBSNBS, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for males > 95mm biomass models fit using NMFS summer bottom trawl survey data from the EBS and NBS with a 50-knot mesh and a delta-gamma model family.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("SNOW/Figures/DHARMa_Male95_biomass-50-Delta_gamma_SPATIAL-EBSNBS.png"))
+```
+
+
+```{r snow-DHARMa-bio-spat-50-matfem-EBS, fig.align = "center", fig.cap = "Spatial plot of DHARMa residuals for mature female biomass models fit using NMFS summer bottom trawl survey data from the EBS and NBS with a 50-knot mesh and a delta-gamma model family.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("SNOW/Figures/DHARMa_Mature female_biomass-50-Delta_gamma_SPATIAL-EBSNBS.png"))
+```
+
+
+```{r snow-spatpred-bio-50-male-EBS, fig.align = "center", fig.cap = "Spatial predictions of male (>95mm) abundance across the Eastern Bering Sea using NMFS summer bottom trawl survey data from the EBS only with a 50-knot mesh and a delta-gamma model family. .", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("SNOW/Figures/EBS_Male95_spatabund.png"))
+```
+
+
+```{r snow-spatpred-bio-50-matfem-EBS, fig.align = "center", fig.cap = "Spatial predictions of mature female abundance across the Eastern Bering Sea using NMFS summer bottom trawl survey data from the EBS only with a 50-knot mesh and a delta-gamma model family. .", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("SNOW/Figures/EBS_Mature Female_spatabund.png"))
+```
+
+```{r snow-spatpred-bio-50-male-EBSNBS, fig.align = "center", fig.cap = "Spatial predictions of male (>95mm) abundance across the Eastern Bering Sea using NMFS summer bottom trawl survey data from the EBS and NBS with a 50-knot mesh and a delta-gamma model family. .", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("SNOW/Figures/EBSNBS_Male95_spatabund.png"))
+```
+
+
+```{r snow-spatpred-bio-50-matfem-EBS, fig.align = "center", fig.cap = "Spatial predictions of mature female abundance across the Eastern Bering Sea using NMFS summer bottom trawl survey data from the EBS and NBS with a 50-knot mesh and a delta-gamma model family. .", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("SNOW/Figures/EBSNBS_Mature Female_spatabund.png"))
+```
+
+
+```{r snow-bio-index, fig.align = "center", fig.cap = "Estimated biomass (tons) for Eastern Bering Sea snow crab. Colored lines represent biomass (±95% CI) estimated by sdmTMB in a delta-model frameword, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent biomass (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("SNOW/Figures/snow.biomass.index.png"))
 ```
 
 

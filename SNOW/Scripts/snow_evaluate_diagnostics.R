@@ -11,7 +11,9 @@
 source("./SNOW/Scripts/load_libs_functions.R")
 
 ### Set parallel processing for sdmTMB_cv()
+parallelly::availableCores()
 plan(multisession, workers =4)
+options(future.globals.maxSize = 1000 * 1024^2)
 
 ### LOAD FUNCTION --------------------------------------------------------------
 evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
@@ -101,6 +103,7 @@ evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
         spatiotemporal = "ar1",
         extra_time = c(2020),
         silent = FALSE,
+        use_initial_fit = TRUE,
         anisotropy = TRUE,
         family = delta_gamma(type = "poisson-link"),
         fold_ids = clust,
@@ -114,6 +117,7 @@ evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
         time = "year",
         mesh = model$spde,
         spatiotemporal = "iid",
+        use_initial_fit = TRUE,
         silent = FALSE,
         anisotropy = TRUE,
         family = delta_gamma(type = "poisson-link"),
@@ -133,6 +137,7 @@ evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
         mesh = model$spde,
         spatiotemporal = "ar1",
         extra_time = c(2020),
+        use_initial_fit = TRUE,
         silent = FALSE,
         anisotropy = TRUE,
         family = tweedie(link = "log"),
@@ -148,6 +153,7 @@ evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
         time = "year",
         mesh = model$spde,
         spatiotemporal = "iid",
+        use_initial_fit = TRUE,
         silent = FALSE,
         anisotropy = TRUE,
         family = tweedie(link = "log"),

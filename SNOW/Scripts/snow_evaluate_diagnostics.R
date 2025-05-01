@@ -12,7 +12,7 @@ source("./SNOW/Scripts/load_libs_functions.R")
 
 ### Set parallel processing for sdmTMB_cv()
 parallelly::availableCores()
-plan(multisession, workers =4)
+plan(multisession, workers =6)
 options(future.globals.maxSize = 1000 * 1024^2)
 
 ### LOAD FUNCTION --------------------------------------------------------------
@@ -180,9 +180,9 @@ evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
   
   write.csv(eval.df, paste0(dir, "Output/DHARMa_", mod, "_modeleval.csv"))
   
-  saveRDS(resids, paste0(dir, "Output/DHARMa_", mod, ".csv"))
+ # saveRDS(resids, paste0(dir, "Output/DHARMa_", mod, ".csv"))
   
-  return(list(resids, eval.df))
+  return(list(eval.df))
 } 
 
 

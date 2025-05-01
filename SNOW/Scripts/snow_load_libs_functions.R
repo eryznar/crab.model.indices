@@ -41,14 +41,14 @@ nbs_grid <- read.csv(here::here(paste0(dir, "Data/nbs_coarse_grid.csv")))
 
 
 # Plot EBS pred grid
-ggplot(ebsnbs_grid, aes(X, Y))+
+ggplot(ebs_grid, aes(X, Y))+
   geom_point(size = 1, color = "darkgrey")+
   theme_bw()+
-  ggtitle("EBS/NBS prediction grid")+
+  ggtitle("EBS prediction grid")+
   ylab("Latitude")+
   xlab("Longitude")
 
-#ggsave(plot = EBS.pg, "./BAIRDI/Figures/EBS_predgrid.png", height = 4, width =6, units = "in")
+ggsave("./SNOW/Figures/EBS_predgrid.png", height = 4, width =6, units = "in")
 
 
 ### PROCESS DATA -----------------------------------------------------------------

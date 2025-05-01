@@ -285,3 +285,90 @@ model120 <- readRDS(paste0(dir, "Models/snow_All_Male95_120_TW_bioTMB.rda"))
 
 evaluate_diagnostics(data, model90, category, region, knots = 90, dist = "TW") -> all.m.TW90
 evaluate_diagnostics(data, model120, category, region, knots = 120, dist = "TW") -> all.m.TW120
+
+
+### COMBINE EVALUATION OUTPUTS ----------------
+files <- list.files(paste0(dir, "Output/"))
+
+model_eval <- files[grep("_modeleval.csv", files)] %>%
+  purrr::map_df(~read.csv(paste0(dir, "Output/", .))) %>%
+  group_by(category) %>%
+  arrange(desc(loglik), .by_group = TRUE)
+
+### EVALUATE MESH --------------
+snow.male95.cpue %>%
+  filter(region == "EBS") %>%
+  group_by(year) %>%
+  reframe(N = n()) %>%
+  filter(N == min(N)) # mesh vertices need to be less than 305
+
+# EBS
+mesh50 <- readRDS(paste0(dir, "Models/snow_EBS_Male95_50_DG_bioTMB.rda"))$spde$mesh
+mesh90 <- readRDS(paste0(dir, "Models/snow_EBS_Male95_90_DG_bioTMB.rda"))$spde$mesh
+mesh120 <- readRDS(paste0(dir, "Models/snow_EBS_Male95_120_DG_bioTMB.rda"))$spde$mesh
+
+ggplot(snow.male95.cpue %>% filter(year %in% years, region == "EBS")) + 
+  inlabru::gg(mesh50) + 
+  geom_point(aes(x = lon, y = lat), size = 0.5) +
+  theme_bw() +
+  ggtitle(paste0("Specified knots = 50, realized knots=", mesh50$n))+
+  labs(x = "X", y = "Y")+
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12)) -> ebs.50
+
+ggplot(snow.male95.cpue %>% filter(year %in% years, region == "EBS")) + 
+  inlabru::gg(mesh90) + 
+  geom_point(aes(x = lon, y = lat), size = 0.5) +
+  theme_bw() +
+  ggtitle(paste0("Specified knots = 90, realized knots=", mesh90$n))+
+  labs(x = "X", y = "Y")+
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12)) -> ebs.90
+
+ggplot(snow.male95.cpue %>% filter(year %in% years, region == "EBS")) + 
+  inlabru::gg(mesh120) + 
+  geom_point(aes(x = lon, y = lat), size = 0.5) +
+  theme_bw() +
+  ggtitle(paste0("Specified knots = 120, realized knots=", mesh120$n))+
+  labs(x = "X", y = "Y") +
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12)) -> ebs.120
+
+ggpubr::ggarrange(ebs.50, ebs.90, ebs.120, nrow = 3)
+ggsave("./SNOW/Figures/snow_EBS_mesh.png", width = 5, height = 9)
+
+# EBS-NBS
+mesh50 <- readRDS(paste0(dir, "Models/snow_All_Male95_50_DG_bioTMB.rda"))$spde$mesh
+mesh90 <- readRDS(paste0(dir, "Models/snow_All_Male95_90_DG_bioTMB.rda"))$spde$mesh
+mesh120 <- readRDS(paste0(dir, "Models/snow_All_Male95_120_DG_bioTMB.rda"))$spde$mesh
+
+ggplot(snow.male95.cpue %>% filter(year %in% years)) + 
+  inlabru::gg(mesh50) + 
+  geom_point(aes(x = lon, y = lat), size = 0.5) +
+  theme_bw() +
+  ggtitle(paste0("Specified knots = 50, realized knots=", mesh50$n))+
+  labs(x = "X", y = "Y")+
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12)) -> all.50
+
+ggplot(snow.male95.cpue %>% filter(year %in% years)) + 
+  inlabru::gg(mesh90) + 
+  geom_point(aes(x = lon, y = lat), size = 0.5) +
+  theme_bw() +
+  ggtitle(paste0("Specified knots = 90, realized knots=", mesh90$n))+
+  labs(x = "X", y = "Y")+
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12)) -> all.90
+
+ggplot(snow.male95.cpue %>% filter(year %in% years)) + 
+  inlabru::gg(mesh120) + 
+  geom_point(aes(x = lon, y = lat), size = 0.5) +
+  theme_bw() +
+  ggtitle(paste0("Specified knots = 120, realized knots=", mesh120$n))+
+  labs(x = "X", y = "Y") +
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12)) -> all.120
+
+ggpubr::ggarrange(all.50, all.90, all.120, nrow = 3)
+ggsave("./SNOW/Figures/snow_EBS-NBS_mesh.png", width = 5, height = 9)
+

@@ -108,7 +108,7 @@ We utilized abundance and biomass data collected from the NMFS EBS bottom trawl 
 
 ## Snow crab {-}
 
-We utilized biomass data collected from the NMFS bottom trawl survey (1980-2024) to fit snow crab models in *sdmTMB*. Sex-size/maturity categories included males greater than 95mm and mature females. To evaluate decision points for model formulations, we fit models using a 50-knot, 90-knot, and 120-knot mesh (Figures \@ref(fig:snow-50-mesh) - \@ref(fig:snow-120-mesh)), a Tweedie or delta-gamma model family, and a IID spatiotemporal random field. Models initially were fit using EBS data only then compared to models fit with both EBS and NBS data to evaluate if including NBS data enhanced model performance. The best model framework was then used to predict snow crab biomass on an EBS-wide survey grid (Figure \@ref(fig:snow-EBS-grid)). The prediction grid was a resolution of 5 km$^2$.
+We utilized biomass data collected from the NMFS bottom trawl survey (1980-2024) to fit snow crab models in *sdmTMB*. Sex-size/maturity categories included males greater than 95mm and mature females. To evaluate decision points for model formulations, we fit models using a 50-knot, 90-knot, and 120-knot mesh for EBS data only (Figure \@ref(fig:snow-EBS-mesh)) and EBS-NBS data combined (Figure \@ref(fig:snow-NBS-mesh)), a Tweedie or delta-gamma model family, and a IID spatiotemporal random field for EBS-only models and an AR1 random field for EBS-NBS models. Models initially were fit using EBS data only then compared to models fit with both EBS and NBS data to evaluate if including NBS data enhanced model performance. The best model framework was then used to predict snow crab biomass on an EBS-wide survey grid (Figure \@ref(fig:snow-EBS-grid)). The prediction grid was a resolution of 5 km$^2$.
 
 ## Norton Sound red king crab {-}
 
@@ -321,7 +321,7 @@ df <- read.csv(here::here("./SNOW/Output/model_eval_bio.csv")) %>%
 library(kableExtra)
 
 df %>%
-  kable(booktabs = TRUE, caption = "Snow crab diagnostic values for biomass models fit with Tweedie or delta gamma families and a spatial resolution of 50, 90, or 120 knots across sex-size/maturity categories and regions (EBS only, EBS-NBS. Log-likelihood values were estimated using the cross-validation function in sdmTMB with 3 folds. Quantile, dispersion, outlier, and zero-inflation diagnostics were estimated from DHARMa residuals, with values below 0.05 indicating significant metrics. Values are ordered within sex-size/maturity category and period by decreasing log-likelihood.", digits = c(1)) %>%
+  kable(booktabs = TRUE, caption = "Snow crab diagnostic values for biomass models fit with Tweedie or delta gamma families and a spatial resolution of 50, 90, or 120 knots across sex-size/maturity categories and regions (EBS only, EBS-NBS. Log-likelihood values were estimated using the cross-validation function in sdmTMB with 3 folds. Quantile, dispersion, outlier, and zero-inflation diagnostics were estimated from DHARMa residuals, with values below 0.05 indicating significant metrics. Values are ordered within sex-size/maturity category by decreasing log-likelihood.", digits = c(1)) %>%
   kable_styling(full_width = FALSE, latex_options = "scale_down",
                 row_label_position='c') %>%
   kable_paper(full_width = FALSE) 
@@ -370,10 +370,6 @@ print(tab, caption.placement = "top", include.rownames = FALSE, booktabs = T, si
 
 # Figures {-}
 
-```{r bairdi-EBS-grid, fig.align = "center", fig.cap = "Eastern Bering Sea prediction grid used for Tanner crab spatial abundance and biomass predictions. Spatial resolution is 5km$^2$ and does not include land."}
-
-knitr::include_graphics(here::here("BAIRDI/Figures/EBS_predgrid.png"))
-```
 
 ```{r bairdi-50-mesh, fig.align = "center", fig.cap = "Spatial mesh with 50 knots used for fitting Tanner crab spatial models. Points represent observations and vertices represent knot locations. The title denotes the realized number of knots after mesh generation. "}
 
@@ -388,6 +384,11 @@ knitr::include_graphics(here::here("BAIRDI/Figures/mesh90.png"))
 ```{r bairdi-120-mesh, fig.align = "center", fig.cap = "Spatial mesh with 120 knots used for fitting Tanner crab spatial models. Points represent observations and vertices represent knot locations. The title denotes the realized number of knots after mesh generation. "}
 
 knitr::include_graphics(here::here("BAIRDI/Figures/mesh120.png"))
+```
+
+```{r bairdi-EBS-grid, fig.align = "center", fig.cap = "Eastern Bering Sea prediction grid used for Tanner crab spatial abundance and biomass predictions. Spatial resolution is 5km$^2$ and does not include land."}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/EBS_predgrid.png"))
 ```
 
 ```{r DHARMa-abund-QQ-50, fig.align = "center", fig.cap = "Q-Q plot of DHARMa residuals for abundance models fit with NMFS summer bottom trawl survey data before 1982 (left) and 1982 onward (right) using a delta-gamma model family and 50 knots in the model mesh."}
@@ -485,26 +486,23 @@ knitr::include_graphics(here::here("BAIRDI/Figures/TannerEBS.biomass.sdmTMBVASTi
 ```
 
 \pagebreak
+```{r snow-EBS-mesh, fig.align = "center", fig.cap = "Eastern Bering Sea spatial mesh with 50-, 90-, and 120- knots used for fitting snow crab spatial models. Points represent observations and vertices represent knot locations. The title denotes the realized number of knots after mesh generation. "}
+
+knitr::include_graphics(here::here("SNOW/Figures/snow_EBS_mesh.png"))
+```
+
+```{r snow-NBS-mesh, fig.align = "center", fig.cap = "Eastern Bering Sea and Northern Bering Sea spatial mesh with 50-, 90-, and 120- knots used for fitting snow crab spatial models. Points represent observations and vertices represent knot locations. The title denotes the realized number of knots after mesh generation. "}
+
+knitr::include_graphics(here::here("SNOW/Figures/snow_EBS-NBS_mesh.png"))
+```
 
 ```{r snow-EBS-grid, fig.align = "center", fig.cap = "Eastern Bering Sea prediction grid used for snow crab spatial abundance and biomass predictions. Spatial resolution is 5km$^2$ and does not include land."}
 
 knitr::include_graphics(here::here("SNOW/Figures/EBS_predgrid.png"))
 ```
 
-```{r snow-50-mesh, fig.align = "center", fig.cap = "Spatial mesh with 50 knots used for fitting snow crab spatial models. Points represent observations and vertices represent knot locations. The title denotes the realized number of knots after mesh generation. "}
 
-knitr::include_graphics(here::here("SNOW/Figures/mesh50.png"))
-```
 
-```{r snow-90-mesh, fig.align = "center", fig.cap = "Spatial mesh with 90 knots used for fitting snow crab spatial models. Points represent observations and vertices represent knot locations. The title denotes the realized number of knots after mesh generation. "}
-
-knitr::include_graphics(here::here("SNOW/Figures/mesh90.png"))
-```
-
-```{r snow-120-mesh, fig.align = "center", fig.cap = "Spatial mesh with 120 knots used for fitting snow crab spatial models. Points represent observations and vertices represent knot locations. The title denotes the realized number of knots after mesh generation. "}
-
-knitr::include_graphics(here::here("SNOW/Figures/mesh120.png"))
-```
 
 ```{r snow-DHARMa-male95-QQ-50-EBS, fig.align = "center", fig.cap = "Q-Q plot of DHARMa residuals for male (>95mm) biomass snow crab models fit with NMFS summer bottom trawl survey data from the EBS only using a delta-gamma model family and 50 knots in the model mesh."}
 

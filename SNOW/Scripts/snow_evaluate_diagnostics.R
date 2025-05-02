@@ -8,15 +8,18 @@
 # 1)
 
 ### LOAD LIBRARIES/DATA ----------------------------- ---------------------------
-source("./SNOW/Scripts/load_libs_functions.R")
+source("./SNOW/Scripts/snow_load_libs_functions.R")
 
 ### Set parallel processing for sdmTMB_cv()
 parallelly::availableCores()
+options(future.globals.maxSize = 2 * 1024^3) 
 plan(multisession, workers =6)
-options(future.globals.maxSize = 1000 * 1024^2)
+
 
 ### LOAD FUNCTION --------------------------------------------------------------
 evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
+  
+  gc()
   
   mod <- paste0(category, "-", reg, "-", knots, "-", dist)
   
@@ -253,7 +256,7 @@ model120 <- readRDS(paste0(dir, "Models/snow_All_Mature female_120_DG_bioTMB.rda
 
 evaluate_diagnostics(data, model50, category, region, knots = 50, dist = "DG") -> all.mf.DG50
 evaluate_diagnostics(data, model90, category, region, knots = 90, dist = "DG") -> all.mf.DG90
-evaluate_diagnostics(data, model120, category, region, knots = 120, dist = "DG") -> all.mf.DG120
+evaluate_diagnostics(data, model120, category, region, knots = 120, dist = "DG") -> all.mf.DG120 # NEED RUN
 
 ## Mature female EBS-NBS TW ----
 data <- snow.matfem.cpue

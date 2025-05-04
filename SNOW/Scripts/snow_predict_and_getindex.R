@@ -43,7 +43,7 @@ ebs_grid2 <- ebs_grid %>%
   replicate_df(., "year", years) %>%
   rename(lon = X, lat = Y)
 
-## Mature female EBS 50 knots Delta gamma ----
+## Mature female EBS knots Delta gamma ----
 data <- snow.matfem.cpue
 category <- "Mature female"
 reg <- "EBS"
@@ -136,3 +136,123 @@ model120 <- readRDS(paste0(dir, "Models/snow_All_Male95_120_TW_bioTMB.rda"))
 
 predict_and_getindex(ebs_grid2, model90, category, reg, years, knots = 90, dist = "TW") -> all.m.TW90
 predict_and_getindex(ebs_grid2, model120, category, reg, years, knots = 120, dist = "TW") -> all.m.TW120
+
+## SPATIAL PREDICTION PLOTS ----
+## Male95 EBS DG 90
+ebs_grid2 %>%
+  filter(year %in% years) %>%
+  mutate(year_fac = as.factor(year)) -> newdat2
+
+pred_grid2 <- pred_grid %>%
+  st_as_sf(., coords = c("Lon", "Lat"), crs = "+proj=longlat +datum=WGS84") %>%
+  st_transform(., crs = "+proj=utm +zone=2") %>%
+  cbind(st_coordinates(.)) %>%
+  as.data.frame(.) %>%
+  dplyr::select(Area_km2, X, Y) %>%
+  replicate_df(., "year", years) %>%
+  mutate(X = X/1000, Y = Y/1000, year_fac = as.factor(year)) %>%
+  rename(lon = X, lat = Y)
+
+model90 <- readRDS(paste0(dir, "Models/snow_EBS_Male95_90_DG_bioTMB.rda"))
+
+
+out <- predict(model90, newdata= newdat2, return_tmb_object = T)
+
+bio <- out$data %>%
+        mutate(value =plogis(est1) * exp(est2))
+
+
+ggplot(bio) +
+  geom_tile(aes(y = lat, x = lon, fill = log(value)), width = 27, height = 27) +
+  scale_fill_viridis_c(name = expression(paste("log(kg ", km^-2, ")")))+
+  labs(y = "Latitude",
+       x = "Longitude") +
+  theme_bw() +
+  scale_x_continuous(breaks = c(250, 750, 1250))+
+  ggtitle("EBS predicted male (95mm) biomass (knots=90, EBS-only data)")+
+  facet_wrap(~year)+
+  theme(axis.title = element_text(size = 10),
+        legend.position = "bottom",
+        legend.direction = "horizontal")
+
+ggsave("./SNOW/Figures/EBS-90-DG-Male95_spatbio.png", width = 8.5, height = 9.5)
+
+
+
+## Mature female EBS DG 50
+
+model50 <- readRDS(paste0(dir, "Models/snow_EBS_Mature female_50_DG_bioTMB.rda"))
+
+out <- predict(model50, newdata= newdat2, return_tmb_object = T)
+
+bio <- out$data %>%
+  mutate(value =plogis(est1) * exp(est2))
+
+
+ggplot(bio) +
+  geom_tile(aes(y = lat, x = lon, fill = log(value)), width = 27, height = 27) +
+  scale_fill_viridis_c(name = expression(paste("log(kg ", km^-2, ")")))+
+  labs(y = "Latitude",
+       x = "Longitude") +
+  theme_bw() +
+  scale_x_continuous(breaks = c(250, 750, 1250))+
+  ggtitle("EBS predicted mature female biomass (knots=50, EBS-only data)")+
+  facet_wrap(~year)+
+  theme(axis.title = element_text(size = 10),
+        legend.position = "bottom",
+        legend.direction = "horizontal")
+
+ggsave("./SNOW/Figures/EBS-50-DG-matfem_spatbio.png", width = 8.5, height = 9.5)
+
+
+
+## Male95 EBSNBS DG 90
+model90 <- readRDS(paste0(dir, "Models/snow_All_Male95_90_DG_bioTMB.rda"))
+
+out <- predict(model90, newdata= newdat2, return_tmb_object = T)
+
+bio <- out$data %>%
+  mutate(value =plogis(est1) * exp(est2))
+
+
+ggplot(bio) +
+  geom_tile(aes(y = lat, x = lon, fill = log(value)), width = 27, height = 27) +
+  scale_fill_viridis_c(name = expression(paste("log(kg ", km^-2, ")")))+
+  labs(y = "Latitude",
+       x = "Longitude") +
+  theme_bw() +
+  scale_x_continuous(breaks = c(250, 750, 1250))+
+  ggtitle("EBS predicted male (95mm) biomass (knots=90, EBS-NBS data)")+
+  facet_wrap(~year)+
+  theme(axis.title = element_text(size = 10),
+        legend.position = "bottom",
+        legend.direction = "horizontal")
+
+ggsave("./SNOW/Figures/EBSNBS-90-DG-Male95_spatbio.png", width = 8.5, height = 9.5)
+
+
+
+## Mature female EBSNBS DG 50
+model50 <- readRDS(paste0(dir, "Models/snow_All_Mature female_50_DG_bioTMB.rda"))
+
+out <- predict(model50, newdata= newdat2, return_tmb_object = T)
+
+bio <- out$data %>%
+  mutate(value =plogis(est1) * exp(est2))
+
+
+ggplot(bio) +
+  geom_tile(aes(y = lat, x = lon, fill = log(value)), width = 27, height = 27) +
+  scale_fill_viridis_c(name = expression(paste("log(kg ", km^-2, ")")))+
+  labs(y = "Latitude",
+       x = "Longitude") +
+  theme_bw() +
+  scale_x_continuous(breaks = c(250, 750, 1250))+
+  ggtitle("EBS predicted mature female biomass (knots=50, EBS-NBS data)")+
+  facet_wrap(~year)+
+  theme(axis.title = element_text(size = 10),
+        legend.position = "bottom",
+        legend.direction = "horizontal")
+
+ggsave("./SNOW/Figures/EBSNBS-50-DG-matfem_spatbio.png", width = 8.5, height = 9.5)
+

@@ -91,82 +91,82 @@ evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
 
   ggsave(plot = res_plot, paste0("./SNOW/Figures/DHARMa_", mod, "_SPATIAL.png"), height = 10, width = 10, units = "in")
 
-  print("Calculating log-likelihood")
-  # Calculate log-likelihood
-  clust <- sample(seq_len(10), size = nrow(model$data), replace = TRUE)
-  
-  if(dist == "DG"){
-    if(reg != "EBS"){
-      ll <- sdmTMB_cv(
-        data = model$data,
-        formula = cpue_kg_km ~ 0 + year_fac,
-        spatial = "on",
-        time = "year",
-        mesh = model$spde,
-        spatiotemporal = "ar1",
-        extra_time = c(2020),
-        silent = FALSE,
-        use_initial_fit = TRUE,
-        anisotropy = TRUE,
-        family = delta_gamma(type = "poisson-link"),
-        fold_ids = clust,
-        parallel = TRUE
-      )
-    } else{
-      ll <- sdmTMB_cv(
-        data = model$data,
-        formula = cpue_kg_km ~ 0 + year_fac,
-        spatial = "on",
-        time = "year",
-        mesh = model$spde,
-        spatiotemporal = "iid",
-        use_initial_fit = TRUE,
-        silent = FALSE,
-        anisotropy = TRUE,
-        family = delta_gamma(type = "poisson-link"),
-        fold_ids = clust,
-        parallel = TRUE
-        
-      )
-    }
-    
-  } else if(dist == "TW"){
-    if(reg != "EBS"){
-      ll <- sdmTMB_cv(
-        data = model$data,
-        formula = cpue_kg_km ~ 0 + year_fac,
-        spatial = "on",
-        time = "year",
-        mesh = model$spde,
-        spatiotemporal = "ar1",
-        extra_time = c(2020),
-        use_initial_fit = TRUE,
-        silent = FALSE,
-        anisotropy = TRUE,
-        family = tweedie(link = "log"),
-        fold_ids = clust,
-        parallel = TRUE
-        
-      )
-    } else{
-      ll <- sdmTMB_cv(
-        data = model$data,
-        formula = cpue_kg_km ~ 0 + year_fac,
-        spatial = "on",
-        time = "year",
-        mesh = model$spde,
-        spatiotemporal = "iid",
-        use_initial_fit = TRUE,
-        silent = FALSE,
-        anisotropy = TRUE,
-        family = tweedie(link = "log"),
-        fold_ids = clust,
-        parallel = TRUE
-        
-      )
-    }
-    
-  }
+  # print("Calculating log-likelihood")
+  # # Calculate log-likelihood
+  # clust <- sample(seq_len(10), size = nrow(model$data), replace = TRUE)
+  # 
+  # if(dist == "DG"){
+  #   if(reg != "EBS"){
+  #     ll <- sdmTMB_cv(
+  #       data = model$data,
+  #       formula = cpue_kg_km ~ 0 + year_fac,
+  #       spatial = "on",
+  #       time = "year",
+  #       mesh = model$spde,
+  #       spatiotemporal = "ar1",
+  #       extra_time = c(2020),
+  #       silent = FALSE,
+  #       use_initial_fit = TRUE,
+  #       anisotropy = TRUE,
+  #       family = delta_gamma(type = "poisson-link"),
+  #       fold_ids = clust,
+  #       parallel = TRUE
+  #     )
+  #   } else{
+  #     ll <- sdmTMB_cv(
+  #       data = model$data,
+  #       formula = cpue_kg_km ~ 0 + year_fac,
+  #       spatial = "on",
+  #       time = "year",
+  #       mesh = model$spde,
+  #       spatiotemporal = "iid",
+  #       use_initial_fit = TRUE,
+  #       silent = FALSE,
+  #       anisotropy = TRUE,
+  #       family = delta_gamma(type = "poisson-link"),
+  #       fold_ids = clust,
+  #       parallel = TRUE
+  #       
+  #     )
+  #   }
+  #   
+  # } else if(dist == "TW"){
+  #   if(reg != "EBS"){
+  #     ll <- sdmTMB_cv(
+  #       data = model$data,
+  #       formula = cpue_kg_km ~ 0 + year_fac,
+  #       spatial = "on",
+  #       time = "year",
+  #       mesh = model$spde,
+  #       spatiotemporal = "ar1",
+  #       extra_time = c(2020),
+  #       use_initial_fit = TRUE,
+  #       silent = FALSE,
+  #       anisotropy = TRUE,
+  #       family = tweedie(link = "log"),
+  #       fold_ids = clust,
+  #       parallel = TRUE
+  #       
+  #     )
+  #   } else{
+  #     ll <- sdmTMB_cv(
+  #       data = model$data,
+  #       formula = cpue_kg_km ~ 0 + year_fac,
+  #       spatial = "on",
+  #       time = "year",
+  #       mesh = model$spde,
+  #       spatiotemporal = "iid",
+  #       use_initial_fit = TRUE,
+  #       silent = FALSE,
+  #       anisotropy = TRUE,
+  #       family = tweedie(link = "log"),
+  #       fold_ids = clust,
+  #       parallel = TRUE
+  #       
+  #     )
+  #   }
+  #   
+  # }
   
   print("Creating evaluation dataframe")
   # Combine evaluation df
@@ -175,7 +175,7 @@ evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
                         knots = knots,
                         dist = dist,
                         method = sptmp,
-                        loglik = ll$sum_loglik,
+                        loglik = NA,
                         quantiles = qq,
                         dispersion = dd,
                         outliers = oo,
@@ -297,12 +297,22 @@ evaluate_diagnostics(data, model120, category, region, knots = 120, dist = "TW")
 
 
 ### COMBINE EVALUATION OUTPUTS ----------------
+
 files <- list.files(paste0(dir, "Output/"))
 
 model_eval <- files[grep("_modeleval.csv", files)] %>%
   purrr::map_df(~read.csv(paste0(dir, "Output/", .))) %>%
-  group_by(category) %>%
+  dplyr::select(!X) %>%
+  rbind(data.frame(category = "Mature female", knots = c(90, 120), 
+                   region = "EBS", dist = "TW", method = "iid", loglik = NA, quantiles = NA, 
+                   dispersion = NA, outliers = NA, zeroinf = NA)) %>%
+  rbind(data.frame(category = "Male95", knots = c(50), 
+                   region = "All", dist = "TW", method = "ar1", loglik = NA, quantiles = NA, 
+                   dispersion = NA, outliers = NA, zeroinf = NA)) %>%
+  group_by(category, region) %>%
   arrange(desc(loglik), .by_group = TRUE)
+
+write.csv(model_eval, "./SNOW/Output/snow_modeleval_bio.csv")
 
 ### EVALUATE MESH --------------
 snow.male95.cpue %>%

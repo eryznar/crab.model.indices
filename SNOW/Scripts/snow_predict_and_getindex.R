@@ -143,16 +143,6 @@ ebs_grid2 %>%
   filter(year %in% years) %>%
   mutate(year_fac = as.factor(year)) -> newdat2
 
-pred_grid2 <- pred_grid %>%
-  st_as_sf(., coords = c("Lon", "Lat"), crs = "+proj=longlat +datum=WGS84") %>%
-  st_transform(., crs = "+proj=utm +zone=2") %>%
-  cbind(st_coordinates(.)) %>%
-  as.data.frame(.) %>%
-  dplyr::select(Area_km2, X, Y) %>%
-  replicate_df(., "year", years) %>%
-  mutate(X = X/1000, Y = Y/1000, year_fac = as.factor(year)) %>%
-  rename(lon = X, lat = Y)
-
 model90 <- readRDS(paste0(dir, "Models/snow_EBS_Male95_90_DG_bioTMB.rda"))
 
 
@@ -169,7 +159,7 @@ ggplot(bio) +
        x = "Longitude") +
   theme_bw() +
   scale_x_continuous(breaks = c(250, 750, 1250))+
-  ggtitle("EBS predicted male (95mm) biomass (knots=90, EBS-only data)")+
+  ggtitle("EBS predicted male (>95mm) biomass (knots=90, EBS-only data)")+
   facet_wrap(~year)+
   theme(axis.title = element_text(size = 10),
         legend.position = "bottom",
@@ -222,7 +212,7 @@ ggplot(bio) +
        x = "Longitude") +
   theme_bw() +
   scale_x_continuous(breaks = c(250, 750, 1250))+
-  ggtitle("EBS predicted male (95mm) biomass (knots=90, EBS-NBS data)")+
+  ggtitle("EBS predicted male (>95mm) biomass (knots=90, EBS-NBS data)")+
   facet_wrap(~year)+
   theme(axis.title = element_text(size = 10),
         legend.position = "bottom",

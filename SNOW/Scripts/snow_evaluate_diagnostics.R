@@ -391,3 +391,79 @@ ggplot(snow.male95.cpue %>% filter(year %in% years)) +
 ggpubr::ggarrange(all.50, all.90, all.120, nrow = 3)
 ggsave("./SNOW/Figures/snow_EBS-NBS_mesh.png", width = 5, height = 9)
 
+
+### FACETTED RESIDUAL PLOTS ----
+# EBS
+model50 <- readRDS(paste0(dir, "Models/snow_EBS_Mature female_50_DG_bioTMB.rda"))
+
+resid1 <- simulate(model50, nsim = 300, type= "mle-mvn")|>
+  dharma_residuals(model50, plot = FALSE)
+
+model90 <- readRDS(paste0(dir, "Models/snow_EBS_Male95_90_DG_bioTMB.rda"))
+
+resid2 <- simulate(model90, nsim = 300, type= "mle-mvn")|>
+  dharma_residuals(model90, plot = FALSE)
+
+residebs <- rbind(resid1 %>% mutate(category = "Mature female", region = "EBS"),
+               resid2 %>% mutate(category = "Male95", region = "EBS"))
+
+labs <- c("Male95" = "Males > 95mm (knots = 90)",
+          "Mature female" = "Mature female (knots = 50)")
+
+ggplot()+
+  theme_bw()+
+  geom_point(resid, mapping = aes(expected, observed), size = 2, fill = "black")+
+  geom_abline(slope = 1, intercept = 0, color = "red", linewidth = 1)+
+  ylab("Expected")+
+  xlab("Observed")+
+  facet_wrap(~factor(category, levels = c("Male95", "Mature female")), scales = "free_y", nrow = 2,
+             labeller = as_labeller(labs))+
+  theme(legend.position = "bottom", 
+        legend.direction = "horizontal",
+        axis.title = element_text(size = 14),
+        axis.text = element_text(size = 14),
+        strip.text = element_text(size = 14),
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 14),
+        title = element_text(size = 16))
+
+ggsave(paste0("./SNOW/Figures/DHARMa_EBS_QQplot.png"), height = 8, width = 7, units = "in")
+
+# EBS-NBS
+model50 <- readRDS(paste0(dir, "Models/snow_All_Mature female_50_DG_bioTMB.rda"))
+
+resid1 <- simulate(model50, nsim = 300, type= "mle-mvn")|>
+  dharma_residuals(model50, plot = FALSE)
+
+model90 <- readRDS(paste0(dir, "Models/snow_All_Male95_90_DG_bioTMB.rda"))
+
+resid2 <- simulate(model90, nsim = 300, type= "mle-mvn")|>
+  dharma_residuals(model90, plot = FALSE)
+
+residnbs <- rbind(resid1 %>% mutate(category = "Mature female", region = "EBS-NBS"),
+               resid2 %>% mutate(category = "Male95", region = "EBS-NBS"))
+
+rbind(residnbs, residebs) -> resid
+
+labs <- c("Male95" = "Males > 95mm (knots = 90)",
+          "Mature female" = "Mature female (knots = 50)",
+          "EBS" = "EBS-only data", "EBS-NBS" = "EBS-NBS data")
+
+ggplot()+
+  theme_bw()+
+  geom_point(resid, mapping = aes(expected, observed), size = 2, fill = "black")+
+  geom_abline(slope = 1, intercept = 0, color = "red", linewidth = 1)+
+  ylab("Expected")+
+  xlab("Observed")+
+  facet_grid(region~factor(category, levels = c("Male95", "Mature female")), scales = "free_y", 
+             labeller = as_labeller(labs))+
+  theme(legend.position = "bottom", 
+        legend.direction = "horizontal",
+        axis.title = element_text(size = 14),
+        axis.text = element_text(size = 14),
+        strip.text = element_text(size = 14),
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 14),
+        title = element_text(size = 16))
+
+ggsave(paste0("./SNOW/Figures/DHARMa_EBSNBS_QQplot.png"), height = 8, width = 7, units = "in")

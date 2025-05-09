@@ -1,0 +1,148 @@
+---
+title: "Appendix for Model-based index development for Bering Sea and Aleutian Islands *Chionoecetes* crab stocks"
+subtitle: "Update for Crab Plan Team"
+author: |
+  | Emily Ryznar
+  | NOAA Fisheries 
+  | emily.ryznar@noaa.gov 
+date: "`r format(Sys.time(), '%B %Y')`"
+output:
+  bookdown::pdf_document2:
+    fig_caption: true
+    includes: null
+    toc: no
+header-includes:
+   - \usepackage{caption}
+   - \newcommand{\blandscape}{\begin{landscape}}
+   - \newcommand{\elandscape}{\end{landscape}}
+   - \usepackage{pdflscape}
+
+---
+
+\pagenumbering{arabic}
+
+```{r global_options, include=FALSE, echo = FALSE, message = FALSE, warning=FALSE}
+library(knitr)
+opts_chunk$set(fig.width = 12, fig.height = 7, fig.align = "left", echo = FALSE, warning = FALSE, message = FALSE,  dpi=300)
+
+```
+
+```{r, load_packages, echo = FALSE, include = FALSE}
+
+library(xtable)
+library(tidyverse)
+
+options(xtable.comment = FALSE)
+
+```
+
+
+```{r bairdi-west-grid, fig.align = "center", fig.cap = "Prediction grid used to predict spatial abundance and biomass for Tanner crab west of 166°. Spatial resolution is 5km$^2$ and does not include land."}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/west_predgrid.png"))
+```
+
+```{r bairdi-east-grid, fig.align = "center", fig.cap = "Prediction grid used to predict spatial abundance and biomass for Tanner crab east of 166°. Spatial resolution is 5km$^2$ and does not include land."}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/east_predgrid.png"))
+```
+
+```{r spatpred-abund-50-maleW, fig.align = "center", fig.cap = "Spatial predictions of male abundance west of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerW_male_spatabund.png"))
+```
+
+```{r spatpred-abund-50-imfemW, fig.align = "center", fig.cap = "Spatial predictions of immature female abundance west of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerW_imfem_spatabund.png"))
+```
+
+```{r spatpred-abund-50-matfemW, fig.align = "center", fig.cap = "Spatial predictions of mature female abundance west of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerW_matfem_spatabund.png"))
+```
+
+```{r spatpred-bio-50-maleW, fig.align = "center", fig.cap = "Spatial predictions of male biomass west of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerW_male_spatbio.png"))
+```
+
+```{r spatpred-bio-50-imfemW, fig.align = "center", fig.cap = "Spatial predictions of immature female biomass west of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerW_imfem_spatbio.png"))
+```
+
+```{r spatpred-bio-50-matfemW, fig.align = "center", fig.cap = "Spatial predictions of mature female biomass west of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerW_matfem_spatbio.png"))
+```
+
+```{r spatpred-abund-50-maleE, fig.align = "center", fig.cap = "Spatial predictions of male abundance east of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerE_male_spatabund.png"))
+```
+
+```{r spatpred-abund-50-imfemE, fig.align = "center", fig.cap = "Spatial predictions of immature female abundance east of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerE_imfem_spatabund.png"))
+```
+
+```{r spatpred-abund-50-matfemE, fig.align = "center", fig.cap = "Spatial predictions of mature female abundance east of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerE_matfem_spatabund.png"))
+```
+
+```{r spatpred-bio-50-maleE, fig.align = "center", fig.cap = "Spatial predictions of male biomass east of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerE_male_spatbio.png"))
+```
+
+```{r spatpred-bio-50-imfemE, fig.align = "center", fig.cap = "Spatial predictions of immature female biomass east of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerE_imfem_spatbio.png"))
+```
+
+```{r spatpred-bio-50-matfemE, fig.align = "center", fig.cap = "Spatial predictions of mature female biomass east of 166° using NMFS summer bottom trawl survey data before 1982 and 1982 onward with a 50-knot mesh and a delta-gamma model family. Predictions from both of these periods/models are combined in this figure.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerE_matfem_spatbio.png"))
+```
+
+```{r Westbairdi-abund-index, fig.align = "center", fig.cap = "Estimated abundance (millions) for Tanner crab west of 166°. Colored lines represent abundance (±95% CI) estimated by sdmTMB, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerWest.abundance.index.png"))
+```
+
+```{r Westbairdi-bio-index, fig.align = "center", fig.cap = "Estimated biomass (tons) for eastern Bering Sea Tanner crab west of 166°. Colored lines represent abundance (±95% CI) estimated by sdmTMB, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent biomass (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerWest.biomass.index.png"))
+```
+
+```{r Eastbairdi-abund-index, fig.align = "center", fig.cap = "Estimated abundance (millions) for Tanner crab east of 166°. Colored lines represent abundance (±95% CI) estimated by sdmTMB, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerEast.abundance.index.png"))
+```
+
+```{r Eastbairdi-bio-index, fig.align = "center", fig.cap = "Estimated biomass (tons) for eastern Bering Sea Tanner crab east of 166°. Colored lines represent abundance (±95% CI) estimated by sdmTMB, with orange, blue, and pink denoting models fit with a 50-, 90-, and 120-knot mesh, respectively. Black points represent biomass (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerEast.biomass.index.png"))
+```
+
+```{r Westbairdi-abund-compare, fig.align = "center", fig.cap = "Estimated abundance (millions; ±95% CI) for Tanner crab west of 166° predicted using sdmTMB (pink) and VAST (blue). Both algorithms fit models using a delta-gamma family at 50 knots. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerW.abundance.sdmTMBVASTindex.png"))
+```
+
+```{r Westbairdi-bio-compare, fig.align = "center", fig.cap = "Estimated biomass (tons; ±95% CI) for Tanner crab west of 166° predicted using sdmTMB (pink) and VAST (blue). Both algorithms fit models using a delta-gamma family at 50 knots. Black points represent biomass (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerW.biomass.sdmTMBVASTindex.png"))
+```
+
+```{r Eastbairdi-abund-compare, fig.align = "center", fig.cap = "Estimated abundance (millions; ±95% CI) for Tanner crab east of 166° predicted using sdmTMB (pink) and VAST (blue). Both algorithms fit models using a delta-gamma family at 50 knots. Black points represent abundance (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerE.abundance.sdmTMBVASTindex.png"))
+```
+
+```{r Eastbairdi-bio-compare, fig.align = "center", fig.cap = "Estimated biomass (tons; ±95% CI) for Tanner crab east of 166° predicted using sdmTMB (pink) and VAST (blue). Both algorithms fit models using a delta-gamma family at 50 knots. Black points represent biomass (±95% CI) estimated by the NMFS summer bottom trawl survey.", out.width="100%", out.height="100%"}
+
+knitr::include_graphics(here::here("BAIRDI/Figures/TannerE.biomass.sdmTMBVASTindex.png"))
+```

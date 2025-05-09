@@ -89,6 +89,7 @@ surv.dat <- rbind(m.surv, mf.surv) %>%
 labs <- c("Male95" = "Males > 95mm",
           "Mature female" = "Mature female")
 
+
 ## Plot indices
 ggplot()+
   geom_ribbon(ind.dat, mapping = aes(x = Year, ymin = lwr, ymax = upr, fill = as.factor(knots)), alpha = 0.4) +
@@ -101,20 +102,85 @@ ggplot()+
              labeller = as_labeller(labs))+
   theme_bw()+
   ylab("Biomass (tons)")+
-  ggtitle("EBS snow estimated biomass") +
+  ggtitle("EBS snow crab estimated biomass (EBS-data only)") +
   scale_color_manual(values = c("#8B0069", "#9A9800", "#B0F4FA"), labels = c("50", "90", "120"), name = "Knots")+
   scale_fill_manual(values = c("#8B0069", "#9A9800", "#B0F4FA"), labels = c("50", "90", "120"), name = "Knots")+
   theme(legend.position = "bottom", 
         legend.direction = "horizontal",
-        axis.title = element_text(size = 14),
-        axis.text = element_text(size = 14),
-        strip.text = element_text(size = 14),
-        legend.text = element_text(size = 14),
-        legend.title = element_text(size = 14),
+        axis.title = element_text(size = 15),
+        axis.text = element_text(size = 15),
+        strip.text = element_text(size = 16),
+        legend.text = element_text(size = 15),
+        legend.title = element_text(size = 15),
         title = element_text(size = 16))
 
-ggsave("./SNOW/Figures/snowEBS.biomass.index.png", height= 9, width = 7.5, units = "in")
+ggsave("./SNOW/Figures/snowEBS.biomass.index.png", height= 9, width = 10, units = "in")
 
+ind.dat %>%
+  filter(category == "Male95") -> ind.dat2
+
+surv.dat %>%
+  filter(category == "Male95") -> surv.dat2
+
+
+## Plot indices
+ggplot()+
+  geom_ribbon(ind.dat2, mapping = aes(x = Year, ymin = lwr, ymax = upr, fill = as.factor(knots)), alpha = 0.4) +
+  geom_line(ind.dat2, mapping = aes(Year, biomass, color = as.factor(knots)), linewidth = 1)+
+  geom_point(surv.dat2,
+             mapping = aes(YEAR, BIOMASS_MT), color = "grey20", size = 1)+
+  geom_errorbar(surv.dat2,
+                mapping = aes(x = YEAR, ymin = BIOMASS_MT - BIOMASS_MT_CI, ymax = BIOMASS_MT + BIOMASS_MT_CI), color = "grey20", width = 0)+
+  facet_wrap(~factor(category, levels = c("Male95", "Mature female")), scales = "free_y", nrow = 2,
+             labeller = as_labeller(labs))+
+  theme_bw()+
+  ylab("Biomass (tons)")+
+  ggtitle("EBS snow crab estimated biomass (EBS-data only)") +
+  scale_color_manual(values = c("#8B0069", "#9A9800", "#B0F4FA"), labels = c("50", "90", "120"), name = "Knots")+
+  scale_fill_manual(values = c("#8B0069", "#9A9800", "#B0F4FA"), labels = c("50", "90", "120"), name = "Knots")+
+  theme(legend.position = "bottom", 
+        legend.direction = "horizontal",
+        axis.title = element_text(size = 15),
+        axis.text = element_text(size = 15),
+        strip.text = element_text(size = 16),
+        legend.text = element_text(size = 15),
+        legend.title = element_text(size = 15),
+        title = element_text(size = 16))
+
+ggsave("./SNOW/Figures/snowEBS.biomass.male95index.png", height= 7, width = 12, units = "in")
+
+ind.dat %>%
+  filter(category == "Mature female") -> ind.dat2
+
+surv.dat %>%
+  filter(category == "Mature female") -> surv.dat2
+
+
+## Plot indices
+ggplot()+
+  geom_ribbon(ind.dat2, mapping = aes(x = Year, ymin = lwr, ymax = upr, fill = as.factor(knots)), alpha = 0.4) +
+  geom_line(ind.dat2, mapping = aes(Year, biomass, color = as.factor(knots)), linewidth = 1)+
+  geom_point(surv.dat2,
+             mapping = aes(YEAR, BIOMASS_MT), color = "grey20", size = 1)+
+  geom_errorbar(surv.dat2,
+                mapping = aes(x = YEAR, ymin = BIOMASS_MT - BIOMASS_MT_CI, ymax = BIOMASS_MT + BIOMASS_MT_CI), color = "grey20", width = 0)+
+  facet_wrap(~factor(category, levels = c("Male95", "Mature female")), scales = "free_y", nrow = 2,
+             labeller = as_labeller(labs))+
+  theme_bw()+
+  ylab("Biomass (tons)")+
+  ggtitle("EBS snow crab estimated biomass (EBS-data only)") +
+  scale_color_manual(values = c("#8B0069", "#9A9800", "#B0F4FA"), labels = c("50", "90", "120"), name = "Knots")+
+  scale_fill_manual(values = c("#8B0069", "#9A9800", "#B0F4FA"), labels = c("50", "90", "120"), name = "Knots")+
+  theme(legend.position = "bottom", 
+        legend.direction = "horizontal",
+        axis.title = element_text(size = 15),
+        axis.text = element_text(size = 15),
+        strip.text = element_text(size = 16),
+        legend.text = element_text(size = 15),
+        legend.title = element_text(size = 15),
+        title = element_text(size = 16))
+
+ggsave("./SNOW/Figures/snowEBS.biomass.matfemindex.png", height= 7, width = 12, units = "in")
 
 ## EBS-NBS ----
 ## Males sdmTMB 
@@ -184,6 +250,76 @@ surv.dat <- rbind(m.surv, mf.surv) %>%
 labs <- c("Male95" = "Males > 95mm (knots = 90)",
           "Mature female" = "Mature female (knots = 50)")
 
+
+ind.dat.ebsnbs %>%
+  filter(category == "Male95") -> ind.dat.ebsnbs2
+
+surv.dat %>%
+  filter(category == "Male95") -> surv.dat2
+
+
+## Plot indices
+ggplot()+
+  geom_ribbon(ind.dat.ebsnbs2, mapping = aes(x = Year, ymin = lwr, ymax = upr, fill = as.factor(knots)), alpha = 0.4) +
+  geom_line(ind.dat.ebsnbs2, mapping = aes(Year, biomass, color = as.factor(knots)), linewidth = 1)+
+  geom_point(surv.dat2,
+             mapping = aes(YEAR, BIOMASS_MT), color = "grey20", size = 1)+
+  geom_errorbar(surv.dat2,
+                mapping = aes(x = YEAR, ymin = BIOMASS_MT - BIOMASS_MT_CI, ymax = BIOMASS_MT + BIOMASS_MT_CI), color = "grey20", width = 0)+
+  facet_wrap(~factor(category, levels = c("Male95", "Mature female")), scales = "free_y", nrow = 2,
+             labeller = as_labeller(labs))+
+  theme_bw()+
+  ylab("Biomass (tons)")+
+  ggtitle("EBS snow crab estimated biomass (EBS-NBS data)") +
+  scale_color_manual(values = c("#8B0069", "#9A9800", "#B0F4FA"), labels = c("50", "90", "120"), name = "Knots")+
+  scale_fill_manual(values = c("#8B0069", "#9A9800", "#B0F4FA"), labels = c("50", "90", "120"), name = "Knots")+
+  theme(legend.position = "bottom", 
+        legend.direction = "horizontal",
+        axis.title = element_text(size = 15),
+        axis.text = element_text(size = 15),
+        strip.text = element_text(size = 16),
+        legend.text = element_text(size = 15),
+        legend.title = element_text(size = 15),
+        title = element_text(size = 16))
+
+ggsave("./SNOW/Figures/snowEBSNBS.biomass.male95index.png", height= 7, width = 12, units = "in")
+
+ind.dat.ebsnbs %>%
+  filter(category == "Mature female") -> ind.dat.ebsnbs2
+
+surv.dat %>%
+  filter(category == "Mature female") -> surv.dat2
+
+
+## Plot indices
+ggplot()+
+  geom_ribbon(ind.dat.ebsnbs2, mapping = aes(x = Year, ymin = lwr, ymax = upr, fill = as.factor(knots)), alpha = 0.4) +
+  geom_line(ind.dat.ebsnbs2, mapping = aes(Year, biomass, color = as.factor(knots)), linewidth = 1)+
+  geom_point(surv.dat2,
+             mapping = aes(YEAR, BIOMASS_MT), color = "grey20", size = 1)+
+  geom_errorbar(surv.dat2,
+                mapping = aes(x = YEAR, ymin = BIOMASS_MT - BIOMASS_MT_CI, ymax = BIOMASS_MT + BIOMASS_MT_CI), color = "grey20", width = 0)+
+  facet_wrap(~factor(category, levels = c("Male95", "Mature female")), scales = "free_y", nrow = 2,
+             labeller = as_labeller(labs))+
+  theme_bw()+
+  ylab("Biomass (tons)")+
+  ggtitle("EBS snow crab estimated biomass (EBS-NBS data)") +
+  scale_color_manual(values = c("#8B0069", "#9A9800", "#B0F4FA"), labels = c("50", "90", "120"), name = "Knots")+
+  scale_fill_manual(values = c("#8B0069", "#9A9800", "#B0F4FA"), labels = c("50", "90", "120"), name = "Knots")+
+  theme(legend.position = "bottom", 
+        legend.direction = "horizontal",
+        axis.title = element_text(size = 15),
+        axis.text = element_text(size = 15),
+        strip.text = element_text(size = 16),
+        legend.text = element_text(size = 15),
+        legend.title = element_text(size = 15),
+        title = element_text(size = 16))
+
+ggsave("./SNOW/Figures/snowEBSNBS.biomass.matfemindex.png", height= 7, width = 12, units = "in")
+
+
+
+
 ## Plot indices
 ggplot()+
 geom_ribbon(ind.dat2, mapping = aes(x = Year, ymin = lwr, ymax = upr, fill = region), alpha = 0.4) +
@@ -196,17 +332,85 @@ geom_ribbon(ind.dat2, mapping = aes(x = Year, ymin = lwr, ymax = upr, fill = reg
              labeller = as_labeller(labs))+
   theme_bw()+
   ylab("Biomass (tons)")+
-  ggtitle("EBS snow estimated biomass") +
+  ggtitle("EBS snow crab estimated biomass") +
   scale_color_manual(values = c("salmon",  "turquoise"), name = "Model data")+
   scale_fill_manual(values = c("salmon", "turquoise"), name = "Model data")+
   theme(legend.position = "bottom", 
         legend.direction = "horizontal",
-        axis.title = element_text(size = 14),
-        axis.text = element_text(size = 14),
-        strip.text = element_text(size = 14),
-        legend.text = element_text(size = 14),
-        legend.title = element_text(size = 14),
+        axis.title = element_text(size = 15),
+        axis.text = element_text(size = 15),
+        strip.text = element_text(size = 16),
+        legend.text = element_text(size = 15),
+        legend.title = element_text(size = 15),
         title = element_text(size = 16))
 
-ggsave("./SNOW/Figures/snowEBSNBS.biomass.index.png", height= 9, width = 7.5, units = "in")
+ggsave("./SNOW/Figures/snowEBSNBS.biomass.index.png", height= 9, width = 10, units = "in")
+
+ind.dat2 %>%
+  filter(category == "Male95") -> ind.dat3
+
+surv.dat %>%
+  filter(category == "Male95") -> surv.dat2
+
+## Plot indices
+ggplot()+
+  geom_ribbon(ind.dat3, mapping = aes(x = Year, ymin = lwr, ymax = upr, fill = region), alpha = 0.4) +
+  geom_line(ind.dat3, mapping = aes(Year, biomass, color = region), linewidth = 1)+
+  geom_point(surv.dat2,
+             mapping = aes(YEAR, BIOMASS_MT), color = "grey20", size = 1)+
+  geom_errorbar(surv.dat2,
+                mapping = aes(x = YEAR, ymin = BIOMASS_MT - BIOMASS_MT_CI, ymax = BIOMASS_MT + BIOMASS_MT_CI), color = "grey20", width = 0)+
+  facet_wrap(~factor(category, levels = c("Male95", "Mature female")), scales = "free_y", nrow = 2,
+             labeller = as_labeller(labs))+
+  theme_bw()+
+  ylab("Biomass (tons)")+
+  ggtitle("EBS snow crab estimated biomass") +
+  scale_color_manual(values = c("salmon",  "turquoise"), name = "Model data")+
+  scale_fill_manual(values = c("salmon", "turquoise"), name = "Model data")+
+  theme(legend.position = "bottom", 
+        legend.direction = "horizontal",
+        axis.title = element_text(size = 15),
+        axis.text = element_text(size = 15),
+        strip.text = element_text(size = 16),
+        legend.text = element_text(size = 15),
+        legend.title = element_text(size = 15),
+        title = element_text(size = 16))
+
+ggsave("./SNOW/Figures/snowEBSNBS.biomass.male95index.png", height= 7, width = 12, units = "in")
+
+
+
+
+ind.dat2 %>%
+  filter(category == "Mature female") -> ind.dat3
+
+surv.dat %>%
+  filter(category == "Mature female") -> surv.dat2
+
+## Plot indices
+ggplot()+
+  geom_ribbon(ind.dat3, mapping = aes(x = Year, ymin = lwr, ymax = upr, fill = region), alpha = 0.4) +
+  geom_line(ind.dat3, mapping = aes(Year, biomass, color = region), linewidth = 1)+
+  geom_point(surv.dat2,
+             mapping = aes(YEAR, BIOMASS_MT), color = "grey20", size = 1)+
+  geom_errorbar(surv.dat2,
+                mapping = aes(x = YEAR, ymin = BIOMASS_MT - BIOMASS_MT_CI, ymax = BIOMASS_MT + BIOMASS_MT_CI), color = "grey20", width = 0)+
+  facet_wrap(~factor(category, levels = c("Male95", "Mature female")), scales = "free_y", nrow = 2,
+             labeller = as_labeller(labs))+
+  theme_bw()+
+  ylab("Biomass (tons)")+
+  ggtitle("EBS snow crab estimated biomass") +
+  scale_color_manual(values = c("salmon",  "turquoise"), name = "Model data")+
+  scale_fill_manual(values = c("salmon", "turquoise"), name = "Model data")+
+  theme(legend.position = "bottom", 
+        legend.direction = "horizontal",
+        axis.title = element_text(size = 15),
+        axis.text = element_text(size = 15),
+        strip.text = element_text(size = 16),
+        legend.text = element_text(size = 15),
+        legend.title = element_text(size = 15),
+        title = element_text(size = 16))
+
+ggsave("./SNOW/Figures/snowEBSNBS.biomass.matfemindex.png", height= 7, width = 12, units = "in")
+
 

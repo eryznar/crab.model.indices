@@ -15,6 +15,14 @@ parallelly::availableCores()
 options(future.globals.maxSize = 2 * 1024^3) 
 plan(multisession, workers =6)
 
+years <- c(1980:2019, 2021:2024)
+
+# Filter pred_grid (already in UTM), replicate by number of years
+ebs_grid2 <- ebs_grid %>%
+  dplyr::select(area_km2, X, Y) %>%
+  replicate_df(., "year", years) %>%
+  rename(lon = X, lat = Y)
+
 
 ### LOAD FUNCTION --------------------------------------------------------------
 evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
@@ -190,14 +198,6 @@ evaluate_diagnostics <- function(data, model, category, reg, knots, dist){
 
 
 ### EVALUATE DIAGNOSTICS ------------
-years <- c(1980:2019, 2021:2024)
-
-# Filter pred_grid (already in UTM), replicate by number of years
-ebs_grid2 <- ebs_grid %>%
-  dplyr::select(area_km2, X, Y) %>%
-  replicate_df(., "year", years) %>%
-  rename(lon = X, lat = Y)
-
 ## Mature female EBS Delta gamma ----
 data <- snow.matfem.cpue
 category <- "Mature female"
@@ -312,6 +312,15 @@ model_eval <- files[grep("_modeleval.csv", files)] %>%
   group_by(category, region) %>%
   arrange(desc(loglik), .by_group = TRUE)
 
+model_eval %>%
+  na.omit() %>%
+  group_by(category, region) %>%
+  mutate(BEST = case_when((loglik == max(loglik)) ~ "Y",
+                          TRUE ~ "")) %>%
+  filter(BEST == "Y") -> tt
+
+tt[1,3] <- 90
+
 write.csv(model_eval, "./SNOW/Output/snow_modeleval_bio.csv")
 
 ### EVALUATE MESH --------------
@@ -332,6 +341,7 @@ ggplot(snow.male95.cpue %>% filter(year %in% years, region == "EBS")) +
   theme_bw() +
   ggtitle(paste0("Specified knots = 50, realized knots=", mesh50$n))+
   labs(x = "X", y = "Y")+
+  ylim(c(5950, 7050))+
   theme(axis.text = element_text(size = 12),
         axis.title = element_text(size = 12)) -> ebs.50
 
@@ -339,6 +349,7 @@ ggplot(snow.male95.cpue %>% filter(year %in% years, region == "EBS")) +
   inlabru::gg(mesh90) + 
   geom_point(aes(x = lon, y = lat), size = 0.5) +
   theme_bw() +
+  ylim(c(5950, 7050))+
   ggtitle(paste0("Specified knots = 90, realized knots=", mesh90$n))+
   labs(x = "X", y = "Y")+
   theme(axis.text = element_text(size = 12),
@@ -348,6 +359,7 @@ ggplot(snow.male95.cpue %>% filter(year %in% years, region == "EBS")) +
   inlabru::gg(mesh120) + 
   geom_point(aes(x = lon, y = lat), size = 0.5) +
   theme_bw() +
+  ylim(c(5950, 7050))+
   ggtitle(paste0("Specified knots = 120, realized knots=", mesh120$n))+
   labs(x = "X", y = "Y") +
   theme(axis.text = element_text(size = 12),
@@ -355,6 +367,9 @@ ggplot(snow.male95.cpue %>% filter(year %in% years, region == "EBS")) +
 
 ggpubr::ggarrange(ebs.50, ebs.90, ebs.120, nrow = 3)
 ggsave("./SNOW/Figures/snow_EBS_mesh.png", width = 5, height = 9)
+
+# ebs.50 + ebs.90 + ebs.120 + plot_layout(axes = "collect")
+# ggsave("./SNOW/Figures/snow_EBS_mesh.png", width = 14, height = 5)
 
 # EBS-NBS
 mesh50 <- readRDS(paste0(dir, "Models/snow_All_Male95_50_DG_bioTMB.rda"))$spde$mesh
@@ -365,6 +380,7 @@ ggplot(snow.male95.cpue %>% filter(year %in% years)) +
   inlabru::gg(mesh50) + 
   geom_point(aes(x = lon, y = lat), size = 0.5) +
   theme_bw() +
+  ylim(c(5950, 7300))+
   ggtitle(paste0("Specified knots = 50, realized knots=", mesh50$n))+
   labs(x = "X", y = "Y")+
   theme(axis.text = element_text(size = 12),
@@ -374,6 +390,7 @@ ggplot(snow.male95.cpue %>% filter(year %in% years)) +
   inlabru::gg(mesh90) + 
   geom_point(aes(x = lon, y = lat), size = 0.5) +
   theme_bw() +
+  ylim(c(5950, 7300))+
   ggtitle(paste0("Specified knots = 90, realized knots=", mesh90$n))+
   labs(x = "X", y = "Y")+
   theme(axis.text = element_text(size = 12),
@@ -383,6 +400,7 @@ ggplot(snow.male95.cpue %>% filter(year %in% years)) +
   inlabru::gg(mesh120) + 
   geom_point(aes(x = lon, y = lat), size = 0.5) +
   theme_bw() +
+  ylim(c(5950, 7300))+
   ggtitle(paste0("Specified knots = 120, realized knots=", mesh120$n))+
   labs(x = "X", y = "Y") +
   theme(axis.text = element_text(size = 12),
@@ -391,6 +409,8 @@ ggplot(snow.male95.cpue %>% filter(year %in% years)) +
 ggpubr::ggarrange(all.50, all.90, all.120, nrow = 3)
 ggsave("./SNOW/Figures/snow_EBS-NBS_mesh.png", width = 5, height = 9)
 
+all.50 + all.90 + all.120 + plot_layout(axes = "collect")
+ggsave("./SNOW/Figures/snow_EBS-NBS_mesh.png", width = 14, height = 5)
 
 ### FACETTED RESIDUAL PLOTS ----
 # EBS
